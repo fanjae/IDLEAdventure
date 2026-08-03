@@ -31,6 +31,13 @@ public class ItemDatabaseSO : ScriptableObject
                 continue;
             }
 
+            // 유효하지 않은 데이터 오류 처리
+            if (item.ItemId <= 0)
+            {
+                Debug.LogError($"[ItemDatabaseSO] ItemId는 1 이상이어야 합니다. Item: {item.name}, ItemId: {item.ItemId}", item);
+                continue;
+            }
+
             // 중복 데이터가 기존 데이터 덮어쓰지 않도록 방지
             if (!itemMap.TryAdd(item.ItemId, item))
             {
