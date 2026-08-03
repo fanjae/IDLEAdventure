@@ -41,7 +41,8 @@ public class ItemDatabaseSO : ScriptableObject
             // 중복 데이터가 기존 데이터 덮어쓰지 않도록 방지
             if (!itemMap.TryAdd(item.ItemId, item))
             {
-                Debug.LogError($"[ItemDatabaseSO] 중복된 ItemId가 있습니다. " + $"ItemId: {item.ItemId}, Item: {item.name}",this);
+                ItemSO existing = itemMap[item.ItemId];
+                Debug.LogError($"[ItemDatabaseSO] 중복된 ItemId가 있습니다. ItemId: {item.ItemId}, Existing: {existing.name}, Duplicate: {item.name}", item);
             }
         }
     }
@@ -51,7 +52,11 @@ public class ItemDatabaseSO : ScriptableObject
     {
         EnsureInitialized();
 
-        itemMap.TryGetValue(itemId, out ItemSO item);
+        if (!itemMap.TryGetValue(itemId, out ItemSO item))
+        {
+            throw new KeyNotFoundException($"[ItemDatabaseSO] 존재하지 않는 ItemId입니다. ItemId: {itemId}");
+        }
+
         return item;
     }
 
@@ -63,17 +68,17 @@ public class ItemDatabaseSO : ScriptableObject
         return itemMap.TryGetValue(itemId, out item);
     }
 
-    // ItemId에 해당하는 EquipmentSO 반환
-    public EquipmentSO GetEquipment(int itemId)
+    // ItemId에 해당하는 지정 타입의 ItemSO 조회
+    public bool TryGetItem<T>(int itemId, out T item) where T : ItemSO
     {
-        return GetItem(itemId) as EquipmentSO;
-    }
+        if (TryGetItem(itemId, out ItemSO found) && found is T typedItem)
+        {
+            item = typedItem;
+            return true;
+        }
 
-    // ItemId에 해당하는 EquipmentSO 조회
-    public bool TryGetEquipment(int itemId, out EquipmentSO equipment)
-    {
-        equipment = GetItem(itemId) as EquipmentSO;
-        return equipment != null;
+        item = null;
+        return false;
     }
 
     // itemMap이 아직 생성되지 않은 경우에만 Initialize 호출.
@@ -89,6 +94,7 @@ public class ItemDatabaseSO : ScriptableObject
     private void OnValidate()
     {
         ValidateItems();
+        itemMap = null;
     }
 
     // 에디터 단계에서 비어있는 항목 및 중복 ItemID 검사
@@ -107,17 +113,15 @@ public class ItemDatabaseSO : ScriptableObject
 
             if (item.ItemId <= 0)
             {
-                Debug.LogError($"[ItemDatabaseSO] ItemId는 1 이상이어야 합니다. " + $"Item: {item.name}, ItemId: {item.ItemId}",item);
+                Debug.LogError($"[ItemDatabaseSO] ItemId는 1 이상이어야 합니다. Item: {item.name}, ItemId: {item.ItemId}", item);
                 continue;
             }
 
             if (!itemIds.Add(item.ItemId))
             {
-                Debug.LogError($"[ItemDatabaseSO] 중복된 ItemId가 있습니다. " + $"ItemId: {item.ItemId}, Item: {item.name}",item);
+                Debug.LogError($"[ItemDatabaseSO] 중복된 ItemId가 있습니다. ItemId: {item.ItemId}, Item: {item.name}", item);
             }
         }
-
-        itemMap = null;
     }
 #endif
 }
