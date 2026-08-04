@@ -40,6 +40,8 @@ public class UnitHealth : MonoBehaviour
         OnDamaged?.Invoke(appliedDamage);
         OnHealthChanged?.Invoke(CurrentHp, MaxHp);
 
+        Debug.Log($"{name} HP : {CurrentHp} / {MaxHp} " + $"(-{appliedDamage})");
+
         if (CurrentHp <= 0)
         {
             Die();
@@ -65,7 +67,7 @@ public class UnitHealth : MonoBehaviour
         
         return appliedHeal;
     }
-    public void SetMaxHp(int newMaxHp)
+    public void SetMaxHp(int newMaxHp, bool addChangedHp = true)
     {
         if (!IsInitialized)
         {
@@ -79,11 +81,29 @@ public class UnitHealth : MonoBehaviour
         int changedHp = newMaxHp - previousMaxHp;
         MaxHp = newMaxHp;
 
-        if (changedHp > 0) CurrentHp += changedHp;
+        if (changedHp > 0 && addChangedHp) CurrentHp += changedHp;
 
         CurrentHp = Mathf.Clamp(CurrentHp, 0, MaxHp);
         OnHealthChanged?.Invoke(CurrentHp, MaxHp);
     }
+    //전투 재시작 또는 풀에서 재사용할 때
+    public void ResetHealth()
+    {
+        if (!IsInitialized) return;
+
+        CurrentHp = MaxHp;
+        IsDead = false;
+
+        OnHealthChanged?.Invoke(CurrentHp, MaxHp);
+    }
+    //생존 상태에서 최대 체력까지 회복하는 용
+    //사용할꺼면 주석풀고 사용하면 됨.
+    //public int RestoreFullHealth()
+    //{
+    //    if (!IsInitialized || IsDead) return 0;
+
+    //    return Heal(MaxHp - CurrentHp);
+    //}
     private void Die()
     {
         if (IsDead) return;
@@ -91,16 +111,10 @@ public class UnitHealth : MonoBehaviour
         CurrentHp = 0;
         IsDead = true;
 
+        Debug.Log($"{name} 사망");
+
         OnDead?.Invoke();
     }
 
 
-    //public void ResetHealth()
-    //{
-
-    //}
-    //public void RestoreFullHealth()
-    //{
-
-    //}
 }
