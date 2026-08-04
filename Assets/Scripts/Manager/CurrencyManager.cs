@@ -68,6 +68,10 @@ public class CurrencyManager : Singleton<CurrencyManager>
             // 재화 종류별로 초기화
             currencies[(CurrencyType)i] = 0;
         }
+
+        // 임시 세이브 매니저에 저장되어 있는 골드량 받아오기.
+        currencies[CurrencyType.Gold] = TestSaveManager.Instance.CurrentSaveData.Gold;
+
         // 에디터 인스펙터 확인용
 #if UNITY_EDITOR
         currencyDatas.Clear();
@@ -86,6 +90,14 @@ public class CurrencyManager : Singleton<CurrencyManager>
 
         currencies[type] += amount;
         OnCurrencyChanged?.Invoke(type, currencies[type]);
+
+        // 임시 골드 저장용 코드
+        if (type == CurrencyType.Gold)
+        {
+            TestSaveManager.Instance.CurrentSaveData.SetGold(currencies[CurrencyType.Gold]);
+            TestSaveManager.Instance.SaveGame();
+        }
+
         Debug.Log($"[재화 획득] [{type}] +{amount} | 현재 보유 : {currencies[type]}");
 
         // 에디터 인스펙터 확인용
@@ -103,6 +115,14 @@ public class CurrencyManager : Singleton<CurrencyManager>
         }
         currencies[type] -= amount;
         OnCurrencyChanged?.Invoke(type, currencies[type]);
+
+        // 임시 골드 저장용 코드
+        if (type == CurrencyType.Gold)
+        {
+            TestSaveManager.Instance.CurrentSaveData.SetGold(currencies[CurrencyType.Gold]);
+            TestSaveManager.Instance.SaveGame();
+        }
+
         Debug.Log($"[{type}] 구매에 성공했습니다. | 남은 재화 : {currencies[type]}");
 
         // 에디터 인스펙터 확인용
