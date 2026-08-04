@@ -8,8 +8,6 @@ using UnityEngine.UI;
 /// </summary>
 public class CurrencyTest : MonoBehaviour
 {
-    [SerializeField] private Button addButton;
-    [SerializeField] private Button useButton;
     [SerializeField] private TMP_Text goldText;
 
     private void Awake()
