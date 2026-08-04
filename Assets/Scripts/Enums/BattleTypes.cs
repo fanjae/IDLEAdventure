@@ -11,7 +11,16 @@ public enum UnitState // 상태
     Skill,
     Dead
 }
-public enum HeroRole // 역할군
+public enum HeroClassType // 클래스 장비 효과를 공유하기 위한 장비 분류하는 녀석
+{                         // 프로젝트에서 실제 역할군 확정되면 조정 예정.
+    Tank,
+    Warrior,
+    Mage,
+    Marksman,
+    Support,
+    Rogue
+}
+public enum HeroRole // 전투에서 탱,딜,힐   행동 목적을 구분하는 녀석
 {
     Tanker,
     Dealer,
