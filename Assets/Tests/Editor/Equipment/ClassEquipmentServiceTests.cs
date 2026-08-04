@@ -114,7 +114,7 @@ public class ClassEquipmentServiceTests
 
         Assert.That(result, Is.False);
         Assert.That(replaceItemId, Is.Zero);
-        Assert.That(failureReason, Is.Equalto(EquipmentEquipFailureReason.InvalidItemId));
+        Assert.That(failureReason, Is.EqualTo(EquipmentEquipFailureReason.InvalidItemId));
     }
 
     // ItemDatabase에 존재하지 않는 ItemID 장착에 대한 케이스가 EquipmentNotFound 실패 체크
@@ -123,14 +123,14 @@ public class ClassEquipmentServiceTests
     {
         const int unknownItemId = 999;
 
-        ITemDatabaseSO itemDatabase = CreateItemDatabase();
+        ItemDatabaseSO itemDatabase = CreateItemDatabase();
         ClassEquipmentService service = new(itemDatabase);
 
         bool result = service.TryEquip(HeroClassType.Warrior, unknownItemId, out int replaceItemId, out EquipmentEquipFailureReason failureReason);
 
         Assert.That(result, Is.False);
         Assert.That(replaceItemId, Is.Zero);
-        Assert.That(failureReason, Is.EqualTo(EquipmentEquipFailureReson.EquipmentNotFound));
+        Assert.That(failureReason, Is.EqualTo(EquipmentEquipFailureReason.EquipmentNotFound));
     }
 
     // 장비가 없는 빈 슬롯을 해제할 때 False 반환 체크
