@@ -1,73 +1,77 @@
 ﻿using System;
+using UnityEngine;
 
 // 특정 영웅 클래스가 공유하는 장비 슬롯별 장착 상태
+// 보유 장비의 InstanceId만 참조하고 실제 장비 데이터는 Inventory에서 관리
 [Serializable]
-public class ClassEquipmentSet
+public sealed class ClassEquipmentSet
 {
-    // 각 장비 슬롯에 장착된 아이템의 ID
-    private int weaponItemId;
-    private int handsItemId;
-    private int accessoryItemId;
-    private int headItemId;
-    private int bodyItemId;
-    private int legsItemId;
+    // 각 장비 슬롯에 장착된 보유 장비의 InstanceId
+    [SerializeField] private string weaponInstanceId = string.Empty;
+    [SerializeField] private string handsInstanceId = string.Empty;
+    [SerializeField] private string accessoryInstanceId = string.Empty;
+    [SerializeField] private string headInstanceId = string.Empty;
+    [SerializeField] private string bodyInstanceId = string.Empty;
+    [SerializeField] private string legsInstanceId = string.Empty;
 
-    // 지정한 장비 슬롯에 현재 장착된 아이템 ID를 반환
-    public int GetEquippedItemId(EquipmentSlotType slotType)
+    // 지정한 장비 슬롯에 현재 장착된 InstanceId 반환
+    public string GetEquippedInstanceId(EquipmentSlotType slotType)
     {
         switch (slotType)
         {
             case EquipmentSlotType.Weapon:
-                return weaponItemId;
+                return weaponInstanceId;
 
             case EquipmentSlotType.Hands:
-                return handsItemId;
+                return handsInstanceId;
 
             case EquipmentSlotType.Accessory:
-                return accessoryItemId;
+                return accessoryInstanceId;
 
             case EquipmentSlotType.Head:
-                return headItemId;
+                return headInstanceId;
 
             case EquipmentSlotType.Body:
-                return bodyItemId;
+                return bodyInstanceId;
 
             case EquipmentSlotType.Legs:
-                return legsItemId;
+                return legsInstanceId;
 
             default:
                 throw new ArgumentOutOfRangeException(nameof(slotType));
         }
     }
 
-    // 지정한 장비 슬롯에 아이템 ID 설정
-    // itemId가 0이면 해당 슬롯을 빈 상태로 변경
-    public void SetEquippedItemId(EquipmentSlotType slotType, int itemId)
+    // 지정한 장비 슬롯에 InstanceId 설정
+    // 빈 문자열을 전달하면 해당 슬롯을 빈 상태로 변경
+    internal void SetEquippedInstanceId(EquipmentSlotType slotType, string instanceId)
     {
+        instanceId ??= string.Empty;
+
         switch (slotType)
         {
             case EquipmentSlotType.Weapon:
-                weaponItemId = itemId;
+                weaponInstanceId = instanceId;
                 break;
 
             case EquipmentSlotType.Hands:
-                handsItemId = itemId;
+                handsInstanceId = instanceId;
                 break;
 
             case EquipmentSlotType.Accessory:
-                accessoryItemId = itemId;
+                accessoryInstanceId = instanceId;
                 break;
 
             case EquipmentSlotType.Head:
-                headItemId = itemId;
+                headInstanceId = instanceId;
                 break;
 
             case EquipmentSlotType.Body:
-                bodyItemId = itemId;
+                bodyInstanceId = instanceId;
                 break;
 
             case EquipmentSlotType.Legs:
-                legsItemId = itemId;
+                legsInstanceId = instanceId;
                 break;
 
             default:
@@ -75,13 +79,29 @@ public class ClassEquipmentSet
         }
     }
 
-    // 지정한 슬롯의 장비 해제, 기존 장착되어 있던 아이템 ID 반환
-    public int RemoveEquippedItem(EquipmentSlotType slotType)
+    // 지정한 슬롯의 장비를 해제하고 기존 InstanceId 반환
+    internal string RemoveEquippedInstance(EquipmentSlotType slotType)
     {
-        int removedItemId = GetEquippedItemId(slotType);
+        string removedInstanceId = GetEquippedInstanceId(slotType);
 
-        SetEquippedItemId(slotType, 0);
+        SetEquippedInstanceId(slotType, string.Empty);
 
-        return removedItemId;
+        return removedInstanceId;
+    }
+
+    // 해당 장비 인스턴스가 현재 장비 세트에 포함됐는지 확인
+    public bool ContainsInstance(string instanceId)
+    {
+        if (string.IsNullOrEmpty(instanceId))
+        {
+            return false;
+        }
+
+        return string.Equals(weaponInstanceId, instanceId, StringComparison.Ordinal)
+            || string.Equals(handsInstanceId, instanceId, StringComparison.Ordinal)
+            || string.Equals(accessoryInstanceId, instanceId, StringComparison.Ordinal)
+            || string.Equals(headInstanceId, instanceId, StringComparison.Ordinal)
+            || string.Equals(bodyInstanceId, instanceId, StringComparison.Ordinal)
+            || string.Equals(legsInstanceId, instanceId, StringComparison.Ordinal);
     }
 }
