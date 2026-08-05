@@ -104,6 +104,7 @@ public class CurrencyManager : Singleton<CurrencyManager>
     // 재화 소모 함수
     public bool UseCurrency(CurrencyType type, int amount)
     {
+        if (amount <= 0) return false;
         if (currencies[type] < amount)
         {
             Debug.Log($"[{type}] 소지 재화가 부족합니다.");
