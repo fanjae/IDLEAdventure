@@ -14,8 +14,8 @@ public class Bootstrapper
     {
         Debug.Log("초기 생성 호출.");
 
-        CurrencyManager currency = CurrencyManager.Instance;
         TestSaveManager testSaveManager = TestSaveManager.Instance;
+        CurrencyManager currency = CurrencyManager.Instance;
 
         Debug.Log("초기 호출 완료.");
     }
