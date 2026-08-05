@@ -4,8 +4,9 @@ using UnityEngine;
 [Serializable]
 public class SaveData
 {
+    [Header("Save Data")]
     [SerializeField] private int[] currencyDatas = new int[(int)CurrencyType.Length];
-    [SerializeField] private long lastGetIdleRewardTime;
+    [SerializeField] private long lastGetIdleRewardTime;    // 시간은 int로 표현하기에 크기가 커서 long 사용
 
     public int[] CurrencyDatas => currencyDatas;
     public long LastGetIdleRewardTime => lastGetIdleRewardTime;

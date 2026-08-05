@@ -8,6 +8,7 @@ using UnityEngine.UI;
 /// </summary>
 public class CurrencyTest : MonoBehaviour
 {
+    [Header("Binding Component")]
     [SerializeField] private TMP_Text goldText;
 
     private void Awake()
