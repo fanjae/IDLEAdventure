@@ -30,6 +30,8 @@ public class IdleTest : MonoBehaviour
         InitializeTime();
     }
 
+    // 방치 보상 수령 버튼 클릭 시 호출될 함수
+    // 시간당 보상을 계산해 획득
     public void ClickIdleRewardButton()
     {
         // 시간 비교
@@ -46,6 +48,8 @@ public class IdleTest : MonoBehaviour
         }
         Debug.Log("획득할 보상이 없습니다.");
     }
+    // 게임 실행 시 시간 설정
+    // 첫 실행이라면 현 시간을 저장
     private void InitializeTime()
     {
         long savedTime = TestSaveManager.Instance.CurrentSaveData.LastGetIdleRewardTime;
@@ -59,13 +63,15 @@ public class IdleTest : MonoBehaviour
 
         RestartUI();
     }
+    // 현재 시간을 저장하는 함수
     private void SaveCurrentTime()
     {
         lastTime = DateTime.UtcNow;
-
+        // 시간 값을 DateTime.ToBinary 함수를 통해 int64값으로 변환
         TestSaveManager.Instance.CurrentSaveData.SetLastIdleRewardTime(lastTime.ToBinary());
         TestSaveManager.Instance.SaveGame();
     }
+    // 보상 수치를 결정할 시간 값 계산 함수
     private float GetRewardTime()
     {
         TimeSpan rewardTime = DateTime.UtcNow - lastTime;
@@ -78,11 +84,15 @@ public class IdleTest : MonoBehaviour
 
         return Mathf.Clamp(passedTime, 0.0f, MaxIdleTime);
     }
+    // 계산된 시간 값을 통해 보상 수치를 계산하는 함수
     private int CalculateReward()
     {
         float rewardTime = GetRewardTime();
         return (int)(rewardTime * goldPerTime);
     }
+
+
+    // 테스트용 UI 연결
     private void UpdateUI()
     {
         float rewradTime = GetRewardTime();
@@ -109,7 +119,7 @@ public class IdleTest : MonoBehaviour
 
             if (currnetTime >= maxIdleTime)
             {
-                rewardPercentText.text = "IdleReward: 100 %";
+                rewardPercentText.text = "IdleReward: 보상이 가득 찼습니다. 수령해주세요.";
                 uiUpdateCoroutine = null;
                 break;
             }
