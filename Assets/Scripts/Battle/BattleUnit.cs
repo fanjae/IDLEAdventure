@@ -96,7 +96,7 @@ public class BattleUnit : MonoBehaviour
 
         health.Initialize(maxHp);
         movement.Initialize(unitData.MoveSpeed, unitData.AttackRange);
-        attack.Initialize(this, attackPower, unitData.AttackSpeed);
+        attack.Initialize(this, unitData.AttackType, attackPower, unitData.AttackSpeed);
 
         //체력이 0이 되면 상태 변경 및 승패 판정(이것도 나중에 HandleDead를 수정할 예정)(일단 전투 프로세스 구현에 초점을 맞춤)
         health.OnDead += HandleDead;
