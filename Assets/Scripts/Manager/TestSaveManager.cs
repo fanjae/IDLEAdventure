@@ -4,13 +4,19 @@ using UnityEngine;
 [Serializable]
 public class SaveData
 {
-    private int gold;
+    [SerializeField] private int[] currencyDatas = new int[(int)CurrencyType.Length];
+    [SerializeField] private long lastGetIdleRewardTime;
 
-    public int Gold => gold;
+    public int[] CurrencyDatas => currencyDatas;
+    public long LastGetIdleRewardTime => lastGetIdleRewardTime;
 
-    public void SetGold(int amount)
+    public void SetCurrency(CurrencyType type, int amount)
     {
-        gold = amount;
+        currencyDatas[(int)type] = amount;
+    }
+    public void SetLastIdleRewardTime(long time)
+    {
+        lastGetIdleRewardTime = time;
     }
 }
 /// <summary>
@@ -35,12 +41,32 @@ public class TestSaveManager : Singleton<TestSaveManager>
     
     public void SaveGame()
     {
-        PlayerPrefs.SetInt("Test_GoldData", currentSaveData.Gold);
+        for (int i = 0; i < (int)CurrencyType.Length; i++)
+        {
+            string key = $"Test_Currency_{i}";
+            PlayerPrefs.SetInt(key, currentSaveData.CurrencyDatas[i]);
+        }
+        Debug.Log("[Test | PlayerPrebs] 현재 재화 저장");
+
+        PlayerPrefs.SetString("Text_LastGetIdleRewardTime", currentSaveData.LastGetIdleRewardTime.ToString());
+        Debug.Log("[Test | PlayerPrefs] 최근 방치 보상 획득 시간 저장");
+        
         PlayerPrefs.Save();
-        Debug.Log("[Test | PlayerPrebs] 현재 골드 저장");
     }
     public void LoadGame()
     {
-        currentSaveData.SetGold(PlayerPrefs.GetInt("Test_GoldData", 0));
+        for (int i = 0; i < (int)CurrencyType.Length; i++)
+        {
+            string key = $"Test_Currency_{i}";
+            int amount = PlayerPrefs.GetInt(key, 0);
+
+            currentSaveData.SetCurrency((CurrencyType)i, amount);
+        }
+
+        string tempSaveData = PlayerPrefs.GetString("Text_LastGetIdleRewardTime", string.Empty);
+        if (!string.IsNullOrEmpty(tempSaveData))
+        {
+            currentSaveData.SetLastIdleRewardTime(Convert.ToInt64(tempSaveData));
+        }
     }
 }
