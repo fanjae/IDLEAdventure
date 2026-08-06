@@ -32,6 +32,11 @@ public class UnitAttackState : IUnitState
             stateMachine.ChangeState(UnitState.Move);
             return;
         }
+        if (unit.CanUseSkill())//스킬이 준비된 상태면 기본 공격보다 먼저 사용
+        {
+            stateMachine.ChangeState(UnitState.Skill);
+            return;
+        }
 
         unit.FaceTarget();
         unit.TryAttack();

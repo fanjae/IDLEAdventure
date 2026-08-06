@@ -24,6 +24,11 @@ public class UnitIdleState : IUnitState
             stateMachine.ChangeState(UnitState.Attack);
             return;
         }
+        if (unit.CanUseSkill())
+        {
+            stateMachine.ChangeState(UnitState.Skill);
+            return;
+        }
         //공격 범위 밖에 있으면 이동
         stateMachine.ChangeState(UnitState.Move);
     }

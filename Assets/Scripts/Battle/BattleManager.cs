@@ -161,4 +161,34 @@ public class BattleManager : MonoBehaviour
         heroes.RemoveAll(unit => unit == null);
         enemies.RemoveAll(unit => unit == null);
     }
+
+    public BattleUnit GetLowestHpAlly(BattleUnit requester)
+    {
+        if (requester == null || requester.IsDead) return null;
+
+        List<BattleUnit> allies = requester.Team == UnitTeam.Hero ? heroes : enemies;
+        BattleUnit lowestHpAlly = null;
+        float lowestHpRatio = 1.0f;
+
+        for (int i = allies.Count - 1; i >= 0; i--)
+        {
+            BattleUnit ally = allies[i];
+
+            if (ally == null)
+            {
+                allies.RemoveAt(i);
+                continue;
+            }
+            if (!ally.gameObject.activeInHierarchy || ally.IsDead || ally.MaxHp <= 0) continue;
+            if (ally.CurrentHp >= ally.MaxHp) continue;
+
+            float hpRatio = (float)ally.CurrentHp / ally.MaxHp;
+            if (hpRatio >= lowestHpRatio) continue;
+
+            lowestHpRatio = hpRatio;
+            lowestHpAlly = ally;
+        }
+
+        return lowestHpAlly;
+    }
 }
