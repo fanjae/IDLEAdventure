@@ -31,3 +31,8 @@ public enum AttackType // 공격 방식(근거리, 원거리)
     Melee,
     Ranged
 }
+public enum SkillEffectType
+{
+    Damage,
+    Heal
+}
