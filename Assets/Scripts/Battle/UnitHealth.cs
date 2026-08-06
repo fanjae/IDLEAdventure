@@ -77,8 +77,7 @@ public class UnitHealth : MonoBehaviour
 
         newMaxHp = Mathf.Max(1, newMaxHp);
 
-        int previousMaxHp = MaxHp;
-        int changedHp = newMaxHp - previousMaxHp;
+        int changedHp = newMaxHp - MaxHp;
         MaxHp = newMaxHp;
 
         if (changedHp > 0 && addChangedHp) CurrentHp += changedHp;

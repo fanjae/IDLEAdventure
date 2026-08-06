@@ -1,10 +1,12 @@
 ﻿
-public class UnitMoveState : IUnitState
+public class UnitSkillState : IUnitState
 {
     private readonly BattleUnit unit;
     private readonly UnitStateMachine stateMachine;
 
-    public UnitMoveState(BattleUnit unit, UnitStateMachine stateMachine)
+    private bool usedSkill;
+
+    public UnitSkillState(BattleUnit unit, UnitStateMachine stateMachine)
     {
         this.unit = unit;
         this.stateMachine = stateMachine;
@@ -12,15 +14,13 @@ public class UnitMoveState : IUnitState
 
     public void Enter()
     {
-
+        unit.StopMove();
+        unit.CancelAttack();
+        usedSkill = unit.UseSkill();
     }
     public void Update()
     {
-        if (!unit.CanBattle)
-        {
-            unit.StopMove();
-            return;
-        }
+        if (!unit.CanBattle) return;
         if (!unit.HasValidTarget())
         {
             unit.ClearTarget();
@@ -32,17 +32,11 @@ public class UnitMoveState : IUnitState
             stateMachine.ChangeState(UnitState.Attack);
             return;
         }
-        //이동 중에도 스킬 조건을 확인하기 위해 추가
-        if (unit.CanUseSkill())
-        {
-            stateMachine.ChangeState(UnitState.Skill);
-            return;
-        }
 
-        unit.MoveToTarget();
+        stateMachine.ChangeState(UnitState.Move);
     }
     public void Exit()
     {
-        unit.StopMove();
+        usedSkill = false;
     }
 }

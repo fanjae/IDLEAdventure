@@ -8,6 +8,8 @@ public class BattleUnit : MonoBehaviour
     [Header("유닛 설정")]
     [SerializeField] private UnitDataSO unitData;
     [SerializeField] private UnitTeam team;
+    [Header("레벨 설정")]
+    [SerializeField, Min(1)] private int level = 1;
     [Header("회전 설정")]
     [SerializeField, Min(0.0f)] private float rotateSpeed = 720f;
     [Header("애니메이터")]
@@ -23,6 +25,7 @@ public class BattleUnit : MonoBehaviour
     private UnitHealth health;
     private UnitMovement movement;
     private UnitAttack attack;
+    private UnitSkill skill;
     private UnitStateMachine stateMachine;
     //실제 전투에서 사용할 런타임 능력치
     //지금은 UnitDataSO로 초기화하고 있지만, 추후에 EquipmentController나 레벨 시스템이 갱신
@@ -30,13 +33,23 @@ public class BattleUnit : MonoBehaviour
     private int attackPower;
     private int defense;
 
+    private bool isInitialized;
+
     public UnitDataSO UnitData => unitData;
     public UnitTeam Team => team;
+    public int Level => level;
     public int MaxHp => maxHp;
     public int AttackPower => attackPower;
     public int Defense => defense;
 
     public BattleUnit Target { get; private set; }
+    public int CurrentHp
+    {
+        get
+        {
+            return health != null ? health.CurrentHp : 0;
+        }
+    }
     
     public bool IsDead
     {
@@ -49,7 +62,7 @@ public class BattleUnit : MonoBehaviour
     {
         get
         {
-            return !IsDead && BattleManager.Instance != null && BattleManager.Instance.IsBattleRunning;
+            return isInitialized && !IsDead && BattleManager.Instance != null && BattleManager.Instance.IsBattleRunning;
         }
     }
     public UnitState CurrentState
@@ -67,6 +80,7 @@ public class BattleUnit : MonoBehaviour
         health = GetComponent<UnitHealth>();
         movement = GetComponent<UnitMovement>();
         attack = GetComponent<UnitAttack>();
+        skill = GetComponent<UnitSkill>();
 
         //animator를 직접 연결하지 않은 경우를 고려해서 작성하였음
         //추후에 변경할 가능성 있음. 현재 단계에선 크게 고려하지 않았음.
@@ -78,33 +92,9 @@ public class BattleUnit : MonoBehaviour
     }
     void Start()
     {
-        if (unitData == null)
-        {
-            enabled = false;
-            return;
-        }
-        if (BattleManager.Instance == null)
-        {
-            enabled = false;
-            return;
-        }
-        //장비와 레벨쪽이 연결되기 전이므로
-        //SO의 기본 능력치를 사용하는 것으로 함.(이것도 나중에 변경 예정)
-        maxHp = Mathf.Max(1, unitData.MaxHp);
-        attackPower = Mathf.Max(0, unitData.Attack);
-        defense = Mathf.Max(0, unitData.Defense);
+        if (isInitialized) return;
 
-        health.Initialize(maxHp);
-        movement.Initialize(unitData.MoveSpeed, unitData.AttackRange);
-        attack.Initialize(this, unitData.AttackType, attackPower, unitData.AttackSpeed);
-
-        //체력이 0이 되면 상태 변경 및 승패 판정(이것도 나중에 HandleDead를 수정할 예정)(일단 전투 프로세스 구현에 초점을 맞춤)
-        health.OnDead += HandleDead;
-        //필요한 컴포넌트 초기화 후 상태 머신 시작
-        stateMachine = new UnitStateMachine(this);
-        stateMachine.Start();
-        //영웅 또는 적 목록 등록
-        BattleManager.Instance.RegisterUnit(this);
+        Initialize(level);
     }
     void Update()
     {
@@ -126,6 +116,38 @@ public class BattleUnit : MonoBehaviour
         }
     }
 
+
+    public void Initialize(int unitLevel)
+    {
+        if (isInitialized) return;
+        if (unitData == null)
+        {
+            enabled = false;
+            return;
+        }
+        if (BattleManager.Instance == null)
+        {
+            enabled = false;
+            return;
+        }
+
+        level = Mathf.Max(1, unitLevel);
+        CalculateLevelStats();
+
+        health.Initialize(maxHp);
+        movement.Initialize(unitData.MoveSpeed, unitData.AttackRange);
+        attack.Initialize(this, unitData.AttackType, attackPower, unitData.AttackSpeed);
+        if (skill != null)
+        {
+            skill.Initialize(this);
+        }
+
+        health.OnDead += HandleDead;
+        stateMachine = new UnitStateMachine(this);
+        stateMachine.Start();
+        BattleManager.Instance.RegisterUnit(this);
+        isInitialized = true;
+    }
     public void ApplyStats(int newMaxHp, int newAttackPower, int newDefense, bool addChangedHp = true)
     {
         //EquipmentController나 레벨 시스템 쪽에서 모든 계산이 끝난 최종 능력치를 전달 받음.
@@ -133,7 +155,7 @@ public class BattleUnit : MonoBehaviour
         attackPower = Mathf.Max(0, newAttackPower);
         defense = Mathf.Max(0, newDefense);
         //
-        if (!health.IsInitialized) return;
+        if (!isInitialized || !health.IsInitialized) return;
 
         health.SetMaxHp(maxHp, addChangedHp);
         attack.SetAttackPower(attackPower);
@@ -188,6 +210,7 @@ public class BattleUnit : MonoBehaviour
 
         movement.FaceTarget(Target.transform, rotateSpeed);
     }
+
     public void TryAttack()
     {
         if (!HasValidTarget()) return;
@@ -198,6 +221,16 @@ public class BattleUnit : MonoBehaviour
     {
         attack.CancelAttack();
     }
+    //스킬~
+    public bool CanUseSkill()
+    {
+        return skill != null && skill.CanUseSkill();
+    }
+    public bool UseSkill()
+    {
+        return skill != null && skill.UseSkill();
+    }
+
     public int TakeDamage(int damage)
     {
         //실제로 받은 데미지 반환(감소한 체력량)
@@ -238,5 +271,35 @@ public class BattleUnit : MonoBehaviour
 
         bool isMoving = CurrentState == UnitState.Move && movement.IsMoving && CanBattle;
         animator.SetBool(moveParameter, isMoving);
+    }
+
+    //레벨을 추가하게 되면서 만든 레벨 능력치 계산용
+    private void CalculateLevelStats()
+    {
+        level = Mathf.Max(1, level);
+        int levelPerIncrease = level - 1;
+        
+        maxHp = Mathf.Max(1, unitData.MaxHp + unitData.HpPerLevel * levelPerIncrease);
+        attackPower = Mathf.Max(0, unitData.Attack + unitData.AttackPerLevel *  levelPerIncrease);
+        defense = Mathf.Max(0, unitData.Defense +  unitData.DefensePerLevel * levelPerIncrease);
+    }
+
+    public void SetLevel(int newLevel)
+    {
+        level = Mathf.Max(1, newLevel);
+
+        //아직 전투 초기화 전이라면, 이후에 Initialize에서 레벨능력치 계산
+        if (!isInitialized) return;
+
+        ApplyLevelStats();
+    }
+    private void ApplyLevelStats()
+    {
+        //기본 능력치와 레벨 성장값만 계산하게 해두었습니다.
+        //추후에 장비 시스템 연결 후에는 최종 능력치 계산을 통해 재계산해야할 것 같습니다.
+        CalculateLevelStats();
+
+        health.SetMaxHp(maxHp, true);
+        attack.SetAttackPower(attackPower);
     }
 }
