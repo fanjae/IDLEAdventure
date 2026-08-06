@@ -3,7 +3,6 @@
 [RequireComponent(typeof(UnitHealth))]
 [RequireComponent(typeof(UnitMovement))]
 [RequireComponent(typeof(UnitAttack))]
-[RequireComponent(typeof(UnitSkill))]
 public class BattleUnit : MonoBehaviour
 {
     [Header("유닛 설정")]
@@ -138,7 +137,10 @@ public class BattleUnit : MonoBehaviour
         health.Initialize(maxHp);
         movement.Initialize(unitData.MoveSpeed, unitData.AttackRange);
         attack.Initialize(this, unitData.AttackType, attackPower, unitData.AttackSpeed);
-        skill.Initialize(this);
+        if (skill != null)
+        {
+            skill.Initialize(this);
+        }
 
         health.OnDead += HandleDead;
         stateMachine = new UnitStateMachine(this);
@@ -282,4 +284,22 @@ public class BattleUnit : MonoBehaviour
         defense = Mathf.Max(0, unitData.Defense +  unitData.DefensePerLevel * levelPerIncrease);
     }
 
+    public void SetLevel(int newLevel)
+    {
+        level = Mathf.Max(1, newLevel);
+
+        //아직 전투 초기화 전이라면, 이후에 Initialize에서 레벨능력치 계산
+        if (!isInitialized) return;
+
+        ApplyLevelStats();
+    }
+    private void ApplyLevelStats()
+    {
+        //기본 능력치와 레벨 성장값만 계산하게 해두었습니다.
+        //추후에 장비 시스템 연결 후에는 최종 능력치 계산을 통해 재계산해야할 것 같습니다.
+        CalculateLevelStats();
+
+        health.SetMaxHp(maxHp, true);
+        attack.SetAttackPower(attackPower);
+    }
 }
