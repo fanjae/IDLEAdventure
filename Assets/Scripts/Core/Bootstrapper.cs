@@ -1,4 +1,4 @@
-癤using UnityEngine;
+using UnityEngine;
 
 /// <summary>
 /// 게임 실행 시 불러와야 할 것들 호출하는 클래스. <br/>
