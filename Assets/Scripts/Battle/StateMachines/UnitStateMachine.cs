@@ -4,6 +4,7 @@ public class UnitStateMachine
     private readonly UnitIdleState idleState;
     private readonly UnitMoveState moveState;
     private readonly UnitAttackState attackState;
+    private readonly UnitSkillState skillState;
     private readonly UnitDeadState deadState;
 
     private IUnitState currentState;
@@ -15,6 +16,7 @@ public class UnitStateMachine
         idleState = new UnitIdleState(unit, this);
         moveState = new UnitMoveState(unit, this);
         attackState = new UnitAttackState(unit, this);
+        skillState = new UnitSkillState(unit, this);
         deadState = new UnitDeadState(unit);
 
     }
@@ -52,13 +54,12 @@ public class UnitStateMachine
                 return moveState;
             case UnitState.Attack:
                 return attackState;
-            //일단 기본동작만 넣고, 나중에 스킬상태 추가할 예정
-
+            case UnitState.Skill:
+                return skillState;
             case UnitState.Dead:
                 return deadState;
-            default:
-                return null;
         }
+        return null;
     }
 
 }
