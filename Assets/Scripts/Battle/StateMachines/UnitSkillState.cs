@@ -1,10 +1,8 @@
-﻿
+
 public class UnitSkillState : IUnitState
 {
     private readonly BattleUnit unit;
     private readonly UnitStateMachine stateMachine;
-
-    private bool usedSkill;
 
     public UnitSkillState(BattleUnit unit, UnitStateMachine stateMachine)
     {
@@ -15,8 +13,7 @@ public class UnitSkillState : IUnitState
     public void Enter()
     {
         unit.StopMove();
-        unit.CancelAttack();
-        usedSkill = unit.UseSkill();
+        unit.UseSkill();
     }
     public void Update()
     {
@@ -37,6 +34,6 @@ public class UnitSkillState : IUnitState
     }
     public void Exit()
     {
-        usedSkill = false;
+        
     }
 }
