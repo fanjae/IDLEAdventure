@@ -57,7 +57,9 @@ public class UnitAttack : MonoBehaviour
         pendingTarget = target;
 
         isAttacking = true;     
-        damageApplied = false;   
+        damageApplied = false;
+        //공격 시작점 기준으로 다음 공격 가능 시간 계산
+        nextAttackTime = Time.time + GetAttackInterval();
 
         return true;
     }
@@ -69,17 +71,10 @@ public class UnitAttack : MonoBehaviour
 
         BattleUnit target = pendingTarget;
 
-        if (unit == null || target == null)
-        {
-            Debug.LogWarning($"{name} : 공격자 또는 대상이 없음.", this);
-            return;
-        }
+        if (unit == null || target == null) return;
         if (unit.IsDead || target.IsDead) return;
-        if (!unit.IsTargetInAttackRange(target, 0.3f))
-        {
-            Debug.Log($"{unit.name} : {target.name}이 공격 범위를 벗어남.");
-            return;
-        }
+        if (!unit.IsTargetInAttackRange(target, 0.3f)) return;
+
         damageApplied = true;
 
         int finalDamage = DamageCalculator.Calculate(attackPower, target.Defense);
@@ -98,9 +93,6 @@ public class UnitAttack : MonoBehaviour
         isAttacking = false;
         damageApplied = false;
         pendingTarget = null;
-
-        //공격 애니메이션이 끝난 시점부터 다음 공격 간격 계산
-        nextAttackTime = Time.time + GetAttackInterval();
     }
     private void FireProjectile(BattleUnit target, int damage)
     {

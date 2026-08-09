@@ -11,6 +11,8 @@ public class UnitAnimator : MonoBehaviour
     private readonly int damagedHash = Animator.StringToHash("Damaged");
     private readonly int deadHash = Animator.StringToHash("Dead");
 
+    private readonly int attackAnimatorSpeedHash = Animator.StringToHash("AttackAnimatorSpeed");
+
     private void Awake()
     {
         if (animator == null)
@@ -24,6 +26,12 @@ public class UnitAnimator : MonoBehaviour
         if (animator == null) return;
 
         animator.SetBool(moveHash, isMoving);
+    }
+    public void SetAttackSpeed(float attackSpeed)
+    {
+        if (animator == null) return;
+
+        animator.SetFloat(attackAnimatorSpeedHash, Mathf.Max(0.1f, attackSpeed));
     }
     public bool TryPlayAttack()
     {

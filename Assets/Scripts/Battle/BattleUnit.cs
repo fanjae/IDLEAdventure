@@ -138,6 +138,9 @@ public class BattleUnit : MonoBehaviour
         health.Initialize(maxHp);
         movement.Initialize(unitData.MoveSpeed, unitData.AttackRange);
         attack.Initialize(this, unitData.AttackType, attackPower, unitData.AttackSpeed);
+        
+        unitAnimator?.SetAttackSpeed(unitData.AttackSpeed);//공격속도에 맞춰서 애니메이션 속도도 설정
+
         skill?.Initialize(this);
 
         health.OnDead += HandleDead;
