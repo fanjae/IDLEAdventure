@@ -45,11 +45,19 @@ public class UnitAnimator : MonoBehaviour
         animator.SetTrigger(attackHash);
         return true;
     }
-    public void PlaySkill()
+    public bool TryPlaySkill()
     {
-        if (animator == null) return;
+        if (animator == null) return false;
+        if (animator.IsInTransition(0)) return false; //다른 상태로 전환 중이면 잠시 대기
 
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+        //해당 동작 중에는 새로운 스킬 애니메이션을 시작하지 않음.
+        if (state.IsTag("Damaged") || state.IsTag("Dead") || state.IsTag("Attack") || state.IsTag("Skill")) return false;
+
+        animator.ResetTrigger(skillHash);
         animator.SetTrigger(skillHash);
+
+        return true;
     }
     public void PlayDamaged()
     {
@@ -78,7 +86,7 @@ public class UnitAnimator : MonoBehaviour
         animator.SetBool(moveHash, false);
         animator.SetTrigger(deadHash);
     }
-
+    //공격 상태 확인
     public bool IsAttackAnimationPlaying()
     {
         if (animator == null) return false;
@@ -87,5 +95,13 @@ public class UnitAnimator : MonoBehaviour
 
         return state.IsTag("Attack");
     }
-    
+    //스킬 상태 확인
+    public bool IsSkillAnimationPlaying()
+    {
+        if (animator == null) return false;
+
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+
+        return state.IsTag("Skill");
+    }
 }

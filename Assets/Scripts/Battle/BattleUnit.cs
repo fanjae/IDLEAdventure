@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(UnitHealth))]
@@ -24,6 +25,8 @@ public class BattleUnit : MonoBehaviour
     private UnitStateMachine stateMachine;
 
     private UnitAnimator unitAnimator;
+
+    private UnitBarrier barrier;
     
     //실제 전투에서 사용할 런타임 능력치
     //지금은 UnitDataSO로 초기화하고 있지만, 추후에 EquipmentController나 레벨 시스템이 갱신
@@ -54,6 +57,13 @@ public class BattleUnit : MonoBehaviour
         get
         {
             return attack != null && attack.IsAttacking;
+        }
+    }
+    public bool IsUsingSkill
+    {
+        get
+        {
+            return skill != null && skill.IsUsingSkill;
         }
     }
     public bool IsDead
@@ -90,6 +100,8 @@ public class BattleUnit : MonoBehaviour
 
         //애니메이션 처리는 UnitAnimator에서 하는걸로
         unitAnimator = GetComponent<UnitAnimator>();
+
+        barrier = GetComponent<UnitBarrier>();
     }
     void Start()
     {
@@ -222,7 +234,7 @@ public class BattleUnit : MonoBehaviour
     {
         attack.CancelAttack();
     }
-    //이벤트 연결
+    //기본 공격 이벤트 연결
     public void AttackHitEvent()
     {
         if (!IsAttacking) return;
@@ -235,6 +247,15 @@ public class BattleUnit : MonoBehaviour
     {
         attack?.CompleteAttack();
     }
+    //스킬 이벤트 연결
+    public void SkillActivateEvent()
+    {
+        if (skill == null) return;
+        //실제 스킬 애니메이션 중에 발생한 이벤트만 가능
+        if (unitAnimator == null || !unitAnimator.IsSkillAnimationPlaying()) return;
+
+        skill.ApplySkillEffect();
+    }
     //스킬~
     public bool CanUseSkill()
     {
@@ -244,6 +265,10 @@ public class BattleUnit : MonoBehaviour
     {
         return skill != null && skill.UseSkill();
     }
+    public void UpdateSkill()
+    {
+        skill?.UpdataSkill();
+    }
 
     public int TakeDamage(int damage)
     {
@@ -251,7 +276,7 @@ public class BattleUnit : MonoBehaviour
         //피격 애니메이션 추가
         if (appliedDamage <= 0 || IsDead) return appliedDamage;
 
-        if (!attack.IsAttacking) unitAnimator?.PlayDamaged();
+        if (!IsAttacking && !IsUsingSkill) unitAnimator?.PlayDamaged();
 
         //실제로 받은 데미지 반환(감소한 체력량)
         return appliedDamage;
@@ -261,15 +286,24 @@ public class BattleUnit : MonoBehaviour
         //실제로 적용된 회복량 반환
         return health.Heal(amount);
     }
+    public bool ActivateBarrier(int blockCount, GameObject vfxPrefab)
+    {
+        if (barrier == null) return false;
+
+        barrier.Activate(blockCount, vfxPrefab);
+        return true;
+    }
     public bool TryPlayAttackAnimation()
     {
         if (unitAnimator == null) return false;
 
         return unitAnimator.TryPlayAttack();
     }
-    public void PlaySkillAnimation()
+    public bool TryPlaySkillAnimation()
     {
-        unitAnimator?.PlaySkill();
+        if (unitAnimator == null) return false;
+
+        return unitAnimator.TryPlaySkill();
     }
     private void HandleDead()
     {
