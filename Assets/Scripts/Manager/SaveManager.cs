@@ -17,6 +17,12 @@ public sealed class SaveManager : Singleton<SaveManager>
             throw new InvalidOperationException("저장 데이터가 초기화되지 않았습니다.");
         }
 
+        // 현재 인벤토리와 장비 장착 상태를 저장 데이터에 반영
+        if (InventoryManager.Instance.IsInitialized)
+        {
+            InventoryManager.Instance.Controller.WriteSaveData(CurrentData);
+        }
+
         // 저장 시점을 UTC Unix Time 기준으로 갱신
         CurrentData.SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         fileService.Save(CurrentData);

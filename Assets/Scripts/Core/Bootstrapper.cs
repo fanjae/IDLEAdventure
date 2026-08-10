@@ -24,8 +24,17 @@ public class Bootstrapper
             Debug.LogError("ItemDatabaseSO를 불러오지 못했습니다.");
             return;
         }
+
+        // 인벤토리 시스템 초기화
         InventoryManager inventoryManager = InventoryManager.Instance;
         inventoryManager.Initialize(itemDatabase);
+
+        // 저장 데이터 초기화 (테스트 세이브 매니저 아직 미삭제)
+        SaveManager saveManager = SaveManager.Instance;
+        saveManager.Initialize();
+
+        // 저장된 인벤토리와 장비 장착 상태 복원
+        inventoryManager.Controller.LoadSaveData(saveManager.CurrentData);
 
 
         Debug.Log("초기 호출 완료.");
