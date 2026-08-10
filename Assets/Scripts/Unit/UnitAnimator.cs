@@ -1,0 +1,83 @@
+using UnityEngine;
+
+public class UnitAnimator : MonoBehaviour
+{
+    [Header("애니메이터")]
+    [SerializeField] private Animator animator;
+
+    private readonly int moveHash = Animator.StringToHash("Move");
+    private readonly int attackHash = Animator.StringToHash("Attack");
+    private readonly int skillHash = Animator.StringToHash("Skill");
+    private readonly int damagedHash = Animator.StringToHash("Damaged");
+    private readonly int deadHash = Animator.StringToHash("Dead");
+
+    private void Awake()
+    {
+        if (animator == null)
+        {
+            animator = GetComponentInChildren<Animator>();
+        }
+    }
+
+    public void SetMove(bool isMoving)
+    {
+        if (animator == null) return;
+
+        animator.SetBool(moveHash, isMoving);
+    }
+    public bool TryPlayAttack()
+    {
+        if (animator == null) return false;
+        if (animator.IsInTransition(0)) return false;
+
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+        if (state.IsTag("Damaged") || state.IsTag("Dead") || state.IsTag("Attack")) return false;
+
+        animator.ResetTrigger(attackHash);
+        animator.SetTrigger(attackHash);
+        return true;
+    }
+    public void PlaySkill()
+    {
+        if (animator == null) return;
+
+        animator.SetTrigger(skillHash);
+    }
+    public void PlayDamaged()
+    {
+        if (animator == null) return;
+
+        //피격 연출 중복 재생을 막기 위함
+        AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+        if (currentState.IsTag("Damaged")) return;
+        if (animator.IsInTransition(0))
+        {
+            AnimatorStateInfo nextState = animator.GetNextAnimatorStateInfo(0);
+            if (nextState.IsTag("Damaged")) return;
+        }
+
+
+        animator.ResetTrigger(damagedHash);
+        animator.SetTrigger(damagedHash);
+    }
+    public void PlayDead()
+    {
+        if (animator == null) return;
+
+        animator.ResetTrigger(attackHash);
+        animator.ResetTrigger(damagedHash);
+
+        animator.SetBool(moveHash, false);
+        animator.SetTrigger(deadHash);
+    }
+
+    public bool IsAttackAnimationPlaying()
+    {
+        if (animator == null) return false;
+
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+
+        return state.IsTag("Attack");
+    }
+    
+}

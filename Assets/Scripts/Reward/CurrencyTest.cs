@@ -3,14 +3,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// CurrencyManager ÀÛµ¿ È®ÀÎ¿ë Å¬·¡½º.
+/// CurrencyManager ì‘ë™ í™•ì¸ìš© í´ë˜ìŠ¤.
 /// </summary>
 public class CurrencyTest : MonoBehaviour
 {
     [Header("Binding Component")]
-    //[SerializeField] private TMP_Text goldText;
-    //[SerializeField] private TMP_Text expText;
-    //[SerializeField] private TMP_Text diamondText;
     [SerializeField] private TMP_Text[] currencyTexts = new TMP_Text[3];
 
     private void Awake()

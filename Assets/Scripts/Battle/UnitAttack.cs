@@ -1,10 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class UnitAttack : MonoBehaviour
 {
-    [Header("공격 설정")]
-    [SerializeField] private bool useAnimationEvent;
-
     [Header("원거리 공격 설정")]
     [SerializeField] private RangedProjectile projectilePrefab;
     [SerializeField] private Transform projectileSpawnPoint;
@@ -18,7 +15,15 @@ public class UnitAttack : MonoBehaviour
     private int attackPower;
     private float attackSpeed;
     private float nextAttackTime;
+
+    //공격 애니메이션이 진행 중인지 체크하는 용
+    private bool isAttacking;
+    //중복 타격 방지용
+    private bool damageApplied;
+
     private bool hasLoggedMissingProjectile;//프리펩 누락 오류가 매 프레임 출력되는 것을 방지하는 용
+
+    public bool IsAttacking => isAttacking;
 
     public void Initialize(BattleUnit unit, AttackType attackType, int attackPower, float attackSpeed)
     {
@@ -29,6 +34,8 @@ public class UnitAttack : MonoBehaviour
 
         pendingTarget = null;
         nextAttackTime = 0.0f;
+        isAttacking = false;
+        damageApplied = false;
         hasLoggedMissingProjectile = false;
     }
 
@@ -37,26 +44,30 @@ public class UnitAttack : MonoBehaviour
     {
         if (unit == null || target == null) return false;
         if (unit.IsDead || target.IsDead) return false;
+        if (isAttacking) return false;
+        if (Time.time < nextAttackTime) return false;
         if (attackType == AttackType.Ranged && projectilePrefab == null)
         {
             LogMissingProjectile();
             return false;
         }
-        if (Time.time < nextAttackTime) return false;
 
-        nextAttackTime = Time.time + GetAttackInterval();
+        if (!unit.TryPlayAttackAnimation()) return false;
+
         pendingTarget = target;
-        unit.PlayAttackAnimation();
-        
-        if (!useAnimationEvent) ApplyAttackDamage();
+
+        isAttacking = true;     
+        damageApplied = false;   
 
         return true;
     }
     //공격 애니메이션의 실제 타격 프레임에서 호출
     public void ApplyAttackDamage()
     {
+        if (!isAttacking) return;
+        if (damageApplied) return;
+
         BattleUnit target = pendingTarget;
-        pendingTarget = null;
 
         if (unit == null || target == null)
         {
@@ -69,6 +80,7 @@ public class UnitAttack : MonoBehaviour
             Debug.Log($"{unit.name} : {target.name}이 공격 범위를 벗어남.");
             return;
         }
+        damageApplied = true;
 
         int finalDamage = DamageCalculator.Calculate(attackPower, target.Defense);
         if (attackType == AttackType.Ranged)
@@ -78,6 +90,17 @@ public class UnitAttack : MonoBehaviour
         }
         int appliedDamage = target.TakeDamage(finalDamage);
         Debug.Log($"{unit.name} -> {target.name} / " + $"피해량 : {appliedDamage}");
+    }
+    public void CompleteAttack()
+    {
+        if (!isAttacking) return;
+
+        isAttacking = false;
+        damageApplied = false;
+        pendingTarget = null;
+
+        //공격 애니메이션이 끝난 시점부터 다음 공격 간격 계산
+        nextAttackTime = Time.time + GetAttackInterval();
     }
     private void FireProjectile(BattleUnit target, int damage)
     {
@@ -105,12 +128,18 @@ public class UnitAttack : MonoBehaviour
     public void CancelAttack()
     {
         pendingTarget = null;
+
+        isAttacking = false;
+        damageApplied = false;
     }
     //전투 재시작하거나 오브젝트 풀 재사용 시 공격 대상과 쿨 초기화
     public void ResetAttack()
     {
         pendingTarget = null;
         nextAttackTime = 0.0f;
+
+        isAttacking = false;
+        damageApplied = false;
     }
     private float GetAttackInterval()
     {

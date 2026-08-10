@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -32,7 +32,7 @@ public class UnitMovement : MonoBehaviour
     {
         unit = GetComponent<NavMeshAgent>();
 
-        unit.updateRotation = false;//공격 중엔 이동 방향이 아닌 타겟 방향을 바라보게 하기 위해서 false
+        unit.updateRotation = true;//이동 중에는 이동 방향을 바라보게
         unit.updateUpAxis = true;
         unit.autoRepath = true;
     }
