@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+using UnityEditor.Rendering;
+using UnityEngine;
 
 public class UnitSkill : MonoBehaviour
 {
@@ -7,12 +8,16 @@ public class UnitSkill : MonoBehaviour
 
     private BattleUnit unit;
     private float nextSkillTime;
-    private bool HasSkill => skillData != null;
 
     public void Initialize(BattleUnit unit)
     {
         this.unit = unit;
-        nextSkillTime = 0.0f;
+        if (skillData == null)
+        {
+            nextSkillTime = 0.0f;
+            return;
+        }
+        nextSkillTime = Time.time + skillData.Cooldown;
     }
 
     public bool CanUseSkill()
@@ -25,15 +30,13 @@ public class UnitSkill : MonoBehaviour
     }
     public bool UseSkill()
     {
-        if (!CanUseSkill()) return false;
+        if (unit == null || unit.IsDead || skillData == null) return false;
+        if (Time.time < nextSkillTime) return false;
 
         BattleUnit target = FindSkillTarget();
         if (!IsValidTarget(target)) return false;
 
         nextSkillTime = Time.time + skillData.Cooldown;
-
-        unit.StopMove();
-        unit.CancelAttack();
 
         switch (skillData.EffectType)
         {
@@ -50,12 +53,18 @@ public class UnitSkill : MonoBehaviour
     }
     public void ResetSkill()
     {
-        nextSkillTime = 0.0f;
+        if (skillData == null)
+        {
+            nextSkillTime = 0.0f;
+            return;
+        }
+
+        nextSkillTime = Time.time + skillData.Cooldown;
     }
 
     private BattleUnit FindSkillTarget()
     {
-        if (skillData == null) return null;
+        if (unit == null || skillData == null) return null;
 
         switch (skillData.EffectType)
         {
