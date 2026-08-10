@@ -3,56 +3,56 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ÀçÈ­ Á¾·ù ¿­°Å
+/// ì¬í™” ì¢…ë¥˜ ì—´ê±°
 /// </summary>
 public enum CurrencyType
 {
     None = -1,
-    GOLD, EXP, UPGRADE,     // ÀÌÈÄ Ãß°¡µÉ ÀçÈ­ Ãß°¡
+    GOLD, EXP, UPGRADE, DIAMOND,     // ì´í›„ ì¶”ê°€ë  ì¬í™” ì¶”ê°€
     Length
 }
 /// <summary>
-/// ÀçÈ­ °ü¸® Å¬·¡½º. <br/>
-/// ÇÃ·¹ÀÌ¾î°¡ È¹µæ ¹× »ç¿ëÇÒ ÀçÈ­µéÀ» ÅëÇÕ °ü¸®ÇÏ´Â ¸Å´ÏÀú Å¬·¡½º. <br/>
-/// »ç¿ë¹ı <br/>
-/// ÀçÈ­ È¹µæ: AddCurrency(ÀçÈ­ Å¸ÀÔ, ÀçÈ­·®) <br/>
-/// ÀçÈ­ ¼Ò¸ğ: UseCurrency(ÀçÈ­ Å¸ÀÔ, ÀçÈ­·®) <br/>
-/// ÀçÈ­ È®ÀÎ(°ª ¹İÈ¯): GetCurrency(ÀçÈ­ Å¸ÀÔ)
+/// ì¬í™” ê´€ë¦¬ í´ë˜ìŠ¤. <br/>
+/// í”Œë ˆì´ì–´ê°€ íšë“ ë° ì‚¬ìš©í•  ì¬í™”ë“¤ì„ í†µí•© ê´€ë¦¬í•˜ëŠ” ë§¤ë‹ˆì € í´ë˜ìŠ¤. <br/>
+/// ì‚¬ìš©ë²• <br/>
+/// ì¬í™” íšë“: AddCurrency(ì¬í™” íƒ€ì…, ì¬í™”ëŸ‰) <br/>
+/// ì¬í™” ì†Œëª¨: UseCurrency(ì¬í™” íƒ€ì…, ì¬í™”ëŸ‰) <br/>
+/// ì¬í™” í™•ì¸(ê°’ ë°˜í™˜): GetCurrency(ì¬í™” íƒ€ì…)
 /// </summary>
 public class CurrencyManager : Singleton<CurrencyManager>
 {
-    // ÇÊ¿ä ¾ø±ä ÇÑµ¥ È¤½Ã ¾î¶»°Ô Àû¿ëÇÏ´ÂÁö È®ÀÎÇØº¸½Ç ºĞµéÀ» À§ÇØ ÁÖ¼®Ã³¸®
-    // ¾À ½ÇÇà ½Ã °­Á¦·Î ¸Å´ÏÀú »ı¼ºÇÏ´Â ºÎºĞ
-    // ·Îµù ±¸Çö ½Ã ÇØ´ç ÆÄÆ®¿¡¼­ »ı¼ºÇÏ´Â ¹æ½ÄÀ¸·Î º¯°æ ¿¹Á¤
+    // í•„ìš” ì—†ê¸´ í•œë° í˜¹ì‹œ ì–´ë–»ê²Œ ì ìš©í•˜ëŠ”ì§€ í™•ì¸í•´ë³´ì‹¤ ë¶„ë“¤ì„ ìœ„í•´ ì£¼ì„ì²˜ë¦¬
+    // ì”¬ ì‹¤í–‰ ì‹œ ê°•ì œë¡œ ë§¤ë‹ˆì € ìƒì„±í•˜ëŠ” ë¶€ë¶„
+    // ë¡œë”© êµ¬í˜„ ì‹œ í•´ë‹¹ íŒŒíŠ¸ì—ì„œ ìƒì„±í•˜ëŠ” ë°©ì‹ìœ¼ë¡œ ë³€ê²½ ì˜ˆì •
     //[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     //private static void InitializeWhenSceneStart()
     //{
     //    var init = Instance;
     //}
 
-    // ÀçÈ­ Á¾·ùº° °ª °ü¸®
-    // ÀçÈ­ Á¾·ù°¡ ÀûÀ¸´Ï ÃÖÀûÈ­ º¸´Ù´Â »ç¿ë Æí¸®¼ºÀ» À§ÇØ Dictionary ÀÚ·á±¸Á¶ ¼±ÅÃ
+    // ì¬í™” ì¢…ë¥˜ë³„ ê°’ ê´€ë¦¬
+    // ì¬í™” ì¢…ë¥˜ê°€ ì ìœ¼ë‹ˆ ìµœì í™” ë³´ë‹¤ëŠ” ì‚¬ìš© í¸ë¦¬ì„±ì„ ìœ„í•´ Dictionary ìë£Œêµ¬ì¡° ì„ íƒ
     private Dictionary<CurrencyType, int> currencies = new Dictionary<CurrencyType, int>();
-    public event Action<CurrencyType, int> OnCurrencyChanged;    // ÀçÈ­ º¯È­ ½Ã ¹ß¼ÛÇÒ ÀÌº¥Æ®
+    public event Action<CurrencyType, int> OnCurrencyChanged;    // ì¬í™” ë³€í™” ì‹œ ë°œì†¡í•  ì´ë²¤íŠ¸
 
-    // ÇÁ·ÎÆÛÆ¼
-    // ÇÊ¿äÇÒ±î?
+    // í”„ë¡œí¼í‹°
+    // í•„ìš”í• ê¹Œ?
 
     protected override void Awake()
     {
         base.Awake();
 
-        // ÀçÈ­ ÃÊ±â ¼³Á¤
+        // ì¬í™” ì´ˆê¸° ì„¤ì •
         for (int i = 0; i < (int)CurrencyType.Length; i++)
         {
-            // ÀçÈ­ Á¾·ù º°·Î ÃÊ±âÈ­
+            // ì¬í™” ì¢…ë¥˜ ë³„ë¡œ ì´ˆê¸°í™”
             currencies[(CurrencyType)i] = 0;
-            // ÀÓ½Ã ¼¼ÀÌºê ¸Å´ÏÀú¿¡ ÀúÀåµÇ¾î ÀÖ´Â ÀçÈ­ ¹Ş¾Æ¿À±â.
+            // ì„ì‹œ ì„¸ì´ë¸Œ ë§¤ë‹ˆì €ì— ì €ì¥ë˜ì–´ ìˆëŠ” ì¬í™” ë°›ì•„ì˜¤ê¸°.
             currencies[(CurrencyType)i] = TestSaveManager.Instance.CurrentSaveData.CurrencyDatas[i];
         }
     }
 
-    // ÀçÈ­ È¹µæ ÇÔ¼ö
+    // ì¬í™” íšë“ í•¨ìˆ˜
     public void AddCurrency(CurrencyType type, int amount)
     {
         if (amount <= 0) return;
@@ -60,33 +60,33 @@ public class CurrencyManager : Singleton<CurrencyManager>
         currencies[type] += amount;
         OnCurrencyChanged?.Invoke(type, currencies[type]);
 
-        // ÀÓ½Ã ÀçÈ­ ÀúÀå¿ë ÄÚµå
+        // ì„ì‹œ ì¬í™” ì €ì¥ìš© ì½”ë“œ
         TestSaveManager.Instance.CurrentSaveData.SetCurrency(type, currencies[type]);
         TestSaveManager.Instance.SaveGame();
 
-        Debug.Log($"[ÀçÈ­ È¹µæ] [{type}] +{amount} | ÇöÀç º¸À¯ : {currencies[type]}");
+        Debug.Log($"[ì¬í™” íšë“] [{type}] +{amount} | í˜„ì¬ ë³´ìœ  : {currencies[type]}");
     }
-    // ÀçÈ­ ¼Ò¸ğ ÇÔ¼ö
+    // ì¬í™” ì†Œëª¨ í•¨ìˆ˜
     public bool UseCurrency(CurrencyType type, int amount)
     {
         if (amount <= 0) return false;
         if (currencies[type] < amount)
         {
-            Debug.Log($"[{type}] ¼ÒÁö ÀçÈ­°¡ ºÎÁ·ÇÕ´Ï´Ù.");
+            Debug.Log($"[{type}] ì†Œì§€ ì¬í™”ê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.");
             return false;
         }
         currencies[type] -= amount;
         OnCurrencyChanged?.Invoke(type, currencies[type]);
 
-        // ÀÓ½Ã ÀçÈ­ ÀúÀå¿ë ÄÚµå
+        // ì„ì‹œ ì¬í™” ì €ì¥ìš© ì½”ë“œ
         TestSaveManager.Instance.CurrentSaveData.SetCurrency(type, currencies[type]);
         TestSaveManager.Instance.SaveGame();
 
-        Debug.Log($"[{type}] »ç¿ë¿¡ ¼º°øÇß½À´Ï´Ù. | ³²Àº ÀçÈ­ : {currencies[type]}");
+        Debug.Log($"[{type}] ì‚¬ìš©ì— ì„±ê³µí–ˆìŠµë‹ˆë‹¤. | ë‚¨ì€ ì¬í™” : {currencies[type]}");
 
         return true;
     }
-    // ÇöÀç ÀçÈ­ ¹İÈ¯ ÇÔ¼ö
+    // í˜„ì¬ ì¬í™” ë°˜í™˜ í•¨ìˆ˜
     public int GetCurrency(CurrencyType type)
     {
         return currencies[type];
