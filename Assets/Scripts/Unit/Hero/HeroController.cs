@@ -1,9 +1,8 @@
-
-// 영웅 원본 데이터와 플레이어의 보유 영웅 목록을 관리하는 클래스
-// 외부에서는 HeroController를 통해 보유 영웅 기능에 접근
 using System;
 using System.Collections.Generic;
 
+// 보유 영웅 관련 기능을 처리하는 컨트롤러
+// 게임 전역에서는 HeroManager를 통해 접근
 public sealed class HeroController
 {
     private readonly HeroDatabaseSO heroDatabase;

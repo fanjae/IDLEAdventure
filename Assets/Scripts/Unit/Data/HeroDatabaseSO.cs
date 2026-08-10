@@ -14,11 +14,6 @@ public sealed class HeroDatabaseSO : ScriptableObject
     // 외부에 저장할 전체 영웅 목록
     public IReadOnlyList<HeroData> Heroes => heroes;
 
-    private void OnEnable()
-    {
-        
-    }
-
     // Heroes 목록을 UnitID 기준 Dictionary로 변환
     private void Initialize()
     {

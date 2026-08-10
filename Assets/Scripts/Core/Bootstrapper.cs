@@ -4,7 +4,7 @@ using UnityEngine;
 /// 게임 실행 시 불러와야 할 것들 호출하는 클래스. <br/>
 /// 보통 매니저들이 들어올 것으로 보인다. <br/>
 /// 현재 추가된 목록 <br/>
-/// TestSaveManager, CurrencyManager
+/// TestSaveManager, CurrencyManager, InventoryManager, HeroManager
 /// </summary>
 public class Bootstrapper
 {
@@ -27,6 +27,16 @@ public class Bootstrapper
         InventoryManager inventoryManager = InventoryManager.Instance;
         inventoryManager.Initialize(itemDatabase);
 
+        HeroDatabaseSO heroDatabase = Resources.Load<HeroDatabaseSO>("GameData/HeroDatabase");
+
+        if (heroDatabase == null)
+        {
+            Debug.LogError("HeroDatabaseSO를 불러오지 못했습니다.");
+            return;
+        }
+
+        HeroManager heroManager = HeroManager.Instance;
+        heroManager.Initialize(heroDatabase);
 
         Debug.Log("초기 호출 완료.");
     }
