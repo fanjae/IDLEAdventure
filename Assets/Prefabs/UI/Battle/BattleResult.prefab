@@ -119,7 +119,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 403849485767265978}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3690912372252660966}
+        m_TargetAssemblyTypeName: BattleUIRelay, Assembly-CSharp
+        m_MethodName: RetryBattle
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2024502857334500182
 GameObject:
   m_ObjectHideFlags: 0
@@ -239,7 +251,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1668060259351525571}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3690912372252660966}
+        m_TargetAssemblyTypeName: BattleUIRelay, Assembly-CSharp
+        m_MethodName: ReturnToMain
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2456478950205469809
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,7 +383,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5075917021253659625}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3690912372252660966}
+        m_TargetAssemblyTypeName: BattleUIRelay, Assembly-CSharp
+        m_MethodName: ChallengeNextStage
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2914582253517183189
 GameObject:
   m_ObjectHideFlags: 0
@@ -584,6 +620,7 @@ GameObject:
   - component: {fileID: 4481420579322110883}
   - component: {fileID: 7803445143309079020}
   - component: {fileID: 6344396844298858569}
+  - component: {fileID: 3690912372252660966}
   m_Layer: 5
   m_Name: BattleResult
   m_TagString: Untagged
@@ -654,6 +691,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3690912372252660966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4113012725913414565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b98cdb67b2df26348901f070b034398f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleUIRelay
 --- !u!1 &7869636190134275088
 GameObject:
   m_ObjectHideFlags: 0
