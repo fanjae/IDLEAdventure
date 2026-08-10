@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class CurrencyTest : MonoBehaviour
 {
     [Header("Binding Component")]
-    [SerializeField] private TMP_Text[] currencyTexts = new TMP_Text[4];
+    [SerializeField] private TMP_Text[] currencyTexts = new TMP_Text[3];
 
     private void Awake()
     {

@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 /// <summary>
 /// 재화가 아닌 아이템 보상 클래스. <br/>
 /// 여기에 아이템 지급은 아이템 파트에게 ID값으로 해당 아이템을 획득할 수 있도록 요청.
@@ -25,18 +24,11 @@ public class ItemReward : IReward
 
     public void GiveReward(int amount)
     {
-        // 인벤토리의 Add 함수 등 아이템 획득용 함수 호출 예정.
-        // Ex) for문을 통해 rewardValue값 만큼 반복 (rewardValue 개수 지급)
-        // Ex) InventoryManager.Instance.AddItem(RandomItemSelect(), 1);
+        // 인벤토리의 Add 함수 등 아이템 획득용 함수 호출하면 될듯.
+        // 아이템 ID 값을 기반으로 해당 아이템 획득 가능한 함수 필요.
+        // Ex) InventpryManager.Instance.AddItem(itemID, amount);
+        // 물론 꼭 이런 형태는 아니어도 됨.
+        // 이 부분에 대해 싱글톤 패턴을 통한 매니저로 관리할지, 인스펙터를 통해 컴포넌트 연결을 해주는 것이 좋을지도 이야기 필요.
         Debug.Log($"{itemID} 획득 x{amount}");
-    }
-    // 최종 이야기된 아이템 지급 방식인 랜덤 지급 방식을 적용할 함수.
-    // min ~ max 연속된 아이템 ID 중 랜덤 숫자 선택 및 반환 예정.
-    private int RandomItemSelect()
-    {
-        int min = 0;
-        int max = 1;
-
-        return Random.Range(min, max);
     }
 }

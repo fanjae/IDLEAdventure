@@ -37,8 +37,66 @@ public class IdleTest : MonoBehaviour
 
     private void Start()
     {
-        stageRewards = RewardCSVParser.Parse(rewardCSVData);
+        LoadRewardCSVData();
         InitializeTime();
+    }
+
+    // 보상 CSV 파일 받아오는 함수
+    private void LoadRewardCSVData()
+    {
+        if (rewardCSVData == null) return;
+        // 줄 개행을 기준으로 분할
+        string[] lines = rewardCSVData.text.Split('\n');
+        // 줄 수 만큼 반복
+        // 첫 줄은 데이터 이름이기에 1번 줄부터 검사
+        for (int i = 1; i < lines.Length; i++)
+        {
+            // Trim() 함수를 통해 의도치 않은 공백 제거
+            string line = lines[i].Trim();
+            // 문자열이 비었는지, 공백으로만 이루어져있는지 확인
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            // 줄 마다 ',' 기준으로 분리
+            string[] row = lines[i].Split(',');
+            // 분리했을 때 stageId, resourceId, amount 세 가지가 제대로 들어있는지 확인
+            if (row.Length >= 3)
+            {
+                // 문자열로 적혀있는 숫자를 각각 int, float 형식으로 변환
+                // 안전하게 Try함수 사용 및 Trim() 함수를 통해 공백 제거
+                if (int.TryParse(row[0].Trim(), out int stageId) &&
+                    float.TryParse(row[2].Trim(), out float amountPerSecond))
+                {
+                    // 문자열 그대로 쓰기에 변환 없이 공백만 제거 후 저장
+                    string resourceId = row[1].Trim();
+                    // 보상 정보를 담을 인터페이스 객체 선언
+                    IReward reward;
+                    // true 매개변수를 통해 대소문자 구분 x
+                    // 재화일 경우 (CSV의 ResourceID가 CurrencyType으로 제대로 변환이 된 경우)
+                    // 재화 ID 열거형으로 반환
+                    if (Enum.TryParse(resourceId, true, out CurrencyType type))
+                    {
+                        reward = new CurrencyReward(type, amountPerSecond);
+                    }
+                    // 아이템인 경우 (CSV의 ResourceID가 CurrencyType으로 변환에 실패한 경우)
+                    // 보상 지급될 아이템들도 열거형으로 관리가 된다면 열거현 변환으로 처리하면 좋을듯?
+                    else
+                    {
+                        reward = new ItemReward(resourceId, amountPerSecond);
+                    }
+                    // 만약 스테이지 ID값이 저장해둔 스테이지 보상 테이블에 존재하지 않는 값이 들어왔다면
+                    if (!stageRewards.ContainsKey(stageId))
+                    {
+                        // 해당 번호의 데이터 추가
+                        stageRewards[stageId] = new StageRewardData();
+                    }
+                    // 스테이지 번호에 맞게 보상 데이터 저장
+                    stageRewards[stageId].GetReward(reward);
+                }
+                else
+                {
+                    Debug.Log("파싱 실패");
+                }
+            }
+        }
     }
 
     // 방치 보상 수령 버튼 클릭 시 호출될 함수
