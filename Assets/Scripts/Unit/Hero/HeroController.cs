@@ -14,6 +14,9 @@ public sealed class HeroController
     // 보유 영웅 목록 변경시 이벤트 호출
     public event Action OnHeroCollectionChanged;
 
+    // 보유 영웅 레벨 변경 시 호출
+    public event Action<OwnedHeroData> OnHeroLevelChanged;
+
     public HeroController(HeroDatabaseSO heroDatabase)
     {
         if (heroDatabase == null)
@@ -52,5 +55,29 @@ public sealed class HeroController
     public bool ContainsHero(string heroId)
     {
         return heroCollection.Contains(heroId);
+    }
+
+    // 보유 영웅의 레벨 변경
+    public bool TrySetHeroLevel(string heroId, int level)
+    {
+        if (level < 1)
+        {
+            return false;
+        }
+
+        if (!heroCollection.TryGet(heroId, out OwnedHeroData hero))
+        {
+            return false;
+        }
+
+        if (hero.Level == level)
+        {
+            return false;
+        }
+
+        hero.SetLevel(level);
+        OnHeroLevelChanged?.Invoke(hero);
+
+        return true;
     }
 }
