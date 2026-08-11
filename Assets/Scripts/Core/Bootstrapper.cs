@@ -46,7 +46,10 @@ public class Bootstrapper
 
         // 저장된 인벤토리와 장비 장착 상태 복원
         inventoryManager.Controller.LoadSaveData(saveManager.CurrentData);
-      
+
+        // 저장된 보유 영웅 상태 복원
+        heroManager.Controller.LoadSaveData(saveManager.CurrentData);
+
         Debug.Log("초기 호출 완료.");
     }
 }

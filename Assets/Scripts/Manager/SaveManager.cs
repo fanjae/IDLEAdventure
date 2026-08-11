@@ -23,17 +23,23 @@ public sealed class SaveManager : Singleton<SaveManager>
             InventoryManager.Instance.Controller.WriteSaveData(CurrentData);
         }
 
+        // 현재 보유 영웅 상태를 저장 데이터에 반영
+        if (HeroManager.Instance.IsInitialized)
+        {
+            HeroManager.Instance.Controller.WriteSaveData(CurrentData);
+        }
+
         // 저장 시점을 UTC Unix Time 기준으로 갱신
         CurrentData.SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         fileService.Save(CurrentData);
     }
 
-    // 저장 파일이 존재하면 기존 데이터를 불러오고, 없으면 신규 데이터 생성
+    // 저장 파일을 불러오고 사용할 수 없는 경우 신규 데이터 생성
     public void Initialize()
     {
-        if (fileService.Exists())
+        if (fileService.TryLoad(out GameSaveData saveData))
         {
-            CurrentData = fileService.Load();
+            CurrentData = saveData;
             return;
         }
 
@@ -45,7 +51,6 @@ public sealed class SaveManager : Singleton<SaveManager>
     {
         return new GameSaveData
         {
-            Version = 1,
             SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
         };
     }
