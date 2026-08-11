@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 17ded5d891b976d42927654fced35c25, type: 3}
-  m_Name: Ranger_ChargedShot
+  m_Name: Healer_Heal
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
-  skillName: RangerChargedShot
-  effectType: 3
+  skillName: 
+  effectType: 1
   damageRatio: 1.5
   cooldown: 10
   actionDuration: 10
-  blockCount: 1
+  blockCount: 5
   barrierVfxPrefab: {fileID: 0}
-  projectilePrefab: {fileID: 7650556263332480521, guid: d1090cf15c64c2941862b17e0daaaff6, type: 3}
+  projectilePrefab: {fileID: 0}
   projectileSpeed: 10
-  healCastVfxPrefab: {fileID: 0}
-  healTargetVfxPrefab: {fileID: 0}
+  healCastVfxPrefab: {fileID: 805668277512953704, guid: 5b2f495877dea7e4bb35c6fdd14d8672, type: 3}
+  healTargetVfxPrefab: {fileID: 3596470342651629080, guid: 85eb7a31b98950945a0b9b1fc45f7349, type: 3}
   healVfxDuration: 1.5

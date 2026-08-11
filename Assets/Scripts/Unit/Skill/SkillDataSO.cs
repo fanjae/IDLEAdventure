@@ -12,8 +12,9 @@ public class SkillDataSO : ScriptableObject
     [SerializeField, Min(0.0f)] private float damageRatio = 1.5f;
     [SerializeField, Min(0.1f)] private float cooldown = 6.0f;
 
-    [Header("스킬 애니메이션 시간")]
-    [SerializeField, Min(0.1f)] private float actionDuration = 2.4f; //스킬 애니메이션 길이보다 0.05~0.1정도 크게??. 
+    [Header("스킬 안전 종료 시간")]
+    //SkillEnd 애니메이션 이벤트 누락 대비용
+    [SerializeField, Min(0.1f)] private float actionDuration = 10.0f;
 
     [Header("배리어 설정")]
     [SerializeField, Min(1)] private int blockCount = 5;
@@ -23,6 +24,11 @@ public class SkillDataSO : ScriptableObject
     [SerializeField] private SkillProjectile projectilePrefab;
     [SerializeField, Min(0.1f)] private float projectileSpeed = 10.0f;
 
+    [Header("힐 스킬")]
+    [SerializeField] private GameObject healCastVfxPrefab;
+    [SerializeField] private GameObject healTargetVfxPrefab;
+    [SerializeField, Min(0.1f)] private float healVfxDuration = 1.5f;
+
     
     public string SkillName => skillName;
     public SkillEffectType EffectType => effectType;
@@ -31,7 +37,12 @@ public class SkillDataSO : ScriptableObject
     public int BlockCount => blockCount;
     public GameObject BarrierVfxPrefab => barrierVfxPrefab;
     public float ActionDuration => actionDuration;
+
     public SkillProjectile ProjectilePrefab => projectilePrefab;
     public float ProjectileSpeed => projectileSpeed;
+
+    public GameObject HealCastVfxPrefab => healCastVfxPrefab;
+    public GameObject HealTargetVfxPrefab => healTargetVfxPrefab;
+    public float HealVfxDuration => healVfxDuration;
 
 }
