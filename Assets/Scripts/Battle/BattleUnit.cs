@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(UnitHealth))]
@@ -238,9 +237,7 @@ public class BattleUnit : MonoBehaviour
     public void AttackHitEvent()
     {
         if (!IsAttacking) return;
-        //Attack 애니메이션 재생 중일 때, 타격 판정
-        if (unitAnimator == null || !unitAnimator.IsAttackAnimationPlaying()) return;
-
+        
         attack.ApplyAttackDamage();
     }
     public void AttackEndEvent()
@@ -250,11 +247,15 @@ public class BattleUnit : MonoBehaviour
     //스킬 이벤트 연결
     public void SkillActivateEvent()
     {
-        if (skill == null) return;
+        if (skill == null || !IsUsingSkill) return;
         //실제 스킬 애니메이션 중에 발생한 이벤트만 가능
-        if (unitAnimator == null || !unitAnimator.IsSkillAnimationPlaying()) return;
-
         skill.ApplySkillEffect();
+    }
+    public void SkillEndEvent()
+    {
+        if (skill == null || !IsUsingSkill) return;
+
+        skill.CompleteSkill();
     }
     //스킬~
     public bool CanUseSkill()
@@ -267,7 +268,11 @@ public class BattleUnit : MonoBehaviour
     }
     public void UpdateSkill()
     {
-        skill?.UpdataSkill();
+        skill?.UpdateSkill();
+    }
+    public void CancelSkill()
+    {
+        skill?.CancelSkill();
     }
 
     public int TakeDamage(int damage)
@@ -307,6 +312,10 @@ public class BattleUnit : MonoBehaviour
     }
     private void HandleDead()
     {
+        //사망 애니메이션으로 넘어가기 전에 진행 중인 공격/스킬부터 정리
+        attack?.CancelAttack();
+        skill?.CancelSkill();
+
         //사망 상태로 변경하면서 이동, 공격을 정리
         stateMachine?.ChangeState(UnitState.Dead);
 
