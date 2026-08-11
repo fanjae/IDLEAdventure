@@ -58,7 +58,7 @@ public class PlayerMove : MonoBehaviour
         Vector3 moveDirection = (cameraForward * input.y) + (cameraRight * input.x);
 
         Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
         characterController.Move(moveDirection * moveSpeed * Time.deltaTime);
     }
