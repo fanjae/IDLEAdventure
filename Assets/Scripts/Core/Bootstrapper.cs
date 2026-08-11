@@ -1,22 +1,52 @@
 using UnityEngine;
 
 /// <summary>
-/// °ÔÀÓ ½ÇÇà ½Ã ºÒ·¯¿Í¾ß ÇÒ °Íµé È£ÃâÇÏ´Â Å¬·¡½º. <br/>
-/// º¸Åë ¸Å´ÏÀúµéÀÌ µé¾î¿Ã °ÍÀ¸·Î º¸ÀÎ´Ù. <br/>
-/// ÇöÀç Ãß°¡µÈ ¸ñ·Ï <br/>
-/// TestSaveManager, CurrencyManager
+/// ê²Œì„ ì‹¤í–‰ ì‹œ ë¶ˆëŸ¬ì™€ì•¼ í•  ê²ƒë“¤ í˜¸ì¶œí•˜ëŠ” í´ë˜ìŠ¤. <br/>
+/// ë³´í†µ ë§¤ë‹ˆì €ë“¤ì´ ë“¤ì–´ì˜¬ ê²ƒìœ¼ë¡œ ë³´ì¸ë‹¤. <br/>
+/// í˜„ì¬ ì¶”ê°€ëœ ëª©ë¡ <br/>
+/// TestSaveManager, CurrencyManager, InventoryManager, HeroManager
 /// </summary>
 public class Bootstrapper
 {
-    // ¾À ½ÇÇà ½Ã È£Ãâ
+    // ì”¬ ì‹¤í–‰ ì‹œ í˜¸ì¶œ
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void InitializeWhenSceneStart()
     {
-        Debug.Log("ÃÊ±â »ı¼º È£Ãâ.");
+        Debug.Log("ì´ˆê¸° ìƒì„± í˜¸ì¶œ.");
 
         TestSaveManager testSaveManager = TestSaveManager.Instance;
         CurrencyManager currency = CurrencyManager.Instance;
 
-        Debug.Log("ÃÊ±â È£Ãâ ¿Ï·á.");
+        ItemDatabaseSO itemDatabase = Resources.Load<ItemDatabaseSO>("GameData/ItemDatabase");
+
+        if (itemDatabase == null)
+        {
+            Debug.LogError("ItemDatabaseSOë¥¼ ë¶ˆëŸ¬ì˜¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
+            return;
+        }
+
+        // ì¸ë²¤í† ë¦¬ ì‹œìŠ¤í…œ ì´ˆê¸°í™”
+        InventoryManager inventoryManager = InventoryManager.Instance;
+        inventoryManager.Initialize(itemDatabase);
+
+        HeroDatabaseSO heroDatabase = Resources.Load<HeroDatabaseSO>("GameData/HeroDatabase");
+
+        if (heroDatabase == null)
+        {
+            Debug.LogError("HeroDatabaseSOë¥¼ ë¶ˆëŸ¬ì˜¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
+            return;
+        }
+
+        HeroManager heroManager = HeroManager.Instance;
+        heroManager.Initialize(heroDatabase);
+      
+        // ì €ì¥ ë°ì´í„° ì´ˆê¸°í™” (í…ŒìŠ¤íŠ¸ ì„¸ì´ë¸Œ ë§¤ë‹ˆì € ì•„ì§ ë¯¸ì‚­ì œ)
+        SaveManager saveManager = SaveManager.Instance;
+        saveManager.Initialize();
+
+        // ì €ì¥ëœ ì¸ë²¤í† ë¦¬ì™€ ì¥ë¹„ ì¥ì°© ìƒíƒœ ë³µì›
+        inventoryManager.Controller.LoadSaveData(saveManager.CurrentData);
+      
+        Debug.Log("ì´ˆê¸° í˜¸ì¶œ ì™„ë£Œ.");
     }
 }

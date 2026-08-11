@@ -6,30 +6,12 @@ using TMPro;
 using UnityEngine;
 
 /// <summary>
-/// CSV¿¡¼­ ¹Ş¾Æ¿Â º¸»ó µ¥ÀÌÅÍ¸¦ ´ã¾ÆµÑ Å¬·¡½º. <br/>
-/// ÀÌÁß µñ¼Å³Ê¸®·Î ÀÛ¾÷ ÇÏ´Ù°¡ ÀÌ ¹æ½ÄÀÌ ´õ º¸±â¿¡µµ, »ç¿ëÇÏ±â¿¡µµ ÁÁ¾Æº¸¿© ¼öÁ¤.
-/// </summary>
-public class StageRewardData
-{
-    // º¸»ó Å×ÀÌºíÀ» ´ã¾ÆµÑ µñ¼Å³Ê¸®
-    private Dictionary<CurrencyType, float> rewards = new Dictionary<CurrencyType, float>();
-
-    // ÇÁ·ÎÆÛÆ¼
-    public Dictionary<CurrencyType, float> Rewards => rewards;
-
-    // µ¥ÀÌÅÍ¸¦ ¼öÁ¤ÇÒ ÇÔ¼ö
-    public void GetReward(CurrencyType type, float amount)
-    {
-        rewards[type] = amount;
-    }
-}
-/// <summary>
-/// Idle ½Ã°£ Àû¿ë È®ÀÎ¿ë Å¬·¡½º <br/>
-/// UI °ü·Ã ³»¿ëÀº ¾ÆÁ÷ ¾î¶² ¹æ½ÄÀ¸·Î ÇÒÁö Á¤ÇÏÁö ¸ø ÇÔ. <br/>
-/// ÀÏ´Ü Update¿¡¼­ ÇÏ´Â °ÍÀº ÇÇÇÏ±â À§ÇØ ÄÚ·çÆ¾À» »ç¿ë. <br/>
-/// ÇöÀç ¹æÄ¡ º¸»ó °è»ê ¹æ½ÄÀÌ ±âÁ¸ ½Ã°£ ~ ¼ö·É ½Ã°£À» ÅëÇØ ½ºÅ×ÀÌÁö ´Ü°è¿¡ ¸Â´Â º¸»ó °ªÀ¸·Î ¼ö·ÉÀÌ µÇ±â¿¡ ½×¾Æ³õ°í ½ºÅ×ÀÌÁö ´Ü°è°¡ ¿Ã¶ó°£ ÈÄ ¼ö·ÉÇÏ¸é ¿Ã¶ó°£ ´Ü°èÀÇ º¸»óÀ¸·Î ¼ö·ÉµÊ. <br/>
-/// ¶§¹®¿¡ ½Ã½ºÅÛ ÀÚÃ¼¸¦ ¹Ù²ÙÁö ¾Ê´Â´Ù¸é, ½ºÅ×ÀÌÁö Å¬¸®¾î ½Ã ´Ü°è¸¦ ¿Ã¸®±â Àü¿¡ ±âÁ¸ ¹æÄ¡ º¸»óÀ» ¼ö·É½ÃÅ°°í ÇØ´ç ½ÃÁ¡À» ±âÁ¸ ½Ã°£À¸·Î Àç¼³Á¤ ÈÄ ½ºÅ×ÀÌÁö¸¦ ¿Ã¸®´Â ¹æ¹ıÀ¸·Î ÁøÇàÇÏ·Á ÇÔ.
-/// <br/> ¾Æ... º¸»ó ¹Ş°í ³²´Â ½Ã°£ ±×³É ¹ö·Á¹ö¸®°í½Í´Ù... ¾î¶»°Ô º¸°üÇØÁÙ±î...
+/// Idle ì‹œìŠ¤í…œ ì ìš© í™•ì¸ìš© í´ë˜ìŠ¤. <br/>
+/// UI ê´€ë ¨ ë‚´ìš©ì€ ì•„ì§ ì–´ë–¤ ë°©ì‹ìœ¼ë¡œ í• ì§€ ì •í•˜ì§€ ëª» í•¨. <br/>
+/// ì¼ë‹¨ Updateì—ì„œ í•˜ëŠ” ê²ƒì€ í”¼í•˜ê¸° ìœ„í•´ ì½”ë£¨í‹´ì„ ì‚¬ìš©. <br/>
+/// í˜„ì¬ ë°©ì¹˜ ë³´ìƒ ê³„ì‚° ë°©ì‹ì´ ê¸°ì¡´ ì‹œê°„ ~ ìˆ˜ë ¹ ì‹œê°„ì„ í†µí•´ ìŠ¤í…Œì´ì§€ ë‹¨ê³„ì— ë§ëŠ” ë³´ìƒ ê°’ìœ¼ë¡œ ìˆ˜ë ¹ì´ ë˜ê¸°ì— ìŒ“ì•„ë†“ê³  ìŠ¤í…Œì´ì§€ ë‹¨ê³„ê°€ ì˜¬ë¼ê°„ í›„ ìˆ˜ë ¹í•˜ë©´ ì˜¬ë¼ê°„ ë‹¨ê³„ì˜ ë³´ìƒìœ¼ë¡œ ìˆ˜ë ¹ë¨. <br/>
+/// í•˜ì§€ë§Œ, ê·¸ë ‡ë‹¤ê³  ì‹¤ì‹œê°„ìœ¼ë¡œ ìˆ˜ë ¹ ê°€ëŠ¥í•œ ì¬í™”ë¥¼ ê³„ì‚°í•˜ê³ , ìŒ“ì•„ë‘ëŠ” ë°©ì‹ì€ ì„±ëŠ¥ìƒ ë¬¸ì œê°€ ìˆë‹¤ê³  íŒë‹¨ë¨. <br/>
+/// ë•Œë¬¸ì— í˜„ì¬ ë°©ì‹ìœ¼ë¡œëŠ” ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´ ì‹œ ë‹¨ê³„ë¥¼ ì˜¬ë¦¬ê¸° ì „ì— ê¸°ì¡´ ë°©ì¹˜ ë³´ìƒì„ ìˆ˜ë ¹ì‹œí‚¤ê³  í•´ë‹¹ ì‹œì ì„ ìµœì¢… ìˆ˜ë ¹ ì‹œê°„ìœ¼ë¡œ ì¬ì„¤ì • í›„ ìŠ¤í…Œì´ì§€ë¥¼ ì˜¬ë¦¬ëŠ” ë°©ë²•ìœ¼ë¡œ ì§„í–‰í•˜ë ¤ í•¨.
 /// </summary>
 public class IdleTest : MonoBehaviour
 {
@@ -38,135 +20,78 @@ public class IdleTest : MonoBehaviour
     [SerializeField] private TMP_Text rewardPercentText;
 
     [Header("Setting Reward")]
-    [SerializeField] private TextAsset rewardCSVData;    // º¸»ó Å×ÀÌºí·Î »ç¿ëÇÒ CSV µ¥ÀÌÅÍ ¿¬°á
-    [SerializeField] private float maxIdleTime = 600.0f;    // ÃÖ´ë ¹æÄ¡ ½Ã°£ (´ÜÀ§: ÃÊ)
-    [SerializeField] private int testClearStageNum = 1;    // ÃÖÁ¾ Å¬¸®¾î ½ºÅ×ÀÌÁö ´Ü°è Àû¿ë¿ë ÀÓ½Ã º¯¼ö
+    [SerializeField] private TextAsset rewardCSVData;    // ë³´ìƒ í…Œì´ë¸”ë¡œ ì‚¬ìš©í•  CSV ë°ì´í„° ì—°ê²°
+    [SerializeField] private float maxIdleTime = 100.0f;    // ìµœëŒ€ ë°©ì¹˜ ì‹œê°„ (ë‹¨ìœ„: ì´ˆ)
+    [SerializeField] private int testClearStageNum = 1;    // ìµœì¢… í´ë¦¬ì–´ ìŠ¤í…Œì´ì§€ ë‹¨ê³„ ì ìš©ìš© ì„ì‹œ ë³€ìˆ˜
 
-    private DateTime lastTime;  // ½Ã°£À» °è»êÇÏ±â À§ÇÑ DateTime ±¸Á¶Ã¼ »ç¿ë
+    private DateTime lastTime;  // ì‹œê°„ì„ ê³„ì‚°í•˜ê¸° ìœ„í•œ DateTime êµ¬ì¡°ì²´ ì‚¬ìš©
 
-    private Coroutine uiUpdateCoroutine;    // Update¸¦ »ç¿ëÇÏÁö ¾Ê±â À§ÇÑ ÄÚ·çÆ¾
-    // ½ºÅ×ÀÌÁö ´Ü°èº° º¸»ó Å×ÀÌºí ÀúÀå¿ë µñ¼Å³Ê¸®
+    private Coroutine uiUpdateCoroutine;    // Updateë¥¼ ì‚¬ìš©í•˜ì§€ ì•Šê¸° ìœ„í•œ ì½”ë£¨í‹´
+    // ìŠ¤í…Œì´ì§€ ë‹¨ê³„ë³„ ë³´ìƒ í…Œì´ë¸” ì €ì¥ìš© ë”•ì…”ë„ˆë¦¬ | Key: ìŠ¤í…Œì´ì§€ ë²ˆí˜¸, Value: CSVì—ì„œ ë°›ì•„ì˜¨ ë³´ìƒ í…Œì´ë¸” ë°ì´í„°
     private Dictionary<int, StageRewardData> stageRewards = new Dictionary<int, StageRewardData>();
-    // ¹æÄ¡ º¸»ó °è»ê ¹æ½ÄÀ¸·Î ÀÎÇØ ¹ö·ÁÁö´Â ½Ã°£ ÀúÀå¿ë µñ¼Å³Ê¸®
-    private Dictionary<CurrencyType, decimal> leftRewards = new Dictionary<CurrencyType, decimal>();
+    // ë°©ì¹˜ ë³´ìƒ ê³„ì‚° ë°©ì‹ìœ¼ë¡œ ì¸í•´ ë²„ë ¤ì§€ëŠ” ì‹œê°„ ì €ì¥ìš© ë”•ì…”ë„ˆë¦¬ | Key: ë³´ìƒ ID, Value: ë³´ìƒì— ë°˜ì˜ë˜ì§€ ëª» í•œ ë²„ë ¤ì§„ ì‹œê°„
+    private Dictionary<string, decimal> leftRewards = new Dictionary<string, decimal>();
 
-    // ÇÁ·ÎÆÛÆ¼
+    // í”„ë¡œí¼í‹°
     public float MaxIdleTime => maxIdleTime;
 
     private void Start()
     {
-        LoadRewardCSVData();
+        stageRewards = RewardCSVParser.Parse(rewardCSVData);
         InitializeTime();
     }
 
-    // º¸»ó CSV ÆÄÀÏ ¹Ş¾Æ¿À´Â ÇÔ¼ö
-    private void LoadRewardCSVData()
-    {
-        if (rewardCSVData == null) return;
-        // ÁÙ °³ÇàÀ» ±âÁØÀ¸·Î ºĞÇÒ
-        string[] lines = rewardCSVData.text.Split('\n');
-        // ÁÙ ¼ö ¸¸Å­ ¹İº¹
-        // Ã¹ ÁÙÀº µ¥ÀÌÅÍ ÀÌ¸§ÀÌ±â¿¡ 1¹ø ÁÙºÎÅÍ °Ë»ç
-        for (int i = 1; i < lines.Length; i++)
-        {
-            // Trim() ÇÔ¼ö¸¦ ÅëÇØ ÀÇµµÄ¡ ¾ÊÀº °ø¹é Á¦°Å
-            string line = lines[i].Trim();
-            // ¹®ÀÚ¿­ÀÌ ºñ¾ú´ÂÁö, °ø¹éÀ¸·Î¸¸ ÀÌ·ç¾îÁ®ÀÖ´ÂÁö È®ÀÎ
-            if (string.IsNullOrWhiteSpace(line)) continue;
-            // ÁÙ ¸¶´Ù ',' ±âÁØÀ¸·Î ºĞ¸®
-            string[] row = lines[i].Split(',');
-            // ºĞ¸®ÇßÀ» ¶§ stageId, resourceId, amount ¼¼ °¡Áö°¡ Á¦´ë·Î µé¾îÀÖ´ÂÁö È®ÀÎ
-            if (row.Length >= 3)
-            {
-                // ¹®ÀÚ¿­·Î ÀûÇôÀÖ´Â ¼ıÀÚ¸¦ °¢°¢ int, float Çü½ÄÀ¸·Î º¯È¯
-                // ¾ÈÀüÇÏ°Ô TryÇÔ¼ö »ç¿ë ¹× Trim() ÇÔ¼ö¸¦ ÅëÇØ °ø¹é Á¦°Å
-                if (int.TryParse(row[0].Trim(), out int stageId) &&
-                    float.TryParse(row[2].Trim(), out float amountPerSecond))
-                {
-                    // ¹®ÀÚ¿­ ±×´ë·Î ¾²±â¿¡ º¯È¯ ¾øÀÌ °ø¹é¸¸ Á¦°Å ÈÄ ÀúÀå
-                    string resourceId = row[1].Trim();
-                    // ¹®ÀÚ¿­À» ¿­°ÅÇüÀ¸·Î º¯È¯
-                    // true ¸Å°³º¯¼ö¸¦ ÅëÇØ ´ë¼Ò¹®ÀÚ ±¸ºĞ x
-                    // ÀçÈ­ Å¸ÀÔ ¿­°ÅÇüÀ¸·Î ¹İÈ¯
-                    if (Enum.TryParse(resourceId, true, out CurrencyType type))
-                    {
-                        // º¸»ó Å×ÀÌºí¿¡ ½ºÅ×ÀÌÁö ¹øÈ£°¡ Á¸ÀçÇÏÁö ¾Ê´Â´Ù¸é ÇØ´ç Id°ªÀ» key°ªÀ¸·Î °®´Â Å×ÀÌºí Ãß°¡
-                        if (!stageRewards.ContainsKey(stageId))
-                        {
-                            stageRewards[stageId] = new StageRewardData();
-                        }
-                        // ½ºÅ×ÀÌÁö Id°ª¿¡ µû¸¥ º¸»ó Å×ÀÌºí ÀúÀå
-                        stageRewards[stageId].GetReward(type, amountPerSecond);
-                    }
-                }
-                else
-                {
-                    Debug.Log("ÆÄ½Ì ½ÇÆĞ");
-                }
-            }
-        }
-    }
-
-    // ¹æÄ¡ º¸»ó ¼ö·É ¹öÆ° Å¬¸¯ ½Ã È£ÃâµÉ ÇÔ¼ö
-    // ½Ã°£´ç º¸»óÀ» °è»êÇØ È¹µæ
+    // ë°©ì¹˜ ë³´ìƒ ìˆ˜ë ¹ ë²„íŠ¼ í´ë¦­ ì‹œ í˜¸ì¶œë  í•¨ìˆ˜
+    // ì‹œê°„ë‹¹ ë³´ìƒì„ ê³„ì‚°í•´ íšë“
     public void ClickIdleRewardButton()
     {
-        // ÀçÈ­ º° ½Ã°£´ç º¸»ó °è»ê
-        Dictionary<CurrencyType, int> rewards = CalculateRewards();
+        if (testClearStageNum <= 0) return;
+        // ì¬í™” ë³„ ì‹œê°„ë‹¹ ë³´ìƒ ê³„ì‚°
+        Dictionary<string, RewardResult> rewards = CalculateRewards();
         /***********
-        LINQ ÇÔ¼ö Any() »ç¿ë
-        ÄÃ·º¼Ç¿¡ µé¾îÀÖ´Â ÀÚ·áÇü (¹è¿­, ¸®½ºÆ®, µñ¼Å³Ê¸®) ¾È¿¡ Á¶°Ç¿¡ ¸Â´Â µ¥ÀÌÅÍ°¡ ÇÏ³ª¶óµµ Á¸ÀçÇÏ´ÂÁö È®ÀÎÇÏ´Â ÇÔ¼ö.
-        ÀüºÎ °Ë»çÇÏÁö ¾Ê°í, Áß°£¿¡ Á¶°Ç¿¡ ¸Â´Â µ¥ÀÌÅÍ¸¦ Ã£´Â ¼ø°£ °Ë»ç¸¦ Áß´ÜÇÏ±â¿¡ ¼º´É»ó ÀÌÁ¡ÀÌ ÀÖ´Ù.
+        LINQì˜ Any()í•¨ìˆ˜ ì‚¬ìš©
+        ì»¬ë ‰ì…˜ì— ë“¤ì–´ìˆëŠ” ìë£Œí˜• (ë°°ì—´, ë¦¬ìŠ¤íŠ¸, ë”•ì…”ë„ˆë¦¬) ì•ˆì— ì¡°ê±´ì— ë§ëŠ” ë°ì´í„°ê°€ í•˜ë‚˜ë¼ë„ ì¡´ì¬í•˜ëŠ”ì§€ í™•ì¸í•˜ëŠ” í•¨ìˆ˜.
+        ì „ë¶€ ê²€ì‚¬í•˜ì§€ ì•Šê³ , ì¤‘ê°„ì— ì¡°ê±´ì— ë§ëŠ” ë°ì´í„°ë¥¼ ì°¾ëŠ” ìˆœê°„ ê²€ì‚¬ë¥¼ ì¤‘ë‹¨í•˜ê¸°ì— ì„±ëŠ¥ìƒ ì´ì ì´ ìˆë‹¤.
         ***********/
-        // ¹öÆ°À» ´­·¶À» ¶§ º¸»ó µñ¼Å³Ê¸® °ª Áß 0º¸´Ù Å« °ªÀÌ ÀÖ´ÂÁö È®ÀÎ.
-        if (rewards.Any(reward => reward.Value > 0))
+        // ë²„íŠ¼ì„ ëˆŒë €ì„ ë•Œ ë³´ìƒ ë”•ì…”ë„ˆë¦¬ ê°’ ì¤‘ 0ë³´ë‹¤ í° ê°’ì´ ìˆëŠ”ì§€ í™•ì¸. (íšë“ ê°€ëŠ¥í•œ ì¬í™”ê°€ ì¡´ì¬í•˜ëŠ”ì§€ í™•ì¸)
+        if (rewards.Any(reward => reward.Value.FinalReward > 0))
         {
-            /***********
-            °è»ê ¿ÀÂ÷ ¹æÁö¸¦ À§ÇØ decimal ÀÚ·áÇü »ç¿ë.
-            decimal: ºÎµ¿ ¼Ò¼öÁ¡ ÀÚ·áÇü. floatÀÇ ~fÃ³·³ ~mÀ¸·Î »ç¿ëÇÑ´Ù.
-            double, float µî ´Ù¸¥ ½Ç¼ö ÀÚ·áÇü°ú ´Ş¸® 2Áø¼ö°¡ ¾Æ´Ñ 10Áø¼ö¸¦ ±â¹İÀ¸·Î ¿¬»ê
-            ¼º´É ¸é¿¡¼­´Â µÎ ½Ç¼öÇüº¸´Ù È¿À²ÀûÀÌÁö ¸ø ÇÏ´Ù.
-            ÀçÈ­/±İ¾×(µ·) µî 0.000001ÀÇ ¿ÀÂ÷µµ Á¸ÀçÇÏ¸é ¾È µÇ´Â °è»ê¿¡ »ç¿ë.
-            ***********/
-            // floatÀ¸·Î °è»êÇÏ¸é, °è»ê»ó 0.01 * 100 = 1ÀÌ ³ª¿Í¾ß ÇÏ´Âµ¥, 0.999999... °¡ ³ª¿À´Â ¿ÀÂ÷°¡ Á¸Àç
-            decimal rewardTime = (decimal)GetRewardTime();
-            // ½ºÅ×ÀÌÁöº° º¸»ó Å×ÀÌºí¿¡¼­ ÇöÀç ½ºÅ×ÀÌÁö °ªÀ» ÅëÇØ ¾Ë¸ÂÀº º¸»ó Å×ÀÌºí ¹İÈ¯
+            // ìŠ¤í…Œì´ì§€ ë³´ìƒ í…Œì´ë¸”ì—ì„œ ìµœì¢… í´ë¦¬ì–´ ìŠ¤í…Œì´ì§€ ê°’ì„ í†µí•´ ì•Œë§ì€ ë³´ìƒ í…Œì´ë¸” ë°˜í™˜
             if (stageRewards.TryGetValue(testClearStageNum, out StageRewardData stageData))
             {
                 /***********
-                À¯´ÏÆ¼ 5.5¹öÀü ÀÌÈÄ·Î foreachÀÇ GC ¹®Á¦°¡ ÇØ°áµÇ¾î ÀÏ¹İÀûÀ¸·Î for¹®°ú ¼º´É»ó Â÷ÀÌ°¡ °ÅÀÇ ³ªÁö ¾Ê´Â´Ù.
-                ¶ÇÇÑ, ¼øÈ¸ ¼Óµµ°¡ µñ¼Å³Ê¸® °¡ÁØÀ¸·Î´Â for¹®º¸´Ù foreach¹®ÀÌ ´õ ºü¸£´Ù.
-                ÇØ´ç ÆÄÆ®´Â ³ªÁß¿¡ ½ÇÇèÇØ º¸¸é ÁÁÀ»µí.
-                KeyValuePair<,> ¹æ½ÄÀº µñ¼Å³Ê¸® ¹İÈ¯¿¡ ÁÁ´Ù.
+                ìœ ë‹ˆí‹° 5.5ë²„ì „ ì´í›„ë¡œ foreachì˜ GC ë¬¸ì œê°€ í•´ê²°ë˜ì–´ ì¼ë°˜ì ìœ¼ë¡œ forë¬¸ê³¼ ì„±ëŠ¥ìƒ ì°¨ì´ê°€ ê±°ì˜ ë‚˜ì§€ ì•ŠëŠ”ë‹¤.
+                ë˜í•œ, ìˆœíšŒ ì†ë„ê°€ ë”•ì…”ë„ˆë¦¬ ê°€ì¤€ìœ¼ë¡œëŠ” forë¬¸ë³´ë‹¤ foreachë¬¸ì´ ë” ë¹ ë¥´ë‹¤.
+                í•´ë‹¹ íŒŒíŠ¸ëŠ” ë‚˜ì¤‘ì— ì‹¤í—˜í•´ ë³´ë©´ ì¢‹ì„ë“¯.
+                KeyValuePair<,> ë°©ì‹ì€ ë”•ì…”ë„ˆë¦¬ê°€ ì‚¬ìš©í•˜ëŠ” ë°˜í™˜í˜•. ì • ê·€ì°®ë‹¤ë©´ varë¥¼ ì¨ë„ ë¬´ë°©í• ë“¯.
                 ***********/
-                // µñ¼Å³Ê¸®¸¦ ¼øÈ¸ÇÏ¸ç ¹İÈ¯ ¹ŞÀº º¸»ó Å×ÀÌºíÀÇ Á¤º¸¸¦ key: ÀçÈ­ Á¾·ù, value: º¸»ó·® ÇüÅÂ·Î »ç¿ë
-                foreach (KeyValuePair<CurrencyType, float> rewardInfo in stageData.Rewards)
+                // ë”•ì…”ë„ˆë¦¬ë¥¼ ìˆœíšŒí•˜ë©° ë°˜í™˜ ë°›ì€ ë³´ìƒ í…Œì´ë¸”ì˜ ì •ë³´ë¥¼ key: ë³´ìƒ ID, value: ë³´ìƒëŸ‰ í˜•íƒœë¡œ ì‚¬ìš©
+                foreach (KeyValuePair<string, RewardResult> reward in rewards)
                 {
-                    CurrencyType type = rewardInfo.Key;    // ÀçÈ­ Á¾·ù ÀúÀå
-                    decimal rewardAmount = (decimal)rewardInfo.Value;    // ÀçÈ­ º° º¸»ó·® ÀúÀå, decimal·Î º¯È¯
-                    decimal leftReward = leftRewards.ContainsKey(type) ? leftRewards[type] : 0m;    // ÀçÈ­ º° ÀÌÀü ¼ö·É ÈÄ ³²Àº ½Ã°£·® °è»ê
+                    string id = reward.Key;    // ë³´ìƒ ID ì €ì¥
+                    int amount = reward.Value.FinalReward;    // ë³´ìƒëŸ‰ ì €ì¥
+                    decimal leftover = reward.Value.LeftoverReward;    // ë³´ìƒ ì •ì‚° í›„ ë‚¨ì€ ì‹œê°„ ì €ì¥
 
-                    decimal finalAmount = (rewardTime * rewardAmount) + leftReward;    // ³²Àº ½Ã°£µµ Æ÷ÇÔÇÑ ÃÖÁ¾ º¸»ó·® °è»ê
-                    int finalReward = (int)finalAmount;    // ÃÖÁ¾ º¸»ó·®À» int·Î Çüº¯È¯. ¾È ÇÏ°í °á°ú°ª¿¡ ±×³É (int)ÇØµµ µÊ.
+                    leftRewards[id] = leftover;    // ë‚¨ì€ ì‹œê°„ ë”•ì…”ë„ˆë¦¬ì— í•´ë‹¹ ë³´ìƒ IDë¥¼ Keyë¡œ ì €ì¥
 
-                    leftRewards[type] = finalAmount - finalReward;    // ¼Ò¼öÁ¡ °ª (º¸»ó Á¤»ê¿¡ µé¾î°¡Áö ¸ø ÇÏ´Â ½Ã°£) ³²Àº ½Ã°£ º¸°ü¿ë µñ¼Å³Ê¸®¿¡ ÀúÀå
-                    // ÃÖÁ¾ º¸»ó Áö±Ş·®ÀÌ 1°³ ÀÌ»óÀÎ °æ¿ì ÀçÈ­ Áö±Ş
-                    if (finalReward > 0)
+                    // ë³´ìƒëŸ‰ì´ ì¡´ì¬í•˜ê³ , ë³´ìƒ í…Œì´ë¸”ì— í•´ë‹¹ IDê°’ì´ ì¡´ì¬í•œë‹¤ë©´
+                    if (amount > 0 && stageData.Rewards.ContainsKey(id))
                     {
-                        CurrencyManager.Instance.AddCurrency(type, finalReward);
+                        // IDì— ë”°ë¥¸ ë³´ìƒ ì œê³µ.
+                        stageData.Rewards[id].GiveReward(amount);
                     }
                 }
             }
-            Debug.Log("¹æÄ¡ º¸»ó È¹µæ ¿Ï·á.");
+            Debug.Log("ë°©ì¹˜ ë³´ìƒ íšë“ ì™„ë£Œ.");
             SaveCurrentTime();
             RestartUI();
             //return;
         }
         else
-            Debug.Log("È¹µæÇÒ º¸»óÀÌ ¾ø½À´Ï´Ù.");
+            Debug.Log("íšë“í•  ë³´ìƒì´ ì—†ìŠµë‹ˆë‹¤.");
     }
-    // °ÔÀÓ ½ÇÇà ½Ã ½Ã°£ ¼³Á¤
-    // Ã¹ ½ÇÇàÀÌ¶ó¸é Çö ½Ã°£À» ÀúÀå
+    // ê²Œì„ ì‹¤í–‰ ì‹œ ì‹œê°„ ì„¤ì •
+    // ì²« ì‹¤í–‰ì´ë¼ë©´ í˜„ ì‹œê°„ì„ ì €ì¥
     private void InitializeTime()
     {
         long savedTime = TestSaveManager.Instance.CurrentSaveData.LastGetIdleRewardTime;
@@ -180,58 +105,68 @@ public class IdleTest : MonoBehaviour
 
         RestartUI();
     }
-    // ÇöÀç ½Ã°£À» ÀúÀåÇÏ´Â ÇÔ¼ö
+    // í˜„ì¬ ì‹œê°„ì„ ì €ì¥í•˜ëŠ” í•¨ìˆ˜
     private void SaveCurrentTime()
     {
         lastTime = DateTime.UtcNow;
-        // ½Ã°£ °ªÀ» DateTime.ToBinary ÇÔ¼ö¸¦ ÅëÇØ int64°ªÀ¸·Î º¯È¯
+        // ì‹œê°„ ê°’ì„ DateTime.ToBinary í•¨ìˆ˜ë¥¼ í†µí•´ int64ê°’ìœ¼ë¡œ ë³€í™˜
         TestSaveManager.Instance.CurrentSaveData.SetLastIdleRewardTime(lastTime.ToBinary());
         TestSaveManager.Instance.SaveGame();
     }
-    // º¸»ó ¼öÄ¡¸¦ °áÁ¤ÇÒ ½Ã°£ °ª °è»ê ÇÔ¼ö
+    // ë³´ìƒ ìˆ˜ì¹˜ë¥¼ ê²°ì •í•  ì‹œê°„ ê°’ ê³„ì‚° í•¨ìˆ˜
     private float GetRewardTime()
     {
-        // ÇöÀç ½ÇÁ¦ ½Ã°£ - ÀúÂ¡µÈ ½Ã°£
+        // í˜„ì¬ ì‹¤ì œ ì‹œê°„ - ì €ì§•ëœ ì‹œê°„
         TimeSpan rewardTime = DateTime.UtcNow - lastTime;
-        // °è»êµÈ ¹æÄ¡ ½Ã°£ ÃÊ ´ÜÀ§·Î º¯È¯
+        // ê³„ì‚°ëœ ë°©ì¹˜ ì‹œê°„ ì´ˆ ë‹¨ìœ„ë¡œ ë³€í™˜
         float passedTime = (float)rewardTime.TotalSeconds;
-        // ¹æÄ¡ ½Ã°£ÀÌ À½¼ö·Î °¡Áö ¾Ê°Ô Ã³¸®
+        // ë°©ì¹˜ ì‹œê°„ì´ ìŒìˆ˜ë¡œ ê°€ì§€ ì•Šê²Œ ì²˜ë¦¬
         if (passedTime < 0.0f)
         {
             passedTime = 0.0f;
         }
-        // ÃÖ´ë ¹æÄ¡ ½Ã°£À» ³Ñ¾î°¡Áö ¾Ê°Ô Ã³¸®
+        // ìµœëŒ€ ë°©ì¹˜ ì‹œê°„ì„ ë„˜ì–´ê°€ì§€ ì•Šê²Œ ì²˜ë¦¬
         return Mathf.Clamp(passedTime, 0.0f, MaxIdleTime);
     }
-    // °è»êµÈ ½Ã°£ °ªÀ» ÅëÇØ º¸»ó ¼öÄ¡¸¦ °è»êÇÏ´Â ÇÔ¼ö
-    // ÀçÈ­ º°·Î ¸ğµÎ ´ëÀÀÇÏ±â À§ÇØ µñ¼Å³Ê¸® ÀÚ·áÇüÀ¸·Î ±¸Çö
-    private Dictionary<CurrencyType, int> CalculateRewards()
+    // ê³„ì‚°ëœ ì‹œê°„ ê°’ì„ í†µí•´ ë³´ìƒ ìˆ˜ì¹˜ë¥¼ ê³„ì‚°í•˜ëŠ” í•¨ìˆ˜
+    // ì¬í™” ë³„ë¡œ ëª¨ë‘ ëŒ€ì‘í•˜ê¸° ìœ„í•´ ë”•ì…”ë„ˆë¦¬ ìë£Œí˜•ìœ¼ë¡œ êµ¬í˜„
+    private Dictionary<string, RewardResult> CalculateRewards()
     {
-        Dictionary<CurrencyType, int> calculateRewards = new Dictionary<CurrencyType, int>();
-        // °è»êµÈ ¹æÄ¡ ½Ã°£ Çüº¯È¯ ÈÄ ÀúÀå
+        Dictionary<string, RewardResult> calculateRewards = new Dictionary<string, RewardResult>();
+        /***********
+        ê³„ì‚° ì˜¤ì°¨ ë°©ì§€ë¥¼ ìœ„í•´ decimal ìë£Œí˜• ì‚¬ìš©.
+        decimal: ë¶€ë™ ì†Œìˆ˜ì  ìë£Œí˜•. floatì˜ ~fì²˜ëŸ¼ ~mìœ¼ë¡œ ì‚¬ìš©í•œë‹¤.
+        double, float ë“± ë‹¤ë¥¸ ì‹¤ìˆ˜ ìë£Œí˜•ê³¼ ë‹¬ë¦¬ 2ì§„ìˆ˜ê°€ ì•„ë‹Œ 10ì§„ìˆ˜ë¥¼ ê¸°ë°˜ìœ¼ë¡œ ì—°ì‚°
+        ì„±ëŠ¥ ë©´ì—ì„œëŠ” ë‘ ì‹¤ìˆ˜í˜•ë³´ë‹¤ íš¨ìœ¨ì ì´ì§€ ëª» í•˜ë‹¤.
+        ì¬í™”/ê¸ˆì•¡(ëˆ) ë“± 0.000001ì˜ ì˜¤ì°¨ë„ ì¡´ì¬í•˜ë©´ ì•ˆ ë˜ëŠ” ê³„ì‚°ì— ì‚¬ìš©.
+        ***********/
+        // floatìœ¼ë¡œ ê³„ì‚°í•˜ë©´, ê³„ì‚°ìƒ 0.01 * 100 = 1ì´ ë‚˜ì™€ì•¼ í•˜ëŠ”ë°, 0.999999... ê°€ ë‚˜ì˜¤ëŠ” ì˜¤ì°¨ê°€ ì¡´ì¬
+        // ê³„ì‚°ëœ ë°©ì¹˜ ì‹œê°„ í˜•ë³€í™˜ í›„ ì €ì¥
         decimal rewardTime = (decimal)GetRewardTime();
-        // ½ºÅ×ÀÌÁö¿¡ ¸Â´Â º¸»ó Å×ÀÌºí ¹İÈ¯
+        // ìŠ¤í…Œì´ì§€ì— ë§ëŠ” ë³´ìƒ í…Œì´ë¸” ë°˜í™˜
         if (stageRewards.TryGetValue(testClearStageNum, out StageRewardData stageData))
         {
-            // Key: ÀçÈ­ Á¾·ù, Value: º¸»ó·®
-            foreach (KeyValuePair<CurrencyType, float> rewardInfo in stageData.Rewards)
+            // Key: ë³´ìƒ ID, Value: ë³´ìƒ ê°ì²´
+            foreach (KeyValuePair<string, IReward> rewardData in stageData.Rewards)
             {
-                CurrencyType type = rewardInfo.Key;    // ÀçÈ­ Á¾·ù ÀúÀå
+                string id = rewardData.Key;    // ìˆœíšŒì¤‘ì¸ ë³´ìƒì˜ IDê°’ ì €ì¥
 
-                decimal reward = (decimal)rewardInfo.Value;    // º¸»ó·® Çüº¯È¯ ÈÄ ÀúÀå
+                decimal rewardAmount = (decimal)rewardData.Value.RewardValue;    // ê¸°ì¤€ì´ ë  ì¬í™”ëŸ‰ ì €ì¥
+                decimal leftReward = leftRewards.ContainsKey(id) ? leftRewards[id] : 0m;    // ì´ì „ ì •ì‚° í›„ ë‚¨ì€ ë³´ìƒëŸ‰ ì €ì¥
+                
+                decimal maxReward = (decimal)maxIdleTime * rewardAmount;    // ìˆ˜ë ¹ ê°€ëŠ¥í•œ ìµœëŒ€ ë³´ìƒëŸ‰ ë¯¸ë¦¬ ê³„ì‚°
+                decimal finalAmount = Math.Min(((rewardTime * rewardAmount) + leftReward), maxReward);    // ê³„ì‚°ëœ ë³´ìƒëŸ‰ì´ ìµœëŒ€ ìˆ˜ë ¹ ê°€ëŠ¥ ë³´ìƒëŸ‰ì„ ë„˜ì§€ ëª» í•˜ê²Œ ì œí•œ
 
-                decimal leftReward = leftRewards.ContainsKey(type) ? leftRewards[type] : 0m;    // ÀÌÀü º¸»ó ¼ö·É ÈÄ ³²Àº ½Ã°£ÀÌ ÀÖ´Ù¸é ¹İÈ¯
+                int finalReward = (int)finalAmount;    // ìµœì¢… ë³´ìƒ í˜•ë³€í™˜
+                decimal leftoverReward = finalAmount - finalReward;    // í˜¹ì‹œ ë‚¨ëŠ” ë³´ìƒì´ ìˆëŠ”ì§€ ì²´í¬
 
-                decimal finalReward = (rewardTime * reward) + leftReward;    // ±âº» º¸»ó·®°ú ³²¾Ò´ø º¸»ó·® ÇÕ»ê
-
-                calculateRewards[type] = (int)finalReward;    // ÃÖÁ¾ º¸»ó intÇüÀ¸·Î ¹İÈ¯
+                calculateRewards[id] = new RewardResult(finalReward, leftoverReward);    // ìµœì¢… ë³´ìƒëŸ‰ê³¼ ë‚¨ëŠ” ë³´ìƒëŸ‰ ì €ì¥
             }
         }
-        return calculateRewards;    // ÃÖÁ¾ º¸»ó °á°ú°¡ ´ã±ä µñ¼Å³Ê¸® ¹İÈ¯
+        return calculateRewards;    // ìµœì¢… ë³´ìƒ ê²°ê³¼ê°€ ë‹´ê¸´ ë”•ì…”ë„ˆë¦¬ ë°˜í™˜
     }
 
-
-    // Å×½ºÆ®¿ë UI ¿¬°á
+    // í…ŒìŠ¤íŠ¸ìš© UI ì—°ê²°
     private void UpdateUI()
     {
         float rewradTime = GetRewardTime();

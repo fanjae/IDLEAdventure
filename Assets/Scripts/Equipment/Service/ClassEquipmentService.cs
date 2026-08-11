@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 // 장비 장착 실패 원인
@@ -209,6 +209,7 @@ public sealed class ClassEquipmentService
     // 모든 영웅 클래스의 장비 세트 생성
     private void InitializeEquipmentSets()
     {
+        equipmentSets.Clear();
         foreach (HeroClassType heroClass in Enum.GetValues(typeof(HeroClassType)))
         {
             equipmentSets.Add(heroClass, new ClassEquipmentSet());
@@ -219,5 +220,112 @@ public sealed class ClassEquipmentService
     private bool TryGetEquipmentSet(HeroClassType heroClass, out ClassEquipmentSet equipmentSet)
     {
         return equipmentSets.TryGetValue(heroClass, out equipmentSet);
+    }
+
+    // 현재 클래스별 장비 장착 상태를 저장 데이터로 생성
+    public EquipmentSaveData CreateSaveData()
+    {
+        EquipmentSaveData saveData = new();
+
+        foreach (KeyValuePair<HeroClassType, ClassEquipmentSet> pair in equipmentSets)
+        {
+            ClassEquipmentSaveData classSaveData = new()
+            {
+                HeroClass = pair.Key
+            };
+
+            // 장착 중인 슬롯의 InstanceId 저장
+            foreach (EquipmentSlotType slotType in Enum.GetValues(typeof(EquipmentSlotType)))
+            {
+                string instanceId = pair.Value.GetEquippedInstanceId(slotType);
+
+                if (!string.IsNullOrEmpty(instanceId))
+                {
+                    classSaveData.EquippedInstanceIds.Add(slotType, instanceId);
+                }
+            }
+
+            saveData.Classes.Add(classSaveData);
+        }
+
+        return saveData;
+    }
+
+    // 저장 데이터를 기준으로 클래스별 장비 장착 상태 복원
+    public void LoadSaveData(EquipmentSaveData saveData)
+    {
+
+        if (saveData == null)
+        {
+            throw new ArgumentNullException(nameof(saveData));
+        }
+
+        // 기존 장착 상태를 모두 초기화
+        InitializeEquipmentSets();
+
+        if (saveData.Classes == null)
+        {
+            return;
+        }
+
+        foreach (ClassEquipmentSaveData classData in saveData.Classes)
+        {
+            if (classData == null || classData.EquippedInstanceIds == null)
+            {
+                continue;
+            }
+
+            foreach (KeyValuePair<EquipmentSlotType, string> pair in classData.EquippedInstanceIds)
+            {
+                TryLoadEquipment(classData.HeroClass, pair.Key, pair.Value);
+            }
+        }
+    }
+
+    // 저장된 장비 장착 상태를 복원할 수 있으면 해당 슬롯에 적용
+    private bool TryLoadEquipment(HeroClassType heroClass, EquipmentSlotType slotType, string instanceId)
+    {
+        if (string.IsNullOrEmpty(instanceId))
+        {
+            return false;
+        }
+
+        // 저장된 장비가 현재 인벤토리에 존재하는지 확인
+        if (!inventory.TryGetEquipment(instanceId, out OwnedEquipmentData ownedEquipment))
+        {
+            return false;
+        }
+
+        // 보유 장비와 연결된 원본 EquipmentSO 확인
+        if (!itemDatabase.TryGetItem<EquipmentSO>(ownedEquipment.EquipmentId, out EquipmentSO equipment))
+        {
+            return false;
+        }
+
+        // 저장된 클래스와 실제 장비 대상 클래스가 다른 경우 복원하지 않음
+        if (equipment.TargetClass != heroClass)
+        {
+            return false;
+        }
+
+        // 저장된 슬롯과 실제 장비 슬롯이 다른 경우 복원하지 않음
+        if (equipment.SlotType != slotType)
+        {
+            return false;
+        }
+
+        if (!TryGetEquipmentSet(heroClass, out ClassEquipmentSet equipmentSet))
+        {
+            return false;
+        }
+
+        // 같은 장비 인스턴스가 여러 슬롯에 중복 복원되는 것을 방지
+        if (IsEquipped(instanceId))
+        {
+            return false;
+        }
+
+        equipmentSet.SetEquippedInstanceId(slotType, instanceId);
+        return true;
     }
 }

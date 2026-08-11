@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+using Unity.VisualScripting;
+using UnityEngine;
 
 [RequireComponent(typeof(UnitHealth))]
 [RequireComponent(typeof(UnitMovement))]
@@ -12,21 +13,21 @@ public class BattleUnit : MonoBehaviour
     [SerializeField, Min(1)] private int level = 1;
     [Header("회전 설정")]
     [SerializeField, Min(0.0f)] private float rotateSpeed = 720f;
-    [Header("애니메이터")]
-    [SerializeField] private Animator animator;
-    [SerializeField] private string moveParameter = "Move";
-    [SerializeField] private string attackParameter = "Attack";
-    [SerializeField] private string deadParameter = "Dead";
     [Header("사망 애니메이션 실행딜레이")]
     //추후에 에셋을 추가하고 연결한 이후에 딜레이를 조절할 예정
     //지금은 죽으면 바로 파괴
-    [SerializeField, Min(0.0f)] private float destroyDelay = 0.0f;
+    [SerializeField, Min(0.0f)] private float destroyDelay = 2.0f;
 
     private UnitHealth health;
     private UnitMovement movement;
     private UnitAttack attack;
     private UnitSkill skill;
     private UnitStateMachine stateMachine;
+
+    private UnitAnimator unitAnimator;
+
+    private UnitBarrier barrier;
+    
     //실제 전투에서 사용할 런타임 능력치
     //지금은 UnitDataSO로 초기화하고 있지만, 추후에 EquipmentController나 레벨 시스템이 갱신
     private int maxHp;
@@ -51,6 +52,20 @@ public class BattleUnit : MonoBehaviour
         }
     }
     
+    public bool IsAttacking
+    {
+        get
+        {
+            return attack != null && attack.IsAttacking;
+        }
+    }
+    public bool IsUsingSkill
+    {
+        get
+        {
+            return skill != null && skill.IsUsingSkill;
+        }
+    }
     public bool IsDead
     {
         get
@@ -80,15 +95,13 @@ public class BattleUnit : MonoBehaviour
         health = GetComponent<UnitHealth>();
         movement = GetComponent<UnitMovement>();
         attack = GetComponent<UnitAttack>();
+        //스킬이 없는 유닛이 있을 수도 있음. (잡몹)
         skill = GetComponent<UnitSkill>();
 
-        //animator를 직접 연결하지 않은 경우를 고려해서 작성하였음
-        //추후에 변경할 가능성 있음. 현재 단계에선 크게 고려하지 않았음.
-        //(이전 작업 때 에셋에 따라 사용방식이 달라지는 경우가 있었음.)
-        if (animator == null)
-        {
-            animator = GetComponentInChildren<Animator>();
-        }
+        //애니메이션 처리는 UnitAnimator에서 하는걸로
+        unitAnimator = GetComponent<UnitAnimator>();
+
+        barrier = GetComponent<UnitBarrier>();
     }
     void Start()
     {
@@ -137,10 +150,10 @@ public class BattleUnit : MonoBehaviour
         health.Initialize(maxHp);
         movement.Initialize(unitData.MoveSpeed, unitData.AttackRange);
         attack.Initialize(this, unitData.AttackType, attackPower, unitData.AttackSpeed);
-        if (skill != null)
-        {
-            skill.Initialize(this);
-        }
+        
+        unitAnimator?.SetAttackSpeed(unitData.AttackSpeed);//공격속도에 맞춰서 애니메이션 속도도 설정
+
+        skill?.Initialize(this);
 
         health.OnDead += HandleDead;
         stateMachine = new UnitStateMachine(this);
@@ -214,12 +227,34 @@ public class BattleUnit : MonoBehaviour
     public void TryAttack()
     {
         if (!HasValidTarget()) return;
-
+        
         attack.TryAttack(Target);
     }
     public void CancelAttack()
     {
         attack.CancelAttack();
+    }
+    //기본 공격 이벤트 연결
+    public void AttackHitEvent()
+    {
+        if (!IsAttacking) return;
+        //Attack 애니메이션 재생 중일 때, 타격 판정
+        if (unitAnimator == null || !unitAnimator.IsAttackAnimationPlaying()) return;
+
+        attack.ApplyAttackDamage();
+    }
+    public void AttackEndEvent()
+    {
+        attack?.CompleteAttack();
+    }
+    //스킬 이벤트 연결
+    public void SkillActivateEvent()
+    {
+        if (skill == null) return;
+        //실제 스킬 애니메이션 중에 발생한 이벤트만 가능
+        if (unitAnimator == null || !unitAnimator.IsSkillAnimationPlaying()) return;
+
+        skill.ApplySkillEffect();
     }
     //스킬~
     public bool CanUseSkill()
@@ -230,33 +265,53 @@ public class BattleUnit : MonoBehaviour
     {
         return skill != null && skill.UseSkill();
     }
+    public void UpdateSkill()
+    {
+        skill?.UpdataSkill();
+    }
 
     public int TakeDamage(int damage)
     {
+        int appliedDamage = health.TakeDamage(damage);
+        //피격 애니메이션 추가
+        if (appliedDamage <= 0 || IsDead) return appliedDamage;
+
+        if (!IsAttacking && !IsUsingSkill) unitAnimator?.PlayDamaged();
+
         //실제로 받은 데미지 반환(감소한 체력량)
-        return health.TakeDamage(damage);
+        return appliedDamage;
     }
     public int Heal(int amount)
     {
         //실제로 적용된 회복량 반환
         return health.Heal(amount);
     }
-    public void PlayAttackAnimation()
+    public bool ActivateBarrier(int blockCount, GameObject vfxPrefab)
     {
-        if (animator == null) return;
+        if (barrier == null) return false;
 
-        animator.SetTrigger(attackParameter);
+        barrier.Activate(blockCount, vfxPrefab);
+        return true;
+    }
+    public bool TryPlayAttackAnimation()
+    {
+        if (unitAnimator == null) return false;
+
+        return unitAnimator.TryPlayAttack();
+    }
+    public bool TryPlaySkillAnimation()
+    {
+        if (unitAnimator == null) return false;
+
+        return unitAnimator.TryPlaySkill();
     }
     private void HandleDead()
     {
         //사망 상태로 변경하면서 이동, 공격을 정리
         stateMachine?.ChangeState(UnitState.Dead);
-        
-        if (animator != null)
-        {
-            animator.SetBool(moveParameter, false);
-            animator.SetTrigger(deadParameter);
-        }
+
+        unitAnimator?.PlayDead();
+
         //오브젝트 삭제 전에 판정
         BattleManager.Instance?.NotifyUnitDead(this);
 
@@ -267,10 +322,9 @@ public class BattleUnit : MonoBehaviour
     }
     private void UpdateMoveAnimation()
     {
-        if (animator == null) return;
-
         bool isMoving = CurrentState == UnitState.Move && movement.IsMoving && CanBattle;
-        animator.SetBool(moveParameter, isMoving);
+
+        unitAnimator?.SetMove(isMoving);
     }
 
     //레벨을 추가하게 되면서 만든 레벨 능력치 계산용

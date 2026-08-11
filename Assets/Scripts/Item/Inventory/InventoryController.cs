@@ -136,4 +136,36 @@ public sealed class InventoryController
     {
         OnInventoryChanged?.Invoke();
     }
+
+    // 현재 인벤토리 상태를 저장 데이터에 반영
+    public void WriteSaveData(GameSaveData saveData)
+    {
+        if (saveData == null)
+        {
+            throw new ArgumentNullException(nameof(saveData));
+        }
+
+        saveData.Inventory = inventory.CreateSaveData();
+        saveData.Equipment = equipmentService.CreateSaveData();
+    }
+
+    // 저장 데이터를 기준으로 인벤토리와 장비 장착 상태 복원
+    public void LoadSaveData(GameSaveData saveData)
+    {
+        if (saveData == null)
+        {
+            throw new ArgumentNullException(nameof(saveData));
+        }
+
+        // 저장 데이터가 비어 있는 경우 기본 데이터 사용
+        saveData.Inventory ??= new InventorySaveData();
+        saveData.Equipment ??= new EquipmentSaveData();
+
+        // 장착 상태에서 보유 장비의 InstanceId를 참조하므로 인벤토리를 먼저 복원
+        inventory.LoadSaveData(saveData.Inventory);
+        equipmentService.LoadSaveData(saveData.Equipment);
+
+        OnInventoryChanged?.Invoke();
+        OnEquipmentChanged?.Invoke();
+    }
 }

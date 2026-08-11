@@ -1,10 +1,8 @@
-﻿
+
 public class UnitSkillState : IUnitState
 {
     private readonly BattleUnit unit;
     private readonly UnitStateMachine stateMachine;
-
-    private bool usedSkill;
 
     public UnitSkillState(BattleUnit unit, UnitStateMachine stateMachine)
     {
@@ -15,12 +13,15 @@ public class UnitSkillState : IUnitState
     public void Enter()
     {
         unit.StopMove();
-        unit.CancelAttack();
-        usedSkill = unit.UseSkill();
+        unit.UseSkill();
     }
     public void Update()
     {
         if (!unit.CanBattle) return;
+
+        unit.UpdateSkill();//스킬 행동시간 확인용
+
+        if (unit.IsUsingSkill) return;
         if (!unit.HasValidTarget())
         {
             unit.ClearTarget();
@@ -37,6 +38,6 @@ public class UnitSkillState : IUnitState
     }
     public void Exit()
     {
-        usedSkill = false;
+        
     }
 }
