@@ -80,4 +80,61 @@ public sealed class HeroController
 
         return true;
     }
+
+    // 현재 보유 영웅 상태를 저장 데이터에 반영
+    public void WriteSaveData(GameSaveData saveData)
+    {
+        if (saveData == null)
+        {
+            throw new ArgumentNullException(nameof(saveData));
+        }
+
+        saveData.Heroes = heroCollection.CreateSaveData();
+    }
+
+    // 저장 데이터를 기준으로 보유 영웅 상태 복원
+    public void LoadSaveData(GameSaveData saveData)
+    {
+        if (saveData == null)
+        {
+            throw new ArgumentNullException(nameof(saveData));
+        }
+
+        // 저장된 영웅 데이터가 없는 경우 기본 데이터 사용
+        saveData.Heroes ??= new HeroSaveData();
+        saveData.Heroes.OwnedHeroes ??= new List<OwnedHeroSaveData>();
+
+        // 현재 보유 영웅 상태 초기화
+        heroCollection.Clear();
+
+        foreach (OwnedHeroSaveData heroSaveData in saveData.Heroes.OwnedHeroes)
+        {
+            if (heroSaveData == null)
+            {
+                continue;
+            }
+
+            if (string.IsNullOrEmpty(heroSaveData.HeroId))
+            {
+                continue;
+            }
+
+            if (heroSaveData.Level < 1)
+            {
+                continue;
+            }
+
+            // 저장된 UnitID를 기준으로 영웅 원본 데이터 조회
+            if (!heroDatabase.TryGetHero(heroSaveData.HeroId, out HeroData heroData))
+            {
+                continue;
+            }
+
+            // 저장된 레벨을 적용하여 보유 영웅 데이터 복원
+            heroCollection.TryAdd(heroData, heroSaveData.Level);
+        }
+
+        // 보유 영웅 목록 변경 이벤트 호출
+        OnHeroCollectionChanged?.Invoke();
+    }
 }
