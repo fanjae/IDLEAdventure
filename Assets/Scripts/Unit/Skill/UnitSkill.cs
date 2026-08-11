@@ -248,6 +248,7 @@ public class UnitSkill : MonoBehaviour
         if (skillData.HealTargetVfxPrefab == null)
         {
             Debug.LogWarning("[Heal Target VFX] Prefab이 연결되지 않음");
+            return;
         }
 
         GameObject vfx = Instantiate(skillData.HealTargetVfxPrefab, target.transform.position, Quaternion.identity, target.transform);
