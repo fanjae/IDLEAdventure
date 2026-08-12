@@ -510,8 +510,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainUIController, Assembly-CSharp
+      - m_Target: {fileID: 900000000000000002}
+        m_TargetAssemblyTypeName: MainUIRelay, Assembly-CSharp
         m_MethodName: GoBack
         m_Mode: 0
         m_Arguments:
@@ -666,9 +666,11 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
   m_sharedMaterial: {fileID: -1033559045507591764, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 0}
   m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
+  m_fontMaterials:
+  - {fileID: 0}
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281355325
@@ -1513,9 +1515,11 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
   m_sharedMaterial: {fileID: -1033559045507591764, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 0}
   m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
+  m_fontMaterials:
+  - {fileID: 0}
   m_fontColor32:
     serializedVersion: 2
     rgba: 4280895288
@@ -2081,8 +2085,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainUIController, Assembly-CSharp
+      - m_Target: {fileID: 900000000000000002}
+        m_TargetAssemblyTypeName: MainUIRelay, Assembly-CSharp
         m_MethodName: OpenHeroes
         m_Mode: 0
         m_Arguments:
@@ -2684,6 +2688,8 @@ GameObject:
   - component: {fileID: 3867401547007931889}
   - component: {fileID: 2248570327721198686}
   - component: {fileID: 6892668644735094821}
+  - component: {fileID: 2976356151040393566}
+  - component: {fileID: 8854964489972226002}
   m_Layer: 0
   m_Name: InventoryItem_1
   m_TagString: Untagged
@@ -2769,6 +2775,63 @@ MonoBehaviour:
   m_FlexibleWidth: 0
   m_FlexibleHeight: 0
   m_LayoutPriority: 1
+--- !u!114 &2976356151040393566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4077706125939964250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb6da38976993a04a8098d39a3b209d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentInventoryItemView
+  iconImage: {fileID: 5670727600452807065}
+--- !u!114 &8854964489972226002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4077706125939964250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 2248570327721198686}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4118086439187214012
 GameObject:
   m_ObjectHideFlags: 0
@@ -2838,6 +2901,81 @@ MonoBehaviour:
   m_Sprite: {fileID: 21300000, guid: 011af8305cb19cf4b88e01ca6d0c0724, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!1 &4158192419699413879
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 731848051823547805}
+  - component: {fileID: 7621574503596052357}
+  - component: {fileID: 2213899108327529013}
+  m_Layer: 5
+  m_Name: Notification
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &731848051823547805
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4158192419699413879}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 453349465663987585}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 832}
+  m_SizeDelta: {x: 300, y: 300}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &7621574503596052357
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4158192419699413879}
+  m_CullTransparentMesh: 1
+--- !u!114 &2213899108327529013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4158192419699413879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 9f34cf49b42dc1d4ba94449a6278742a, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -3161,6 +3299,8 @@ GameObject:
   - component: {fileID: 8199373876120268690}
   - component: {fileID: 8348660842246548636}
   - component: {fileID: 3243296244566164045}
+  - component: {fileID: 900000000000000002}
+  - component: {fileID: 1706137215056797}
   m_Layer: 5
   m_Name: Equipment
   m_TagString: Untagged
@@ -3226,6 +3366,55 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &900000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4408351698561680908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56a703d3c85319a479ee86d710ef2609, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainUIRelay
+--- !u!114 &1706137215056797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4408351698561680908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e9f967cfd413874c9126741fcd8d29e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentPresenter
+  itemDatabase: {fileID: 11400000, guid: 29592baeae843814abc08152e94398a3, type: 2}
+  tankClassButton: {fileID: 1157457817620865407}
+  warriorClassButton: {fileID: 2997524588151679835}
+  mageClassButton: {fileID: 5083752253419965875}
+  marksmanClassButton: {fileID: 1102998711459106506}
+  supportClassButton: {fileID: 8480065802479129048}
+  rogueClassButton: {fileID: 8290946077465810929}
+  selectedClassLabel: {fileID: 3351434092365015448}
+  selectedClassIcon: {fileID: 2213899108327529013}
+  classIconCatalog: {fileID: 11400000, guid: 041c9638cca6e7e4e88e550f1fa4c690, type: 2}
+  weaponIcon: {fileID: 5132376140507516832}
+  handsIcon: {fileID: 5063817313985434588}
+  accessoryIcon: {fileID: 6438087314386078139}
+  headIcon: {fileID: 2015450836704571460}
+  bodyIcon: {fileID: 4499472662573378744}
+  legsIcon: {fileID: 6209051096579964570}
+  emptySlotIcon: {fileID: 21300000, guid: 205625160a122e647aff2b4791187e13, type: 3}
+  missingEquipmentIcon: {fileID: 21300000, guid: 44527d02da69a9e42b5d8f1131c47f22, type: 3}
+  effectTitleText: {fileID: 1383250599632828216}
+  attackValueText: {fileID: 3681017735015378971}
+  defenseValueText: {fileID: 5226391875459201168}
+  healthValueText: {fileID: 2615531546749908772}
+  inventoryContent: {fileID: 3691492797752773847}
+  inventoryItemTemplate: {fileID: 2976356151040393566}
+  equipButton: {fileID: 4567196970003986165}
 --- !u!1 &4412612753890271507
 GameObject:
   m_ObjectHideFlags: 0
@@ -3388,6 +3577,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1480261844073437322}
+  - {fileID: 731848051823547805}
   - {fileID: 2010847292371681056}
   - {fileID: 7853414820941503771}
   - {fileID: 1919578217599690456}
@@ -4050,13 +4240,15 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC790\uB3D9 \uC7A5\uCC29"
+  m_text: "\uC7A5\uCC29"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
   m_sharedMaterial: {fileID: -1033559045507591764, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 0}
   m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
+  m_fontMaterials:
+  - {fileID: 0}
   m_fontColor32:
     serializedVersion: 2
     rgba: 4278190080
@@ -5420,9 +5612,11 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
   m_sharedMaterial: {fileID: -1033559045507591764, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 0}
   m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
+  m_fontMaterials:
+  - {fileID: 0}
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281881671
@@ -5831,9 +6025,11 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
   m_sharedMaterial: {fileID: -1033559045507591764, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 0}
   m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
+  m_fontMaterials:
+  - {fileID: 0}
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281881671
@@ -6043,9 +6239,11 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
   m_sharedMaterial: {fileID: -1033559045507591764, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 0}
   m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
+  m_fontMaterials:
+  - {fileID: 0}
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281881671

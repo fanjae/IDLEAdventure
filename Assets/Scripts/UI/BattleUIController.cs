@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,14 +20,26 @@ public class BattleUIController : MonoBehaviour
     [SerializeField] private GameObject pausePopup;
     [SerializeField] private GameObject settingsPopup;
     [SerializeField] private GameObject battleResultPopup;
+    [SerializeField] private GameObject selectionNoticePanel;
+    [SerializeField] private TMP_Text selectionNoticeText;
 
     [Header("씬 이동")]
     [SerializeField] private string mainSceneName = "MainScene";
 
     private readonly Stack<GameObject> pageHistory = new Stack<GameObject>();
+    private readonly List<string> expeditionHeroIds = new List<string>();
     private GameObject[] pagePanels;
     private GameObject currentPage;
     private int selectedStageNumber = 1;
+    private BattleHeroRosterPresenter heroSelectRoster;
+    private BattleHeroRosterPresenter formationRoster;
+    private string selectedFormationHeroId;
+    private float selectionNoticeHideTime;
+
+    public event Action<string> OnFormationHeroSelected;
+
+    public string SelectedFormationHeroId => selectedFormationHeroId;
+    public IReadOnlyList<string> ExpeditionHeroIds => expeditionHeroIds;
 
     private void Awake()
     {
@@ -39,6 +53,9 @@ public class BattleUIController : MonoBehaviour
             battleHudPanel
         };
 
+        ConfigureHeroRosters();
+        selectionNoticePanel?.SetActive(false);
+
         if (stageSelectPanel == null)
         {
             Debug.LogError("Stage Select Panel is not assigned.", this);
@@ -51,10 +68,36 @@ public class BattleUIController : MonoBehaviour
         CloseBattleResultPopup();
     }
 
+    private void OnEnable()
+    {
+        ConfigureHeroRosters();
+    }
+
     private void OnDestroy()
     {
+        UnsubscribeFromHeroRosters();
+
         if (Instance == this)
             Instance = null;
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeFromHeroRosters();
+    }
+
+    private void UnsubscribeFromHeroRosters()
+    {
+        if (heroSelectRoster != null)
+        {
+            heroSelectRoster.OnSelectionChanged -= HandleExpeditionSelectionChanged;
+            heroSelectRoster.OnSelectionDenied -= ShowSelectionNotice;
+        }
+
+        if (formationRoster != null)
+        {
+            formationRoster.OnSelectionChanged -= HandleFormationSelectionChanged;
+        }
     }
 
     // 스테이지 선택 화면 엶
@@ -75,12 +118,23 @@ public class BattleUIController : MonoBehaviour
     // 배치할 영웅 고르는 화면 엶
     public void OpenHeroSelection()
     {
+        heroSelectRoster?.ClearHeroFilter();
+        heroSelectRoster?.SetSelectedHeroIds(expeditionHeroIds);
         OpenPage(heroSelectPanel);
     }
 
     // 선택한 영웅 배치하는 화면 엶
     public void OpenFormation()
     {
+        if (expeditionHeroIds.Count == 0)
+        {
+            ShowSelectionNotice("최소 1명의 영웅을 원정대에 편성해야 합니다.");
+            return;
+        }
+
+        formationRoster?.SetHeroFilter(expeditionHeroIds);
+        formationRoster?.SetSelectedHeroIds(null);
+        SetSelectedFormationHero(null);
         OpenPage(formationPanel);
     }
 
@@ -113,7 +167,7 @@ public class BattleUIController : MonoBehaviour
     {
         selectedStageNumber++;
         pageHistory.Clear();
-        ShowPage(heroSelectPanel);
+        OpenHeroSelection();
         CloseBattleResultPopup();
         ClosePausePopup();
     }
@@ -228,5 +282,70 @@ public class BattleUIController : MonoBehaviour
         }
 
         currentPage = targetPage;
+    }
+
+    private void ConfigureHeroRosters()
+    {
+        UnsubscribeFromHeroRosters();
+
+        heroSelectRoster = heroSelectPanel != null
+            ? heroSelectPanel.GetComponent<BattleHeroRosterPresenter>()
+            : null;
+        formationRoster = formationPanel != null
+            ? formationPanel.GetComponent<BattleHeroRosterPresenter>()
+            : null;
+
+        if (heroSelectRoster != null)
+        {
+            heroSelectRoster.OnSelectionChanged += HandleExpeditionSelectionChanged;
+            heroSelectRoster.OnSelectionDenied += ShowSelectionNotice;
+        }
+
+        if (formationRoster != null)
+        {
+            formationRoster.OnSelectionChanged += HandleFormationSelectionChanged;
+        }
+    }
+
+    private void HandleExpeditionSelectionChanged(IReadOnlyList<string> selectedHeroIds)
+    {
+        expeditionHeroIds.Clear();
+        expeditionHeroIds.AddRange(selectedHeroIds);
+    }
+
+    private void HandleFormationSelectionChanged(IReadOnlyList<string> selectedHeroIds)
+    {
+        SetSelectedFormationHero(selectedHeroIds.Count > 0 ? selectedHeroIds[0] : null);
+    }
+
+    private void SetSelectedFormationHero(string heroId)
+    {
+        if (selectedFormationHeroId == heroId)
+        {
+            return;
+        }
+
+        selectedFormationHeroId = heroId;
+        OnFormationHeroSelected?.Invoke(selectedFormationHeroId);
+    }
+
+    private void Update()
+    {
+        if (selectionNoticePanel != null && selectionNoticePanel.activeSelf && Time.unscaledTime >= selectionNoticeHideTime)
+        {
+            selectionNoticePanel.SetActive(false);
+        }
+    }
+
+    private void ShowSelectionNotice(string message)
+    {
+        if (selectionNoticePanel == null || selectionNoticeText == null)
+        {
+            return;
+        }
+
+        selectionNoticeText.text = message;
+        selectionNoticePanel.SetActive(true);
+        selectionNoticeHideTime = Time.unscaledTime + 2f;
     }
 }
