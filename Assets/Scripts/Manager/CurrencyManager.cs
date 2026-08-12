@@ -8,7 +8,7 @@ using UnityEngine;
 public enum CurrencyType
 {
     None = -1,
-    GOLD, EXP, UPGRADE, GEM,     // 이후 추가될 재화 추가
+    GOLD, EXP, UPGRADE, GEM, DIAMOND,     // 이후 추가될 재화 추가
     Length
 }
 /// <summary>
