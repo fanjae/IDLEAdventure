@@ -29,6 +29,9 @@ public sealed class SaveManager : Singleton<SaveManager>
             HeroManager.Instance.Controller.WriteSaveData(CurrentData);
         }
 
+        // 현재 재화 상태를 저장 데이터에 반영
+        CurrencyManager.Instance.WriteSaveData(CurrentData);
+
         // 저장 시점을 UTC Unix Time 기준으로 갱신
         CurrentData.SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         fileService.Save(CurrentData);
