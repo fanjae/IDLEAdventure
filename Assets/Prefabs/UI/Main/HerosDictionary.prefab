@@ -68,10 +68,12 @@ MonoBehaviour:
   m_text: "\uBCF4\uC720 \uC601\uC6C5  08 / 24"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_sharedMaterial: {fileID: -1033559045507591764, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_fontSharedMaterials: []
+  m_sharedMaterial: {fileID: 0}
+  m_fontSharedMaterials:
+  - {fileID: 0}
   m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
+  m_fontMaterials:
+  - {fileID: 0}
   m_fontColor32:
     serializedVersion: 2
     rgba: 4280892720
@@ -835,8 +837,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainUIController, Assembly-CSharp
+      - m_Target: {fileID: 900000000000000004}
+        m_TargetAssemblyTypeName: MainUIRelay, Assembly-CSharp
         m_MethodName: GoBack
         m_Mode: 0
         m_Arguments:
@@ -962,10 +964,12 @@ MonoBehaviour:
   m_text: "\uC5D8\uB9AC\uC544"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_sharedMaterial: {fileID: -1033559045507591764, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_fontSharedMaterials: []
+  m_sharedMaterial: {fileID: 0}
+  m_fontSharedMaterials:
+  - {fileID: 0}
   m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
+  m_fontMaterials:
+  - {fileID: 0}
   m_fontColor32:
     serializedVersion: 2
     rgba: 4280563758
@@ -1165,6 +1169,7 @@ GameObject:
   - component: {fileID: 172455388715725221}
   - component: {fileID: 3778805462858546231}
   - component: {fileID: 1136192281148425496}
+  - component: {fileID: 764571037373847745}
   m_Layer: 0
   m_Name: HeroCard_01
   m_TagString: Untagged
@@ -1297,6 +1302,22 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &764571037373847745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4491880712621237412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 365c2b56c4fbff14cb7ca93c956abc48, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::HeroDictionaryCardView
+  portraitImage: {fileID: 2481688924054003019}
+  nameText: {fileID: 48728762866758114}
+  statusText: {fileID: 2437406938937283741}
+  selectButton: {fileID: 3778805462858546231}
 --- !u!1 &4507785470201707212
 GameObject:
   m_ObjectHideFlags: 0
@@ -1832,10 +1853,12 @@ MonoBehaviour:
   m_text: "\uCD08\uC0C1\uD654 \uC5F0\uACB0 \uC608\uC815"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_sharedMaterial: {fileID: -1033559045507591764, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_fontSharedMaterials: []
+  m_sharedMaterial: {fileID: 0}
+  m_fontSharedMaterials:
+  - {fileID: 0}
   m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
+  m_fontMaterials:
+  - {fileID: 0}
   m_fontColor32:
     serializedVersion: 2
     rgba: 4282544978
@@ -2435,10 +2458,12 @@ MonoBehaviour:
     \uB9CC\uB098\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_sharedMaterial: {fileID: -1033559045507591764, guid: eadb399ed989a3b49ac7c6baa5f45e0c, type: 2}
-  m_fontSharedMaterials: []
+  m_sharedMaterial: {fileID: 0}
+  m_fontSharedMaterials:
+  - {fileID: 0}
   m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
+  m_fontMaterials:
+  - {fileID: 0}
   m_fontColor32:
     serializedVersion: 2
     rgba: 4280694835
@@ -2849,6 +2874,8 @@ GameObject:
   - component: {fileID: 3297806407871408406}
   - component: {fileID: 2987302179263438726}
   - component: {fileID: 2575034844408461300}
+  - component: {fileID: 900000000000000004}
+  - component: {fileID: 4940464510011833434}
   m_Layer: 5
   m_Name: HerosDictionary
   m_TagString: Untagged
@@ -2914,3 +2941,40 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &900000000000000004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8820442444534726952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56a703d3c85319a479ee86d710ef2609, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MainUIRelay
+--- !u!114 &4940464510011833434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8820442444534726952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e31e60a69a6e3094094bbaa0a5c9ec1a, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::HeroDictionaryPresenter
+  heroDatabase: {fileID: 11400000, guid: 34200eb6efdc55c488c1be88967fa1b7, type: 2}
+  presentationCatalog: {fileID: 11400000, guid: 36dfad89a4845ef419532771dc569783, type: 2}
+  allTabButton: {fileID: 5822524831664190504}
+  ownedTabButton: {fileID: 8621576685841672088}
+  unownedTabButton: {fileID: 8946541913469130658}
+  progressLabel: {fileID: 8746859348705971423}
+  progressFill: {fileID: 4847728688224935789}
+  rosterContent: {fileID: 2209995093183842168}
+  cardTemplate: {fileID: 764571037373847745}
+  detailOverlay: {fileID: 2026299091112200697}
+  detailPortraitImage: {fileID: 116336693267421344}
+  detailText: {fileID: 859829492937967042}
+  closeDetailButton: {fileID: 532840753248772511}
