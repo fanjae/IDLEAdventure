@@ -1,4 +1,4 @@
-﻿public enum UnitTeam // 아군, 적군
+public enum UnitTeam // 아군, 적군
 {
     Hero,
     Enemy
@@ -30,4 +30,11 @@ public enum AttackType // 공격 방식(근거리, 원거리)
 {
     Melee,
     Ranged
+}
+public enum SkillEffectType
+{
+    Damage,
+    Heal,
+    Barrier,
+    ProjectileDamage
 }

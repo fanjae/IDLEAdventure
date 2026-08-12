@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 public class UnitHealth : MonoBehaviour
 {
+    private UnitBarrier barrier;
+
     public event Action<int, int> OnHealthChanged; //체력 변화에 대한 이벤트
     public event Action<int> OnDamaged;
     public event Action<int> OnHealed;
@@ -24,12 +26,20 @@ public class UnitHealth : MonoBehaviour
 
         OnHealthChanged?.Invoke(CurrentHp, MaxHp);
     }
+
+    private void Awake()
+    {
+        barrier = GetComponent<UnitBarrier>();
+    }
+
     public int TakeDamage(int damage)
     {
         if (!IsInitialized || IsDead) return 0; //초기화되지 않았거나 이미 죽은상태면 리턴
 
         damage = Mathf.Max(0, damage);
         if (damage <= 0) return 0;
+        //배리어가 활성화되어 있으면 피해 무효화
+        if (barrier != null && barrier.TryBlockDamage()) return 0;
 
         int previousHp = CurrentHp;
         CurrentHp = Mathf.Max(0, CurrentHp - damage);
@@ -77,8 +87,7 @@ public class UnitHealth : MonoBehaviour
 
         newMaxHp = Mathf.Max(1, newMaxHp);
 
-        int previousMaxHp = MaxHp;
-        int changedHp = newMaxHp - previousMaxHp;
+        int changedHp = newMaxHp - MaxHp;
         MaxHp = newMaxHp;
 
         if (changedHp > 0 && addChangedHp) CurrentHp += changedHp;

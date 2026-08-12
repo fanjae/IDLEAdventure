@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 // 플레이어가 보유한 일반 아이템과 장비를 관리하는 클래스
@@ -169,5 +169,117 @@ public sealed class Inventory
 
         int currentQuantity = GetQuantity(itemId);
         return quantity <= int.MaxValue - currentQuantity;
+    }
+
+    // 현재 보유 중인 일반 아이템과 장비를 저장 데이터로 생성
+    public InventorySaveData CreateSaveData()
+    {
+        InventorySaveData saveData = new();
+
+        // 보유 중인 일반 아이템 저장
+        foreach (InventoryItemData item in items.Values)
+        {
+            saveData.Items.Add(new InventoryItemSaveData
+            {
+                ItemId = item.ItemId,
+                Quantity = item.Quantity
+            });
+        }
+
+        // 보유 중인 장비 저장
+        foreach (OwnedEquipmentData equipment in equipments.Values)
+        {
+            saveData.Equipments.Add(new OwnedEquipmentSaveData
+            {
+                InstanceId = equipment.InstanceId,
+                EquipmentId = equipment.EquipmentId,
+                EnhancementLevel = equipment.EnhancementLevel
+            });
+        }
+
+        return saveData;
+    }
+
+    // 저장 데이터를 기준으로 일반 아이템과 보유 장비 상태 복원
+    public void LoadSaveData(InventorySaveData saveData)
+    {
+        if (saveData == null)
+        {
+            throw new ArgumentNullException(nameof(saveData));
+        }
+
+        items.Clear();
+        equipments.Clear();
+
+        // 저장된 일반 아이템 복원
+        if (saveData.Items != null)
+        {
+            foreach (InventoryItemSaveData itemData in saveData.Items)
+            {
+                if (!CanLoadItem(itemData))
+                {
+                    continue;
+                }
+
+                items.Add(itemData.ItemId, new InventoryItemData(itemData.ItemId, itemData.Quantity));
+            }
+        }
+
+        // 저장된 보유 장비 복원
+        if (saveData.Equipments != null)
+        {
+            foreach (OwnedEquipmentSaveData equipmentData in saveData.Equipments)
+            {
+                if (!CanLoadEquipment(equipmentData))
+                {
+                    continue;
+                }
+
+                OwnedEquipmentData equipment = new(equipmentData.InstanceId, equipmentData.EquipmentId, equipmentData.EnhancementLevel);
+                equipments.Add(equipment.InstanceId, equipment);
+            }
+        }
+    }
+
+    // 저장된 일반 아이템을 복원할 수 있는 상태인지 확인
+    private bool CanLoadItem(InventoryItemSaveData itemData)
+    {
+        if (itemData == null || itemData.ItemId <= 0 || itemData.Quantity <= 0)
+        {
+            return false;
+        }
+
+        if (items.ContainsKey(itemData.ItemId))
+        {
+            return false;
+        }
+
+        if (!itemDatabase.TryGetItem(itemData.ItemId, out ItemSO item))
+        {
+            return false;
+        }
+
+        return item.Category != ItemCategory.Equipment;
+    }
+
+    // 저장된 장비를 복원할 수 있는 상태인지 확인
+    private bool CanLoadEquipment(OwnedEquipmentSaveData equipmentData)
+    {
+        if (equipmentData == null || string.IsNullOrEmpty(equipmentData.InstanceId))
+        {
+            return false;
+        }
+        
+        if (equipmentData.EnhancementLevel < 0)
+        {
+            return false;
+        }
+
+        if (equipments.ContainsKey(equipmentData.InstanceId))
+        {
+            return false;
+        }
+
+        return itemDatabase.TryGetItem<EquipmentSO>(equipmentData.EquipmentId, out _);
     }
 }

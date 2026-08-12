@@ -32,6 +32,12 @@ public class UnitMoveState : IUnitState
             stateMachine.ChangeState(UnitState.Attack);
             return;
         }
+        //이동 중에도 스킬 조건을 확인하기 위해 추가
+        if (unit.CanUseSkill())
+        {
+            stateMachine.ChangeState(UnitState.Skill);
+            return;
+        }
 
         unit.MoveToTarget();
     }

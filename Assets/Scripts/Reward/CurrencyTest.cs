@@ -1,40 +1,42 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 /// <summary>
-/// CurrencyManager ÀÛµ¿ È®ÀÎ¿ë Å¬·¡½º.
+/// CurrencyManager ì‘ë™ í™•ì¸ìš© í´ë˜ìŠ¤.
 /// </summary>
 public class CurrencyTest : MonoBehaviour
 {
     [Header("Binding Component")]
-    [SerializeField] private TMP_Text goldText;
+    [SerializeField] private TMP_Text[] currencyTexts = new TMP_Text[4];
 
     private void Awake()
     {
-        CurrencyManager.Instance.OnCurrencyChanged += UpdateGoldText;
+        CurrencyManager.Instance.OnCurrencyChanged += UpdateCurrencyText;
 
-        UpdateGoldText(CurrencyType.Gold, CurrencyManager.Instance.GetCurrency(CurrencyType.Gold));
+        for (int i = 0; i < (int)CurrencyType.Length; i++)
+        {
+            UpdateCurrencyText((CurrencyType)i, CurrencyManager.Instance.GetCurrency((CurrencyType)i));
+        }
     }
 
     public void ClickAddButton()
     {
-        CurrencyManager.Instance.AddCurrency(CurrencyType.Gold, 100);
+        CurrencyManager.Instance.AddCurrency(CurrencyType.GOLD, 100);
     }
     public void ClickUseButton()
     {
-        CurrencyManager.Instance.UseCurrency(CurrencyType.Gold, 50);
+        CurrencyManager.Instance.UseCurrency(CurrencyType.GOLD, 50);
     }
     public void ClickSceneChangeButton()
     {
         SceneManager.LoadScene("SampleScene");
     }
-    private void UpdateGoldText(CurrencyType type, int amount)
+    private void UpdateCurrencyText(CurrencyType type, int amount)
     {
-        if (type == CurrencyType.Gold)
+        if ((int)type >= 0 && (int)type < currencyTexts.Length)
         {
-            goldText.text = $"Gold : {amount}";
+            currencyTexts[(int)type].text = $"{type}: {amount}";
         }
     }
 
@@ -42,7 +44,7 @@ public class CurrencyTest : MonoBehaviour
     {
         if (CurrencyManager.Instance != null)
         {
-            CurrencyManager.Instance.OnCurrencyChanged -= UpdateGoldText;
+            CurrencyManager.Instance.OnCurrencyChanged -= UpdateCurrencyText;
         }
     }
 }
