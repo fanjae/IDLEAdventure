@@ -8,7 +8,7 @@ using UnityEngine;
 public enum CurrencyType
 {
     None = -1,
-    GOLD, EXP, UPGRADE, DIAMOND,     // 이후 추가될 재화 추가
+    GOLD, EXP, UPGRADE, GEM,     // 이후 추가될 재화 추가
     Length
 }
 /// <summary>
@@ -50,6 +50,13 @@ public class CurrencyManager : Singleton<CurrencyManager>
             // 임시 세이브 매니저에 저장되어 있는 재화 받아오기.
             currencies[(CurrencyType)i] = TestSaveManager.Instance.CurrentSaveData.CurrencyDatas[i];
         }
+    }
+    // 테스트를 위해 초기 재화 지급용
+    private void Start()
+    {
+        // 메인 화면의 Gold, Gem UI 확인을 위해 두 재화 지급.
+        AddCurrency(CurrencyType.GOLD, 10000);
+        AddCurrency(CurrencyType.GEM, 1000);
     }
 
     // 재화 획득 함수
