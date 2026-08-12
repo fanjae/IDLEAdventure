@@ -19,7 +19,7 @@ public class UnitSkillState : IUnitState
     {
         if (!unit.CanBattle) return;
 
-        unit.UpdateSkill();//스킬 행동시간 확인용
+        unit.UpdateSkill();//SkillEnd 누락 대비 체크용
 
         if (unit.IsUsingSkill) return;
         if (!unit.HasValidTarget())
