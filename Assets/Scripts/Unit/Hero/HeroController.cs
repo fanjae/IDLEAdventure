@@ -7,6 +7,7 @@ public sealed class HeroController
 {
     private readonly HeroDatabaseSO heroDatabase;
     private readonly HeroCollection heroCollection;
+    private readonly HeroStatCalculator statCalculator;
 
     // 현재 보유 중인 영웅 목록 반환
     public IReadOnlyCollection<OwnedHeroData> Heroes => heroCollection.Heroes;
@@ -17,17 +18,26 @@ public sealed class HeroController
     // 보유 영웅 레벨 변경 시 호출
     public event Action<OwnedHeroData> OnHeroLevelChanged;
 
-    public HeroController(HeroDatabaseSO heroDatabase)
+    // 영웅 최종 능력치 변경 시 호출
+    public event Action OnHeroStatChanged;
+
+    public HeroController(HeroDatabaseSO heroDatabase, HeroStatCalculator statCalculator)
     {
         if (heroDatabase == null)
         {
             throw new ArgumentNullException(nameof(heroDatabase));
         }
 
+        if (statCalculator == null)
+        {
+            throw new ArgumentNullException(nameof(statCalculator));
+        }
+
         this.heroDatabase = heroDatabase;
+        this.statCalculator = statCalculator;
         heroCollection = new HeroCollection();
     }
-    
+
     // UnitID에 해당하는 영웅을 보유 목록에 추가
     public bool TryAcquireHero(string heroId)
     {
@@ -49,6 +59,26 @@ public sealed class HeroController
     public bool TryGetHero(string heroId, out OwnedHeroData hero)
     {
         return heroCollection.TryGet(heroId, out hero);
+    }
+
+    // UnitID에 해당하는 보유 영웅의 최종 능력치 계산
+    public bool TryGetHeroStat(string heroId, out HeroStat stat)
+    {
+        stat = default;
+
+        if (!heroCollection.TryGet(heroId, out OwnedHeroData hero))
+        {
+            return false;
+        }
+
+        stat = statCalculator.Calculate(hero);
+        return true;
+    }
+
+    // 영웅 최종 능력치 변경 이벤트 호출
+    public void NotifyStatChanged()
+    {
+        OnHeroStatChanged?.Invoke();
     }
 
     // 지정한 영웅을 보유하고 있는지 확인
@@ -77,6 +107,7 @@ public sealed class HeroController
 
         hero.SetLevel(level);
         OnHeroLevelChanged?.Invoke(hero);
+        OnHeroStatChanged?.Invoke();
 
         return true;
     }

@@ -38,8 +38,8 @@ public class Bootstrapper
         }
 
         HeroManager heroManager = HeroManager.Instance;
-        heroManager.Initialize(heroDatabase);
-      
+        heroManager.Initialize(heroDatabase, inventoryManager.Controller);
+
         // 저장 데이터 초기화 (테스트 세이브 매니저 아직 미삭제)
         SaveManager saveManager = SaveManager.Instance;
         saveManager.Initialize();
