@@ -28,6 +28,17 @@ public class UnitAnimationEvent : MonoBehaviour
     {
         if (unit == null) return;
 
+        Debug.Log($"[SkillActivate Event] {unit.name}", gameObject);
+
         unit.SkillActivateEvent();
+    }
+    //Skill애니메이션 종료 시점
+    public void SkillEnd()
+    {
+        if (unit == null) return;
+
+        Debug.Log($"[SkillEnd Event] {unit.name}", gameObject);
+
+        unit.SkillEndEvent();
     }
 }

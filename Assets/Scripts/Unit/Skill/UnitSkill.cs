@@ -8,6 +8,9 @@ public class UnitSkill : MonoBehaviour
     [Header("투사체 스킬 발사 위치")]
     [SerializeField] private Transform projectileSpawnPoint;
 
+    [Header("시전자 VFX 위치")]
+    [SerializeField] private Transform skillVfxPoint;
+
     private BattleUnit unit;
     private BattleUnit pendingTarget; //스킬 시작 당시의 대상을 보관하는 용
 
@@ -59,19 +62,22 @@ public class UnitSkill : MonoBehaviour
         effectApplied = false;
 
         nextSkillTime = Time.time + skillData.Cooldown;
+        //End 이벤트 누락 대비용
         skillEndTime = Time.time + skillData.ActionDuration;
 
         unit.StopMove();
         return true;
     }
-    public void UpdataSkill()
+    public void UpdateSkill()
     {
         if (!isUsingSkill) return;
 
-        if (Time.time >= skillEndTime)
-        {
-            CompleteSkill();
-        }
+        if (Time.time < skillEndTime) return;
+
+        //확인용
+        Debug.LogWarning($"{name} : SkillEnd Event 가 호출되지 않아서 스킬 상태를 복구함.", this);
+
+        CompleteSkill();
     }
     //SkillActivate 애니메이션 이벤트에서 호출하는 용
     public void ApplySkillEffect()
@@ -84,18 +90,22 @@ public class UnitSkill : MonoBehaviour
         {
             case SkillEffectType.Damage:
                 if (!IsValidTarget(pendingTarget)) return;
+                effectApplied = true;
                 unit.FaceTarget();
                 ApplyDamage(pendingTarget);
                 break;
             case SkillEffectType.Heal:
                 if (!IsValidTarget(pendingTarget)) return;
+                effectApplied = true;
                 ApplyHeal(pendingTarget);
                 break;
             case SkillEffectType.Barrier:
+                effectApplied = true;
                 ApplyBarrier();
                 break;
             case SkillEffectType.ProjectileDamage:
                 if (!IsValidTarget(pendingTarget)) return;
+                effectApplied = true;
                 unit.FaceTarget();
                 FireProjectile(pendingTarget);
                 break;
@@ -181,15 +191,22 @@ public class UnitSkill : MonoBehaviour
 
         int appliedDamage = target.TakeDamage(finalDamage);
         //기능 확인 용
-        Debug.Log($"{unit.name} 스킬 사용 / " + $"{target.name} 피해 : {appliedDamage}");
+        Debug.Log($"{unit.name} 스킬 사용 / {target.name} 피해 : {appliedDamage}");
     }
     private void ApplyHeal(BattleUnit target)
     {
+        if (target == null || target.IsDead) return;
+
+        //시전자 발밑 VFX
+        PlayHealCastVfx();
+
         int healAmount = Mathf.RoundToInt(unit.AttackPower * skillData.DamageRatio);
-        
         int appliedHeal = target.Heal(healAmount);
+
+        //회복된 경우에만 대상 힐 VFX 표시
+        if (appliedHeal > 0) PlayHealTargetVfx(target);
         //기능 확인 용
-        Debug.Log($"{unit.name} 회복 스킬 / " + $"{target.name} 회복 : {appliedHeal}");
+        Debug.Log($"[힐 스킬] {unit.name} -> {target.name} / 회복량 : {appliedHeal}");
     }
     private void ApplyBarrier()
     {
@@ -211,5 +228,31 @@ public class UnitSkill : MonoBehaviour
         SkillProjectile projectile = Instantiate(skillData.ProjectilePrefab, spawnPosition, Quaternion.identity);
         projectile.Initialize(unit, direction, skillAttack, skillData.ProjectileSpeed);
     }
+    //힐 관련
+    private void PlayHealCastVfx()
+    {
+        if (skillData.HealCastVfxPrefab == null) return;
 
+        Transform point = skillVfxPoint != null ? skillVfxPoint : transform;
+        GameObject vfx = Instantiate(skillData.HealCastVfxPrefab, point.position, point.rotation, point);
+
+        Destroy(vfx, skillData.HealVfxDuration);
+    }
+    private void PlayHealTargetVfx(BattleUnit target)
+    {
+        if (target == null)
+        {
+            Debug.LogWarning("[Heal Target VFX] target == null");
+            return;
+        }
+        if (skillData.HealTargetVfxPrefab == null)
+        {
+            Debug.LogWarning("[Heal Target VFX] Prefab이 연결되지 않음");
+            return;
+        }
+
+        GameObject vfx = Instantiate(skillData.HealTargetVfxPrefab, target.transform.position, Quaternion.identity, target.transform);
+
+        Destroy(vfx, skillData.HealVfxDuration);
+    }
 }

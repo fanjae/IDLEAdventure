@@ -36,10 +36,9 @@ public class UnitAnimator : MonoBehaviour
     public bool TryPlayAttack()
     {
         if (animator == null) return false;
-        if (animator.IsInTransition(0)) return false;
 
         AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
-        if (state.IsTag("Damaged") || state.IsTag("Dead") || state.IsTag("Attack")) return false;
+        if (state.IsTag("Damaged") || state.IsTag("Dead") || state.IsTag("Attack") || state.IsTag("Skill")) return false;
 
         animator.ResetTrigger(attackHash);
         animator.SetTrigger(attackHash);
@@ -48,7 +47,6 @@ public class UnitAnimator : MonoBehaviour
     public bool TryPlaySkill()
     {
         if (animator == null) return false;
-        if (animator.IsInTransition(0)) return false; //다른 상태로 전환 중이면 잠시 대기
 
         AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
         //해당 동작 중에는 새로운 스킬 애니메이션을 시작하지 않음.
@@ -81,6 +79,7 @@ public class UnitAnimator : MonoBehaviour
         if (animator == null) return;
 
         animator.ResetTrigger(attackHash);
+        animator.ResetTrigger(skillHash);
         animator.ResetTrigger(damagedHash);
 
         animator.SetBool(moveHash, false);

@@ -35,6 +35,36 @@ public sealed class HeroCollection
 
         return true;
     }
+    // 영웅 원본 데이터와 레벨 기준으로 새로운 보유 영웅 추가
+    public bool TryAdd(HeroData heroData, int level)
+    {
+        if (heroData == null)
+        {
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(heroData.UnitID))
+        {
+            return false;
+        }
+
+        if (level < 1)
+        {
+            return false;
+        }
+
+        // 이미 보유 중인 영웅은 중복 추가하지 않음
+        if (heroes.ContainsKey(heroData.UnitID))
+        {
+            return false;
+        }
+
+        OwnedHeroData ownedHero = new(heroData, level);
+        heroes.Add(heroData.UnitID, ownedHero);
+
+        return true;
+    }
+
 
     // UnitID에 해당하는 보유 영웅 조회
     public bool TryGet(string heroId, out OwnedHeroData hero)
@@ -52,4 +82,30 @@ public sealed class HeroCollection
     {
         return !string.IsNullOrEmpty(heroId) && heroes.ContainsKey(heroId);
     }
+
+    // 현재 보유 중인 영웅 데이터 초기화
+    public void Clear()
+    {
+        heroes.Clear();
+    }
+
+    // 현재 보유 영웅 상태를 저장 데이터로 생성
+    public HeroSaveData CreateSaveData()
+    {
+        HeroSaveData saveData = new();
+
+        // 보유 영웅의 UnitID와 현재 레벨을 저장 데이터에 추가
+        foreach (OwnedHeroData hero in heroes.Values)
+        {
+            saveData.OwnedHeroes.Add(new OwnedHeroSaveData
+            {
+                HeroId = hero.HeroId,
+                Level = hero.Level
+            });
+        }
+
+        return saveData;
+    }
+
+    
 }
