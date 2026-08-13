@@ -10,5 +10,5 @@ public sealed class CurrencySaveData
     public int Gold { get; set; }
     public int Exp { get; set; }
     public int Upgrade { get; set; }
-    public int Diamond { get; set; }
+    public int Gem { get; set; }
 }

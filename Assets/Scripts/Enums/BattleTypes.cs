@@ -36,5 +36,6 @@ public enum SkillEffectType
     Damage,
     Heal,
     Barrier,
-    ProjectileDamage
+    ProjectileDamage,
+    Buff
 }
