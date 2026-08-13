@@ -144,6 +144,7 @@ GameObject:
   - component: {fileID: 7043797549312379405}
   - component: {fileID: 1892688900415918722}
   - component: {fileID: 1079873855684137020}
+  - component: {fileID: 63348276637832347}
   m_Layer: 5
   m_Name: IdleTimer
   m_TagString: Untagged
@@ -209,6 +210,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &63348276637832347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1181301829289791451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5803d3d06e23cf24ea3067aeb76ccbae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IdleView
+  idleTimeText: {fileID: 6175816482397386010}
+  idleReward: {fileID: 3557872590785591331}
 --- !u!1 &1249322873976806088
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,6 +235,7 @@ GameObject:
   - component: {fileID: 5827369549996403136}
   - component: {fileID: 64777979405518836}
   - component: {fileID: 328728795632656609}
+  - component: {fileID: 1983350470194338841}
   m_Layer: 5
   m_Name: Gold slot
   m_TagString: Untagged
@@ -286,6 +302,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1983350470194338841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249322873976806088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95284e9fdf492e44bbb7cb1927b8c2c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurrencyView
+  currencyType: 0
+  currencyText: {fileID: 6175347062842500430}
 --- !u!1 &1473706054097679783
 GameObject:
   m_ObjectHideFlags: 0
@@ -721,6 +751,7 @@ GameObject:
   - component: {fileID: 105381533654841447}
   - component: {fileID: 4143699563123955207}
   - component: {fileID: 5884586747543169258}
+  - component: {fileID: 3972759983654222927}
   m_Layer: 5
   m_Name: Gem slot
   m_TagString: Untagged
@@ -787,6 +818,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3972759983654222927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3614287961664097264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95284e9fdf492e44bbb7cb1927b8c2c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurrencyView
+  currencyType: 3
+  currencyText: {fileID: 8269956240436363614}
 --- !u!1 &3685898404070700820
 GameObject:
   m_ObjectHideFlags: 0
@@ -1082,7 +1127,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5160018538516576031}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2099,6 +2144,7 @@ GameObject:
   - component: {fileID: 7229062555646604644}
   - component: {fileID: 2640143221721577449}
   - component: {fileID: 6066018121567470371}
+  - component: {fileID: 3557872590785591331}
   m_Layer: 5
   m_Name: IdleRewardicon
   m_TagString: Untagged
@@ -2208,18 +2254,33 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainUIController, Assembly-CSharp
-        m_MethodName: OpenIdleRewards
-        m_Mode: 0
+      - m_Target: {fileID: 3557872590785591331}
+        m_TargetAssemblyTypeName: IdleReward, Assembly-CSharp
+        m_MethodName: OnClickIdleRewardButton
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3557872590785591331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8133500822530226432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16292ef217f99b149aa107ae8fa1088a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IdleReward
+  rewardCSVData: {fileID: 4900000, guid: 6a6ab591548859e4a84386680347c7a1, type: 3}
+  maxIdleTime: 100
+  testClearStageNum: 1
 --- !u!1 &8275085965427716853
 GameObject:
   m_ObjectHideFlags: 0
