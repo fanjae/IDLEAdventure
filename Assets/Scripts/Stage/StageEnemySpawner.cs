@@ -17,8 +17,7 @@ public sealed class StageEnemySpawner : MonoBehaviour
     [SerializeField] private SlotHighlightController slotHighlightController;
 
     [Header("몬스터 위치")]
-    [SerializeField]
-    private float spawnHeight = -0.2f;
+    [SerializeField] private float spawnHeight = -0.2f;
 
     [SerializeField] private Vector3 spawnRotation = new Vector3(0f, 180f, 0f);
 
@@ -87,7 +86,7 @@ public sealed class StageEnemySpawner : MonoBehaviour
         }
 
         battleUnit.Initialize(enemyData.enemyLevel);
-
+        //없어도 됨
         battleUnit.ApplyStats(enemyData.maxHp, battleUnit.AttackPower, battleUnit.Defense);
 
         if (slotHighlightController != null)
