@@ -13,7 +13,6 @@ public sealed class StageDatabase : MonoBehaviour
     [Header("Stage CSV")]
     [SerializeField] private TextAsset stagesCsv;
     [SerializeField] private TextAsset stageEnemiesCsv;
-    [SerializeField] private TextAsset firstClearRewardsCsv;
 
     public bool IsInitialized => isInitialized;
     public int StageCount => stages.Count;
@@ -62,7 +61,6 @@ public sealed class StageDatabase : MonoBehaviour
         {
             LoadStages();
             LoadStageEnemies();
-            LoadFirstClearRewards();
             LoadStage();
 
             isInitialized = true;
@@ -119,30 +117,16 @@ public sealed class StageDatabase : MonoBehaviour
             stage.enemies.Add(enemy);
         }
     }
-
-    private void LoadFirstClearRewards()
-    {
-        List<FirstClearRewardData> loadedRewards = CsvMapper.Read<FirstClearRewardData>(firstClearRewardsCsv);
-
-        foreach (FirstClearRewardData reward in loadedRewards)
-        {
-            StageData stage = RequireStage(reward.stageId, firstClearRewardsCsv.name);
-
-            stage.firstClearRewards.Add(reward);
-        }
-    }
-
     private void LoadStage()
     {
         if (stages.Count == 0)
         {
-            throw new Exception("불러온 스테이지 데이터가 없습니다.");
+            throw new Exception("불러온 스테이지 데이터가 없음");
         }
 
         foreach (StageData stage in stages.Values)
         {
             StageEnemyInspection(stage);
-            FirstClearRewardInspection(stage);
         }
     }
 
@@ -150,7 +134,7 @@ public sealed class StageDatabase : MonoBehaviour
     {
         if (stage.enemies.Count == 0)
         {
-            Debug.LogWarning($"{stage.stageId}번 스테이지에 몬스터가 없습니다.");
+            Debug.LogWarning($"{stage.stageId}번 스테이지에 몬스터가 없음");
             return;
         }
 
@@ -160,20 +144,7 @@ public sealed class StageDatabase : MonoBehaviour
         {
             if (!usedSlots.Add(enemy.slotNumber))
             {
-                throw new Exception($"{stage.stageId}번 스테이지에서 몬스터 슬롯 번호 {enemy.slotNumber}가 중복되어 있습니다.");
-            }
-        }
-    }
-
-    private static void FirstClearRewardInspection(StageData stage)
-    {
-        HashSet<string> usedRewardIds = new(StringComparer.OrdinalIgnoreCase);
-
-        foreach (FirstClearRewardData reward in stage.firstClearRewards)
-        {
-            if (!usedRewardIds.Add(reward.rewardId))
-            {
-                throw new Exception($"{stage.stageId}번 스테이지에서 최초 클리어 보상 {reward.rewardId}가 중복되어 있습니다.");
+                throw new Exception($"{stage.stageId}번 스테이지에서 몬스터 슬롯 번호 {enemy.slotNumber}가 중복");
             }
         }
     }
@@ -185,14 +156,13 @@ public sealed class StageDatabase : MonoBehaviour
             return stage;
         }
 
-        throw new Exception($"{csvName}의 stageId {stageId}가 {stagesCsv.name}에 존재하지 않습니다.");
+        throw new Exception($"{csvName}의 stageId {stageId}가 {stagesCsv.name}에 존재하지 않음");
     }
 
     private void CsvInspection()
     {
         CsvInspection(stagesCsv, nameof(stagesCsv));
         CsvInspection(stageEnemiesCsv, nameof(stageEnemiesCsv));
-        CsvInspection(firstClearRewardsCsv, nameof(firstClearRewardsCsv));
     }
 
     private static void CsvInspection(TextAsset csvAsset, string fieldName)

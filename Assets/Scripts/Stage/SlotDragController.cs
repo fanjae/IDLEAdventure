@@ -36,16 +36,16 @@ public sealed class SlotDragController : MonoBehaviour
     {
         if (slotBoard == null)
         {
-            throw new Exception("SlotDragController의 Slot Board가 연결되어 있지 않습니다.");
+            throw new Exception("SlotDragController의 Slot Board가 연결되어 있지 않음");
         }
 
         if (slotInput == null)
         {
-            throw new Exception("SlotDragController의 Slot Input이 연결되어 있지 않습니다.");
+            throw new Exception("SlotDragController의 Slot Input이 연결되어 있지 않음");
         }
         if (slotHighlightController == null)
         {
-            throw new Exception("SlotDragController의 Slot Highlight Controller가 연결되어 있지 않습니다.");
+            throw new Exception("SlotDragController의 Slot Highlight Controller가 연결되어 있지 않음");
         }
 
         if (dragCamera == null)

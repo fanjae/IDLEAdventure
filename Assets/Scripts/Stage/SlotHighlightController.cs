@@ -7,37 +7,46 @@ public sealed class SlotHighlightController : MonoBehaviour
     [Header("참조")]
     [SerializeField] private SlotBoard slotBoard;
 
-    [Header("Highlight 색상")]
-    [SerializeField] private Color originalPosColor = new Color(0.25f, 0.45f, 1f, 1f);
-    [SerializeField] private Color targetColor = new Color(0.2f, 1f, 0.35f, 1f);
-    [SerializeField] private Color swapColor = new Color(1f, 0.75f, 0.15f, 1f);
+    [Header("슬롯 Sprite")]
+    [SerializeField] private Sprite availableSprite;
+    [SerializeField] private Sprite selectedSprite;
+    [SerializeField] private Sprite emptySprite;
+    [SerializeField] private Sprite enemySprite;
 
-    [Header("Enemy Highlight")]
-    [SerializeField] private Color enemyColor = new Color(1f, 0.2f, 0.2f, 1f);
-
-    private Renderer[] slotRenderers;
-    private Color[] normalColors;
-    private int[] colorPropertyIds;
-
-    private MaterialPropertyBlock propertyBlock;
+    private SpriteRenderer[] slotSpriteRenderers;
 
     private int currentTargetSlot = -1;
 
-    private readonly HashSet<Renderer> enemyHighlightRenderers = new();
-
-    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
-    private static readonly int ColorId = Shader.PropertyToID("_Color");
+    private readonly Dictionary<SpriteRenderer, Sprite> enemyOriginalSprites = new();
 
     private void Awake()
     {
         if (slotBoard == null)
         {
-            throw new Exception("SlotHighlightController의 Slot Board가 연결되어 있지 않습니다.");
+            throw new Exception("SlotHighlightController의 Slot Board가 연결되어 있지 않음");
         }
 
-        propertyBlock = new MaterialPropertyBlock();
+        if (availableSprite == null)
+        {
+            throw new Exception("Available Sprite가 연결되어 있지 않음");
+        }
 
-        CacheSlotRenderers();
+        if (selectedSprite == null)
+        {
+            throw new Exception("Selected Sprite가 연결되어 있지 않음");
+        }
+
+        if (emptySprite == null)
+        {
+            throw new Exception("Empty Sprite가 연결되어 있지 않음");
+        }
+
+        if (enemySprite == null)
+        {
+            throw new Exception("Enemy Sprite가 연결되어 있지 않음");
+        }
+
+        CacheSlotSpriteRenderers();
     }
 
     private void Start()
@@ -45,6 +54,7 @@ public sealed class SlotHighlightController : MonoBehaviour
         Refresh();
     }
 
+    // 모든 플레이어 슬롯을 기본 Available 상태로 되돌림
     public void Refresh()
     {
         currentTargetSlot = -1;
@@ -56,22 +66,17 @@ public sealed class SlotHighlightController : MonoBehaviour
                 continue;
             }
 
-            if (slotBoard.IsEmpty(i))
-            {
-                SetNormal(i);
-            }
-            else
-            {
-                SetColor(i, originalPosColor);
-            }
+            SetSprite(i, availableSprite);
         }
     }
 
+    // 드래그 시작
     public void StartDragHighlight()
     {
         currentTargetSlot = -1;
     }
 
+    // 현재 마우스가 가리키는 슬롯 변경
     public void SetTargetSlot(int slotNumber, int draggedFromSlot)
     {
         if (currentTargetSlot == slotNumber)
@@ -79,9 +84,17 @@ public sealed class SlotHighlightController : MonoBehaviour
             return;
         }
 
-        DragState(currentTargetSlot);
+        if (slotBoard.IsSlot(currentTargetSlot) && currentTargetSlot != draggedFromSlot)
+        {
+            SetSprite(currentTargetSlot, availableSprite);
+        }
 
         currentTargetSlot = slotNumber;
+
+        if (slotBoard.IsSlot(draggedFromSlot))
+        {
+            SetSprite(draggedFromSlot, selectedSprite);
+        }
 
         if (!slotBoard.IsSlot(currentTargetSlot))
         {
@@ -90,25 +103,18 @@ public sealed class SlotHighlightController : MonoBehaviour
 
         if (currentTargetSlot == draggedFromSlot)
         {
-            SetColor(currentTargetSlot, targetColor);
             return;
         }
 
-        if (slotBoard.IsEmpty(currentTargetSlot))
-        {
-            SetColor(currentTargetSlot, targetColor);
-        }
-        else
-        {
-            SetColor(currentTargetSlot, swapColor);
-        }
+        SetSprite(currentTargetSlot, emptySprite);
     }
-
+    // 드래그 종료
     public void EndDragHighlight()
     {
         Refresh();
     }
 
+    // 적이 배치된 슬롯을 Enemy Sprite로 변경
     public void SetEnemy(Transform slot)
     {
         if (slot == null)
@@ -116,55 +122,43 @@ public sealed class SlotHighlightController : MonoBehaviour
             return;
         }
 
-        Renderer slotRenderer = GetSlotRenderer(slot);
+        SpriteRenderer spriteRenderer = GetSlotSpriteRenderer(slot);
 
-        if (slotRenderer == null)
+        if (spriteRenderer == null)
         {
+            Debug.LogWarning($"{slot.name} 슬롯에서 SpriteRenderer를 찾을 수 없음");
+
             return;
         }
 
-        SetColor(slotRenderer, enemyColor);
+        if (!enemyOriginalSprites.ContainsKey(spriteRenderer))
+        {
+            enemyOriginalSprites.Add(spriteRenderer, spriteRenderer.sprite);
+        }
 
-        enemyHighlightRenderers.Add(slotRenderer);
+        spriteRenderer.sprite = enemySprite;
     }
 
+    // Enemy 표시를 원래 상태로 복구
     public void ClearEnemyHighlights()
     {
-        foreach (Renderer slotRenderer in enemyHighlightRenderers)
+        foreach (KeyValuePair<SpriteRenderer, Sprite> pair in enemyOriginalSprites)
         {
-            if (slotRenderer == null)
+            if (pair.Key == null)
             {
                 continue;
             }
 
-            slotRenderer.SetPropertyBlock(null);
+            pair.Key.sprite = pair.Value;
         }
 
-        enemyHighlightRenderers.Clear();
+        enemyOriginalSprites.Clear();
     }
 
-    private void DragState(int slotNumber)
+    // 각 슬롯의 자식 SpriteRenderer를 미리 찾아 저장
+    private void CacheSlotSpriteRenderers()
     {
-        if (!slotBoard.IsSlot(slotNumber))
-        {
-            return;
-        }
-
-        if (slotBoard.IsEmpty(slotNumber))
-        {
-            SetNormal(slotNumber);
-        }
-        else
-        {
-            SetColor(slotNumber, originalPosColor);
-        }
-    }
-
-    private void CacheSlotRenderers()
-    {
-        slotRenderers = new Renderer[slotBoard.SlotCount];
-        normalColors = new Color[slotBoard.SlotCount];
-        colorPropertyIds = new int[slotBoard.SlotCount];
+        slotSpriteRenderers = new SpriteRenderer[slotBoard.SlotCount];
 
         for (int i = 1; i < slotBoard.SlotCount; i++)
         {
@@ -175,117 +169,40 @@ public sealed class SlotHighlightController : MonoBehaviour
                 continue;
             }
 
-            Renderer slotRenderer = slot.GetComponent<Renderer>();
+            SpriteRenderer spriteRenderer = slot.GetComponentInChildren<SpriteRenderer>(true);
 
-            if (slotRenderer == null)
+            if (spriteRenderer == null)
             {
-                slotRenderer = slot.GetComponentInChildren<Renderer>();
-            }
+                Debug.LogWarning($"{i}번 슬롯에서 SpriteRenderer를 찾을 수 없음");
 
-            if (slotRenderer == null)
-            {
-                Debug.LogWarning($"{i}번 슬롯에서 Renderer를 찾을 수 없습니다.");
                 continue;
             }
 
-            slotRenderers[i] = slotRenderer;
-
-            Material material = slotRenderer.sharedMaterial;
-
-            if (material == null)
-            {
-                continue;
-            }
-
-            if (material.HasProperty(BaseColorId))
-            {
-                colorPropertyIds[i] = BaseColorId;
-                normalColors[i] = material.GetColor(BaseColorId);
-            }
-            else if (material.HasProperty(ColorId))
-            {
-                colorPropertyIds[i] = ColorId;
-                normalColors[i] = material.GetColor(ColorId);
-            }
-            else
-            {
-                Debug.LogWarning($"{i}번 슬롯 Material에서 색상 Property를 찾을 수 없습니다.");
-            }
+            slotSpriteRenderers[i] = spriteRenderer;
         }
     }
 
-    private void SetNormal(int slotNumber)
-    {
-        SetColor(slotNumber, normalColors[slotNumber]);
-    }
-
-    private void SetColor(int slotNumber, Color color)
+    // 해당 슬롯의 Sprite 변경
+    private void SetSprite(int slotNumber, Sprite sprite)
     {
         if (!slotBoard.IsSlot(slotNumber))
         {
             return;
         }
 
-        Renderer slotRenderer = slotRenderers[slotNumber];
+        SpriteRenderer spriteRenderer = slotSpriteRenderers[slotNumber];
 
-        if (slotRenderer == null)
+        if (spriteRenderer == null)
         {
             return;
         }
 
-        int colorPropertyId = colorPropertyIds[slotNumber];
-
-        if (colorPropertyId == 0)
-        {
-            return;
-        }
-
-        slotRenderer.GetPropertyBlock(propertyBlock);
-        propertyBlock.SetColor(colorPropertyId, color);
-        slotRenderer.SetPropertyBlock(propertyBlock);
-        propertyBlock.Clear();
+        spriteRenderer.sprite = sprite;
     }
 
-    private Renderer GetSlotRenderer(Transform slot)
+    // Transform 아래에 있는 SpriteRenderer 검색
+    private SpriteRenderer GetSlotSpriteRenderer(Transform slot)
     {
-        Renderer slotRenderer = slot.GetComponent<Renderer>();
-
-        if (slotRenderer == null)
-        {
-            slotRenderer = slot.GetComponentInChildren<Renderer>();
-        }
-
-        return slotRenderer;
-    }
-
-    private void SetColor(Renderer slotRenderer, Color color)
-    {
-        Material material = slotRenderer.sharedMaterial;
-
-        if (material == null)
-        {
-            return;
-        }
-
-        int colorPropertyId = 0;
-
-        if (material.HasProperty(BaseColorId))
-        {
-            colorPropertyId = BaseColorId;
-        }
-        else if (material.HasProperty(ColorId))
-        {
-            colorPropertyId = ColorId;
-        }
-
-        if (colorPropertyId == 0)
-        {
-            return;
-        }
-
-        slotRenderer.GetPropertyBlock(propertyBlock);
-        propertyBlock.SetColor(colorPropertyId, color);
-        slotRenderer.SetPropertyBlock(propertyBlock);
-        propertyBlock.Clear();
+        return slot.GetComponentInChildren<SpriteRenderer>(true);
     }
 }

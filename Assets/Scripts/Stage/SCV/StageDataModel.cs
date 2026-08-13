@@ -14,17 +14,12 @@ public sealed class StageData
     [CsvMin(1)]
     public int stageId;
 
-    public string areaName;
+    public string mapName;
 
-    public string environmentId;
-
-    public string battlefieldId;
+    public string fieldName;
 
     [CsvIgnore]
     public List<StageEnemyData> enemies = new();
-
-    [CsvIgnore]
-    public List<FirstClearRewardData> firstClearRewards = new();
 }
 
 [Serializable]
@@ -43,16 +38,4 @@ public sealed class StageEnemyData
 
     [CsvMin(1)]
     public int maxHp;
-}
-
-[Serializable]
-public sealed class FirstClearRewardData
-{
-    [CsvMin(1)]
-    public int stageId;
-
-    public string rewardId;
-
-    [CsvMin(1)]
-    public int amount;
 }

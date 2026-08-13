@@ -4,145 +4,80 @@ using UnityEngine;
 public sealed class StageManager : MonoBehaviour
 {
     [Header("참조")]
-    [SerializeField] private FormationManager formationManager;
-    [SerializeField] private StageEnemySpawner stageEnemySpawner;
+    [SerializeField]
+    private StageEnemySpawner stageEnemySpawner;
 
-    [Header("현재 진행 스테이지")]
-    [SerializeField, Min(1)] private int currentStageId = 1;
+    [SerializeField]
+    private StageFieldLoader stageFieldLoader;
 
-    private bool isStagePrepared;
-    private bool isResultHandled;
+    private int currentStageId;
 
     public int CurrentStageId => currentStageId;
-    public bool IsStagePrepared => isStagePrepared;
-
-    public event Action<int> OnStagePrepared;
-    public event Action<int> OnStageCleared;
-    public event Action<int> OnStageFailed;
 
     private void Awake()
     {
-        if (formationManager == null)
-        {
-            throw new Exception("StageManager의 Formation Manager가 연결되어 있지 않습니다.");
-        }
-
         if (stageEnemySpawner == null)
         {
-            throw new Exception("StageManager의 Stage Enemy Spawner가 연결되어 있지 않습니다.");
+            throw new Exception(
+                "StageManager의 StageEnemySpawner가 없습니다.");
+        }
+
+        if (stageFieldLoader == null)
+        {
+            throw new Exception(
+                "StageManager의 StageFieldLoader가 없습니다.");
         }
     }
 
     private void Start()
     {
+        if (StageRuntimeData.SelectedStageId < 1)
+        {
+            Debug.LogError(
+                "선택된 스테이지가 없습니다.");
+
+            return;
+        }
+
+        currentStageId =
+            StageRuntimeData.SelectedStageId;
+
+        Debug.Log(
+            $"전투 씬으로 전달된 StageId: {currentStageId}");
+
         PrepareCurrentStage();
     }
 
-    public void PrepareCurrentStage()
+    private void PrepareCurrentStage()
     {
-        if (BattleManager.Instance != null && BattleManager.Instance.IsBattleRunning)
+        if (StageDatabase.Instance == null)
         {
-            Debug.LogWarning("전투 중에는 스테이지를 다시 준비할 수 없습니다.");
+            Debug.LogError(
+                "StageDatabase가 없습니다.");
+
             return;
         }
 
-        stageEnemySpawner.LoadStage(currentStageId);
+        StageData stage =
+            StageDatabase.Instance.GetStage(
+                currentStageId);
 
-        isStagePrepared = true;
-        isResultHandled = false;
-
-        OnStagePrepared?.Invoke(currentStageId);
-
-        Debug.Log($"{currentStageId}번 스테이지 준비 완료");
-    }
-
-    public void RequestBattleStart()
-    {
-        if (!isStagePrepared)
+        if (stage == null)
         {
-            Debug.LogWarning("스테이지가 준비되지 않았습니다.");
+            Debug.LogError(
+                $"{currentStageId}번 스테이지 데이터를 " +
+                "찾을 수 없습니다.");
+
             return;
         }
 
-        if (formationManager.PlacedHeroCount <= 0)
-        {
-            Debug.LogWarning("배치된 영웅이 없습니다.");
-            return;
-        }
+        stageFieldLoader.LoadField(
+            stage.fieldName);
 
-        if (BattleManager.Instance == null)
-        {
-            Debug.LogError("BattleManager가 없습니다.");
-            return;
-        }
+        stageEnemySpawner.LoadStage(
+            stage);
 
-        if (BattleManager.Instance.IsBattleRunning)
-        {
-            Debug.LogWarning("이미 전투가 진행 중입니다.");
-            return;
-        }
-
-        BattleManager.Instance.StartBattle();
-
-        if (!BattleManager.Instance.IsBattleRunning)
-        {
-            Debug.LogWarning("BattleManager에서 전투가 시작되지 않았습니다.");
-            return;
-        }
-
-        Debug.Log($"{currentStageId}번 스테이지 전투 시작");
-    }
-
-    public void HandleStageClear()
-    {
-        if (!CanHandleResult())
-        {
-            return;
-        }
-
-        int clearedStageId = currentStageId;
-
-        isResultHandled = true;
-        isStagePrepared = false;
-
-        currentStageId++;
-
-        OnStageCleared?.Invoke(clearedStageId);
-
-        Debug.Log($"{clearedStageId}번 스테이지 클리어 → 다음 진행 스테이지: {currentStageId}");
-    }
-
-    public void HandleStageFail()
-    {
-        if (!CanHandleResult())
-        {
-            return;
-        }
-
-        int failedStageId = currentStageId;
-
-        isResultHandled = true;
-        isStagePrepared = false;
-
-        OnStageFailed?.Invoke(failedStageId);
-
-        Debug.Log($"{failedStageId}번 스테이지 패배 → 현재 진행 스테이지 유지: {currentStageId}");
-    }
-
-    private bool CanHandleResult()
-    {
-        if (!isStagePrepared)
-        {
-            Debug.LogWarning("준비된 스테이지가 없습니다.");
-            return false;
-        }
-
-        if (isResultHandled)
-        {
-            Debug.LogWarning("이미 스테이지 결과가 처리되었습니다.");
-            return false;
-        }
-
-        return true;
+        Debug.Log(
+            $"{currentStageId}번 스테이지 준비 완료");
     }
 }

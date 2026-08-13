@@ -1,58 +1,47 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class StageEnemySpawner : MonoBehaviour
 {
-    [Serializable]
-    private sealed class EnemyPrefabEntry
-    {
-        public string enemyId;
-        public GameObject prefab;
-    }
-
     [Header("0번 슬롯은 사용하지 않음")]
-    [SerializeField] private Transform[] tileSlots;
+    [SerializeField] private Transform[] slots;
 
-    [Header("몬스터 프리팹")]
-    [SerializeField] private List<EnemyPrefabEntry> enemyPrefabs = new();
+    [Header("몬스터 Prefab 경로")]
+    [SerializeField] private string enemyPrefabPath = "Prefab/Enemy";
 
     [Header("소환된 몬스터 부모")]
-    [SerializeField] private Transform enemyRoot;
+    [SerializeField]
+    private Transform enemyRoot;
 
     [Header("Highlight")]
     [SerializeField] private SlotHighlightController slotHighlightController;
 
     [Header("몬스터 위치")]
-    [SerializeField] private float spawnHeight = 0.1f;
+    [SerializeField]
+    private float spawnHeight = -0.2f;
+
     [SerializeField] private Vector3 spawnRotation = new Vector3(0f, 180f, 0f);
 
-    private readonly List<GameObject> spawnedEnemies = new();
 
-    public void LoadStage(int stageId)
+    private void Awake()
     {
-        if (StageDatabase.Instance == null)
+        if (slots == null || slots.Length <= 1)
         {
-            throw new Exception("StageDatabase가 Scene에 존재하지 않습니다.");
+            throw new Exception("StageEnemySpawner의 Tile Slots가 설정되지 않음");
         }
 
-        if (!StageDatabase.Instance.IsInitialized)
+        if (enemyRoot == null)
         {
-            StageDatabase.Instance.Initialize();
+            throw new Exception("StageEnemySpawner의 Enemy Root가 설정되지 않음");
         }
+    }
 
-        StageData stage = StageDatabase.Instance.GetStage(stageId);
 
+    public void LoadStage(StageData stage)
+    {
         if (stage == null)
         {
-            throw new Exception($"{stageId}번 스테이지 데이터를 찾을 수 없습니다.");
-        }
-
-        ClearSpawnedEnemies();
-
-        if (slotHighlightController != null)
-        {
-            slotHighlightController.ClearEnemyHighlights();
+            throw new Exception("StageEnemySpawner에 전달된 StageData가 없음");
         }
 
         foreach (StageEnemyData enemyData in stage.enemies)
@@ -60,84 +49,67 @@ public sealed class StageEnemySpawner : MonoBehaviour
             SpawnEnemy(enemyData);
         }
 
-        Debug.Log($"{stageId}번 스테이지 로드 완료: 몬스터 {stage.enemies.Count}마리");
+        Debug.Log($"{stage.stageId}번 스테이지 적 생성 완료: {stage.enemies.Count}마리");
     }
 
-    public void ClearSpawnedEnemies()
-    {
-        foreach (GameObject enemy in spawnedEnemies)
-        {
-            if (enemy != null)
-            {
-                Destroy(enemy);
-            }
-        }
-
-        spawnedEnemies.Clear();
-    }
 
     private void SpawnEnemy(StageEnemyData enemyData)
     {
         int slotNumber = enemyData.slotNumber;
 
-        Debug.Log(
-            $"[StageEnemySpawner 확인] " +
-            $"Object={gameObject.name}, " +
-            $"InstanceID={GetInstanceID()}, " +
-            $"Enemy={enemyData.enemyId}, " +
-            $"Slot={slotNumber}, " +
-            $"TileSlotsNull={tileSlots == null}, " +
-            $"TileSlotsLength={(tileSlots == null ? -1 : tileSlots.Length)}"
-        );
-
-        if (slotNumber <= 0 || tileSlots == null || slotNumber >= tileSlots.Length)
+        if (slotNumber <= 0 || slots == null || slotNumber >= slots.Length)
         {
-            throw new Exception($"{enemyData.enemyId}의 슬롯 번호 {slotNumber}가 올바르지 않습니다.");
+            throw new Exception($"{enemyData.enemyId}의 슬롯 번호 {slotNumber}가 올바르지 않음");
         }
 
-        Transform tile = tileSlots[slotNumber];
+        Transform tile = slots[slotNumber];
 
         if (tile == null)
         {
-            throw new Exception($"Tile Slots의 Element {slotNumber}에 타일이 연결되지 않았습니다.");
+            throw new Exception($"Tile Slots의 Element {slotNumber}에 타일이 연결되지 않음");
         }
 
-        GameObject prefab = FindEnemyPrefab(enemyData.enemyId);
-
-        Transform parent = enemyRoot != null ? enemyRoot : transform;
+        GameObject prefab = LoadEnemyPrefab(enemyData.enemyId);
 
         Vector3 spawnPosition = tile.position + tile.up * spawnHeight;
+
         Quaternion spawnQuaternion = Quaternion.Euler(spawnRotation);
 
-        GameObject spawnedEnemy = Instantiate(prefab, spawnPosition, spawnQuaternion, parent);
+        GameObject spawnedEnemy = Instantiate(prefab, spawnPosition, spawnQuaternion, enemyRoot);
 
         spawnedEnemy.name = $"{enemyData.enemyId}_Stage{enemyData.stageId}_Slot{enemyData.slotNumber}";
 
-        spawnedEnemies.Add(spawnedEnemy);
+        BattleUnit battleUnit = spawnedEnemy.GetComponent<BattleUnit>();
+
+        if (battleUnit == null)
+        {
+            throw new Exception($"{enemyData.enemyId} Prefab에 BattleUnit이 없음");
+        }
+
+        battleUnit.Initialize(enemyData.enemyLevel);
+
+        battleUnit.ApplyStats(enemyData.maxHp, battleUnit.AttackPower, battleUnit.Defense);
 
         if (slotHighlightController != null)
         {
             slotHighlightController.SetEnemy(tile);
         }
 
-        Debug.Log($"몬스터 소환: Enemy={enemyData.enemyId}, Slot={enemyData.slotNumber}, Level={enemyData.enemyLevel}, MaxHp={enemyData.maxHp}");
+        Debug.Log($"몬스터 소환: Enemy={enemyData.enemyId}, Slot={enemyData.slotNumber}, " +
+            $"Level={battleUnit.Level}, MaxHp={battleUnit.MaxHp}");
     }
 
-    private GameObject FindEnemyPrefab(string enemyId)
+    private GameObject LoadEnemyPrefab(string enemyId)
     {
-        foreach (EnemyPrefabEntry entry in enemyPrefabs)
-        {
-            if (string.Equals(entry.enemyId, enemyId, StringComparison.OrdinalIgnoreCase))
-            {
-                if (entry.prefab == null)
-                {
-                    throw new Exception($"{enemyId}에 Prefab이 연결되지 않았습니다.");
-                }
+        string path = $"{enemyPrefabPath}/{enemyId}";
 
-                return entry.prefab;
-            }
+        GameObject prefab = Resources.Load<GameObject>(path);
+
+        if (prefab == null)
+        {
+            throw new Exception($"몬스터 Prefab을 찾을 수 없음. 경로: {path}");
         }
 
-        throw new Exception($"{enemyId}에 해당하는 몬스터 Prefab을 찾을 수 없습니다.");
+        return prefab;
     }
 }
