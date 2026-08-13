@@ -25,11 +25,16 @@ public sealed class HeroManager : Singleton<HeroManager>
     public bool IsInitialized => controller != null;
 
     // HeroDatabaseSO를 이용해 게임에서 사용할 HeroController 생성
-    public void Initialize(HeroDatabaseSO heroDatabase)
+    public void Initialize(HeroDatabaseSO heroDatabase, InventoryController inventoryController)
     {
         if (heroDatabase == null)
         {
             throw new ArgumentNullException(nameof(heroDatabase));
+        }
+
+        if (inventoryController == null)
+        {
+            throw new ArgumentNullException(nameof(inventoryController));
         }
 
         if (IsInitialized)
@@ -37,6 +42,16 @@ public sealed class HeroManager : Singleton<HeroManager>
             return;
         }
 
-        controller = new HeroController(heroDatabase);
+        // 장비 능력치 계산기 생성
+        EquipmentStatCalculator equipmentStatCalculator = new(inventoryController);
+
+        // 영웅 최종 능력치 계산기 생성
+        HeroStatCalculator heroStatCalculator = new(equipmentStatCalculator);
+
+        // 영웅 관련 기능을 처리할 컨트롤러 생성
+        controller = new HeroController(heroDatabase, heroStatCalculator);
+
+        // 장비 변경시 영웅 최종 능력치 전달
+        inventoryController.OnEquipmentChanged += controller.NotifyStatChanged;
     }
 }

@@ -906,6 +906,7 @@ GameObject:
   - component: {fileID: 5838065393020211788}
   - component: {fileID: 7522311426899490965}
   - component: {fileID: 7394411271372405323}
+  - component: {fileID: 2531002029049318537}
   m_Layer: 5
   m_Name: Formation
   m_TagString: Untagged
@@ -985,6 +986,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b98cdb67b2df26348901f070b034398f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleUIRelay
+--- !u!114 &2531002029049318537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7096936297785922077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b583085340211ae47bf94fa2b57e726e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleHeroRosterPresenter
+  presentationCatalog: {fileID: 11400000, guid: 36dfad89a4845ef419532771dc569783, type: 2}
+  classIconCatalog: {fileID: 11400000, guid: 041c9638cca6e7e4e88e550f1fa4c690, type: 2}
+  selectionMode: 1
 --- !u!1 &9147460652365354829
 GameObject:
   m_ObjectHideFlags: 0

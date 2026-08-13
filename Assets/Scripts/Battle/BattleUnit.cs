@@ -122,6 +122,12 @@ public class BattleUnit : MonoBehaviour
         {
             health.OnDead -= HandleDead;
         }
+
+        if (team == UnitTeam.Hero && HeroManager.Instance != null && HeroManager.Instance.IsInitialized)
+        {
+            HeroManager.Instance.Controller.OnHeroStatChanged -= HandleHeroStatChanged;
+        }
+
         if (BattleManager.Instance != null)
         {
             BattleManager.Instance.UnregisterUnit(this);
@@ -144,7 +150,12 @@ public class BattleUnit : MonoBehaviour
         }
 
         level = Mathf.Max(1, unitLevel);
-        CalculateLevelStats();
+
+        // 영웅은 보유 데이터 기준 최종 능력치 적용(0812 추가)
+        if (!TryApplyHeroStat())
+        {
+            CalculateLevelStats();
+        }
 
         health.Initialize(maxHp);
         movement.Initialize(unitData.MoveSpeed, unitData.AttackRange);
@@ -159,7 +170,89 @@ public class BattleUnit : MonoBehaviour
         stateMachine.Start();
         BattleManager.Instance.RegisterUnit(this);
         isInitialized = true;
+
+        // 영웅 능력치 변경 이벤트 구독
+        SubscribeHeroStatChanged();
     }
+    // 영웅 최종 능력치 변경 이벤트 구독 
+    private void SubscribeHeroStatChanged()
+    {
+        if (team != UnitTeam.Hero)
+        {
+            return;
+        }
+
+        if (unitData is not HeroData)
+        {
+            return;
+        }
+
+        if (HeroManager.Instance == null || !HeroManager.Instance.IsInitialized)
+        {
+            return;
+        }
+
+        HeroManager.Instance.Controller.OnHeroStatChanged += HandleHeroStatChanged;
+    }
+
+    // 영웅 최종 능력치 변경 시 전투 능력치 갱신
+    private void HandleHeroStatChanged()
+    {
+        if (unitData is not HeroData heroData)
+        {
+            return;
+        }
+
+        if (HeroManager.Instance == null || !HeroManager.Instance.IsInitialized)
+        {
+            return;
+        }
+
+        if (!HeroManager.Instance.Controller.TryGetHeroStat(heroData.UnitID, out HeroStat heroStat))
+        {
+            return;
+        }
+
+        ApplyStats(heroStat.MaxHp, heroStat.Attack, heroStat.Defense);
+    }
+
+
+    // 보유 영웅 데이터 기준으로 최종 능력치 적용 (0812 추가)
+    private bool TryApplyHeroStat()
+    {
+        if (team != UnitTeam.Hero)
+        {
+            return false;
+        }
+
+        if (unitData is not HeroData heroData)
+        {
+            return false;
+        }
+
+        if (HeroManager.Instance == null || !HeroManager.Instance.IsInitialized)
+        {
+            return false;
+        }
+
+        if (!HeroManager.Instance.Controller.TryGetHero(heroData.UnitID, out OwnedHeroData ownedHero))
+        {
+            return false;
+        }
+
+        if (!HeroManager.Instance.Controller.TryGetHeroStat(heroData.UnitID, out HeroStat heroStat))
+        {
+            return false;
+        }
+
+        level = ownedHero.Level;
+        maxHp = heroStat.MaxHp;
+        attackPower = heroStat.Attack;
+        defense = heroStat.Defense;
+
+        return true;
+    }
+
     public void ApplyStats(int newMaxHp, int newAttackPower, int newDefense, bool addChangedHp = true)
     {
         //EquipmentController나 레벨 시스템 쪽에서 모든 계산이 끝난 최종 능력치를 전달 받음.

@@ -8,7 +8,7 @@ using UnityEngine;
 public enum CurrencyType
 {
     None = -1,
-    GOLD, EXP, UPGRADE, DIAMOND,     // 이후 추가될 재화 추가
+    GOLD, EXP, UPGRADE, GEM,     // 이후 추가될 재화 추가
     Length
 }
 /// <summary>
@@ -47,9 +47,14 @@ public class CurrencyManager : Singleton<CurrencyManager>
         {
             // 재화 종류 별로 초기화
             currencies[(CurrencyType)i] = 0;
-            // 임시 세이브 매니저에 저장되어 있는 재화 받아오기.
-            currencies[(CurrencyType)i] = TestSaveManager.Instance.CurrentSaveData.CurrencyDatas[i];
         }
+    }
+    // 테스트를 위해 초기 재화 지급용
+    private void Start()
+    {
+        // 메인 화면의 Gold, Gem UI 확인을 위해 두 재화 지급.
+        AddCurrency(CurrencyType.GOLD, 10000);
+        AddCurrency(CurrencyType.GEM, 1000);
     }
 
     // 재화 획득 함수
@@ -59,10 +64,6 @@ public class CurrencyManager : Singleton<CurrencyManager>
 
         currencies[type] += amount;
         OnCurrencyChanged?.Invoke(type, currencies[type]);
-
-        // 임시 재화 저장용 코드
-        TestSaveManager.Instance.CurrentSaveData.SetCurrency(type, currencies[type]);
-        TestSaveManager.Instance.SaveGame();
 
         Debug.Log($"[재화 획득] [{type}] +{amount} | 현재 보유 : {currencies[type]}");
     }
@@ -78,10 +79,6 @@ public class CurrencyManager : Singleton<CurrencyManager>
         currencies[type] -= amount;
         OnCurrencyChanged?.Invoke(type, currencies[type]);
 
-        // 임시 재화 저장용 코드
-        TestSaveManager.Instance.CurrentSaveData.SetCurrency(type, currencies[type]);
-        TestSaveManager.Instance.SaveGame();
-
         Debug.Log($"[{type}] 사용에 성공했습니다. | 남은 재화 : {currencies[type]}");
 
         return true;
@@ -90,5 +87,45 @@ public class CurrencyManager : Singleton<CurrencyManager>
     public int GetCurrency(CurrencyType type)
     {
         return currencies[type];
+    }
+
+    // 현재 재화 상태를 저장 데이터에 반영 (저장/로드 관련 작업을 위해 0812 추가)
+    public void WriteSaveData(GameSaveData saveData)
+    {
+        if (saveData == null)
+        {
+            throw new ArgumentNullException(nameof(saveData));
+        }
+
+        // 저장 데이터에 재화 관련 정보를 저장
+        saveData.Currency = new CurrencySaveData
+        {
+            Gold = currencies[CurrencyType.GOLD],
+            Exp = currencies[CurrencyType.EXP],
+            Upgrade = currencies[CurrencyType.UPGRADE],
+            Gem = currencies[CurrencyType.GEM]
+        };
+    }
+
+    // 저장 데이터를 기준으로 재화 상태 복원 (저장/로드 관련 작업을 위해 0812 추가) 
+    public void LoadSaveData(GameSaveData saveData)
+    {
+        if (saveData == null)
+        {
+            throw new ArgumentNullException(nameof(saveData));
+        }
+
+        // 저장 데이터가 비어 있는 경우 기본 데이터 사용
+        saveData.Currency ??= new CurrencySaveData();
+
+        currencies[CurrencyType.GOLD] = saveData.Currency.Gold;
+        currencies[CurrencyType.EXP] = saveData.Currency.Exp;
+        currencies[CurrencyType.UPGRADE] = saveData.Currency.Upgrade;
+        currencies[CurrencyType.GEM] = saveData.Currency.Gem;
+
+        OnCurrencyChanged?.Invoke(CurrencyType.GOLD, currencies[CurrencyType.GOLD]);
+        OnCurrencyChanged?.Invoke(CurrencyType.EXP, currencies[CurrencyType.EXP]);
+        OnCurrencyChanged?.Invoke(CurrencyType.UPGRADE, currencies[CurrencyType.UPGRADE]);
+        OnCurrencyChanged?.Invoke(CurrencyType.GEM, currencies[CurrencyType.GEM]);
     }
 }
