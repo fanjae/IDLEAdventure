@@ -1,4 +1,5 @@
 using System;
+using UnityEditor.Overlays;
 using UnityEngine;
 
 // 게임 저장 데이터의 생성, 로드 저장 관리
@@ -55,10 +56,23 @@ public sealed class SaveManager : Singleton<SaveManager>
     // 최초 실행 시 사용할 기본 저장 데이터 생성
     private GameSaveData CreateNewData()
     {
+        /* 1차 빌드 때 기본 영웅에 대한 지급 문제로 추후 재주석
         return new GameSaveData
         {
             SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+        }; */
+
+        GameSaveData saveData = new()
+        {
+            SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
         };
+
+        // 최초 플레이 시 기본 영웅 지급
+        saveData.Heroes.OwnedHeroes.Add(new OwnedHeroSaveData { HeroId = "Hero_Tanker", Level = 1 });
+        saveData.Heroes.OwnedHeroes.Add(new OwnedHeroSaveData { HeroId = "Hero_Ranger", Level = 1 });
+        saveData.Heroes.OwnedHeroes.Add(new OwnedHeroSaveData { HeroId = "Hero_Healer", Level = 1 });
+
+        return saveData;
     }
 
     // 앱이 백그라운드로 전환될 때 현재 게임 데이터 저장
