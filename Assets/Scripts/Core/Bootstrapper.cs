@@ -52,6 +52,10 @@ public class Bootstrapper
         // 저장된 보유 영웅 상태 복원
         heroManager.Controller.LoadSaveData(saveManager.CurrentData);
 
+
+        // 방치 시간 적용은 아직 되지 않았기에 추가
+        TestSaveManager testSaveManager = TestSaveManager.Instance;
+
         Debug.Log("초기 호출 완료.");
     }
 }
