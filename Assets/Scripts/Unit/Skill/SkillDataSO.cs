@@ -3,8 +3,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SkillData", menuName = "Game Data/Skill/Skill Data")]
 public class SkillDataSO : ScriptableObject
 {
-    [Header("기본 정보")]
+    [Header("식별 정보")]
     [SerializeField] private string skillName;
+
+    [Header("UI 표시 정보")]
+    [SerializeField] private string displayName;
+    [SerializeField] private Sprite icon;
+    [SerializeField, TextArea(2, 4)] private string description;
 
     [Header("스킬 설정")]
     [SerializeField] private SkillEffectType effectType;
@@ -31,6 +36,9 @@ public class SkillDataSO : ScriptableObject
 
     
     public string SkillName => skillName;
+    public string DisplayName => displayName;
+    public Sprite Icon => icon;
+    public string Description => description;
     public SkillEffectType EffectType => effectType;
     public float DamageRatio => damageRatio;
     public float Cooldown => cooldown;
