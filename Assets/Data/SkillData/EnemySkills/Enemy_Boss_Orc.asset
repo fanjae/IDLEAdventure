@@ -10,19 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 17ded5d891b976d42927654fced35c25, type: 3}
-  m_Name: Healer_Heal
+  m_Name: Enemy_Boss_Orc
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
-  skillName: HealerHeal
-  effectType: 1
-  damageRatio: 1.5
+  skillName: OrcWarCry
+  effectType: 4
+  damageRatio: 1
   cooldown: 10
   actionDuration: 10
-  blockCount: 5
   barrierVfxPrefab: {fileID: 0}
+  blockCount: 1
   projectilePrefab: {fileID: 0}
   projectileSpeed: 10
-  healCastVfxPrefab: {fileID: 805668277512953704, guid: 5b2f495877dea7e4bb35c6fdd14d8672, type: 3}
-  healTargetVfxPrefab: {fileID: 3596470342651629080, guid: 85eb7a31b98950945a0b9b1fc45f7349, type: 3}
+  healCastVfxPrefab: {fileID: 0}
+  healTargetVfxPrefab: {fileID: 0}
   healVfxDuration: 1.5
-  hitInterval: 0.2
-  skillRange: 3
+  buffVfxPrefab: {fileID: 5126489433114200694, guid: dcc53fe407a74a0419ee2fe038660285, type: 3}
+  attackBuff: 25
+  buffDuration: 6

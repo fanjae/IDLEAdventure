@@ -33,13 +33,15 @@ public class BattleUnit : MonoBehaviour
     private int attackPower;
     private int defense;
 
+    private int attackModifier;
+
     private bool isInitialized;
 
     public UnitDataSO UnitData => unitData;
     public UnitTeam Team => team;
     public int Level => level;
     public int MaxHp => maxHp;
-    public int AttackPower => attackPower;
+    public int AttackPower => Mathf.Max(0, attackPower + attackModifier);
     public int Defense => defense;
 
     public BattleUnit Target { get; private set; }
@@ -159,7 +161,7 @@ public class BattleUnit : MonoBehaviour
 
         health.Initialize(maxHp);
         movement.Initialize(unitData.MoveSpeed, unitData.AttackRange);
-        attack.Initialize(this, unitData.AttackType, attackPower, unitData.AttackSpeed);
+        attack.Initialize(this, unitData.AttackType, AttackPower, unitData.AttackSpeed);
         
         unitAnimator?.SetAttackSpeed(unitData.AttackSpeed);//공격속도에 맞춰서 애니메이션 속도도 설정
 
@@ -263,7 +265,7 @@ public class BattleUnit : MonoBehaviour
         if (!isInitialized || !health.IsInitialized) return;
 
         health.SetMaxHp(maxHp, addChangedHp);
-        attack.SetAttackPower(attackPower);
+        attack.SetAttackPower(AttackPower);
     }
     public void FindTarget()
     {
@@ -456,6 +458,19 @@ public class BattleUnit : MonoBehaviour
         CalculateLevelStats();
 
         health.SetMaxHp(maxHp, true);
-        attack.SetAttackPower(attackPower);
+        attack.SetAttackPower(AttackPower);
+    }
+
+    public void SetAttackModifier(int value)
+    {
+        attackModifier = value;
+        //UnitAttack이 실제로 사용하는 공격력도 갱신
+        attack?.SetAttackPower(AttackPower);
+    }
+    public void ClearAttackModifier()
+    {
+        attackModifier = 0;
+        //원래대로 복구
+        attack?.SetAttackPower(AttackPower);
     }
 }

@@ -17,8 +17,8 @@ public class SkillDataSO : ScriptableObject
     [SerializeField, Min(0.1f)] private float actionDuration = 10.0f;
 
     [Header("배리어 설정")]
-    [SerializeField, Min(1)] private int blockCount = 5;
     [SerializeField] private GameObject barrierVfxPrefab;
+    [SerializeField, Min(1)] private int blockCount = 5;
 
     [Header("투사체 스킬 설정")]
     [SerializeField] private SkillProjectile projectilePrefab;
@@ -29,14 +29,20 @@ public class SkillDataSO : ScriptableObject
     [SerializeField] private GameObject healTargetVfxPrefab;
     [SerializeField, Min(0.1f)] private float healVfxDuration = 1.5f;
 
+    [Header("공격력 버프 스킬")]
+    [SerializeField] private GameObject buffVfxPrefab;
+    [SerializeField, Min(1)] private int attackBuff = 25;
+    [SerializeField, Min(0.1f)] private float buffDuration = 6.0f;
+
     
     public string SkillName => skillName;
     public SkillEffectType EffectType => effectType;
     public float DamageRatio => damageRatio;
     public float Cooldown => cooldown;
+    public float ActionDuration => actionDuration;
+
     public int BlockCount => blockCount;
     public GameObject BarrierVfxPrefab => barrierVfxPrefab;
-    public float ActionDuration => actionDuration;
 
     public SkillProjectile ProjectilePrefab => projectilePrefab;
     public float ProjectileSpeed => projectileSpeed;
@@ -44,5 +50,9 @@ public class SkillDataSO : ScriptableObject
     public GameObject HealCastVfxPrefab => healCastVfxPrefab;
     public GameObject HealTargetVfxPrefab => healTargetVfxPrefab;
     public float HealVfxDuration => healVfxDuration;
+
+    public GameObject BuffVfxPrefab => buffVfxPrefab;
+    public int AttackBuff => attackBuff;
+    public float BuffDuration => buffDuration;
 
 }
