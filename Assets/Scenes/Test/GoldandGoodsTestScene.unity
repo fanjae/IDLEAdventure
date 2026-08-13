@@ -246,6 +246,25 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &515110441 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1181301829289791451, guid: c6f85f8e2f057ad4a970db31abea5287, type: 3}
+  m_PrefabInstance: {fileID: 832529821}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &515110445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515110441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5803d3d06e23cf24ea3067aeb76ccbae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IdleView
+  idleTimeText: {fileID: 1142642342}
+  idleReward: {fileID: 1167780358}
 --- !u!114 &516752879 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6175347062842500430, guid: c6f85f8e2f057ad4a970db31abea5287, type: 3}
@@ -349,10 +368,36 @@ PrefabInstance:
       propertyPath: m_Name
       value: Main_Test
       objectReference: {fileID: 0}
+    - target: {fileID: 6066018121567470371, guid: c6f85f8e2f057ad4a970db31abea5287, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6066018121567470371, guid: c6f85f8e2f057ad4a970db31abea5287, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1167780358}
+    - target: {fileID: 6066018121567470371, guid: c6f85f8e2f057ad4a970db31abea5287, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnClickIdleRewardButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 6066018121567470371, guid: c6f85f8e2f057ad4a970db31abea5287, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: IdleReward, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6066018121567470371, guid: c6f85f8e2f057ad4a970db31abea5287, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8133500822530226432, guid: c6f85f8e2f057ad4a970db31abea5287, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1167780358}
+    - targetCorrespondingSourceObject: {fileID: 1181301829289791451, guid: c6f85f8e2f057ad4a970db31abea5287, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 515110445}
     - targetCorrespondingSourceObject: {fileID: 3614287961664097264, guid: c6f85f8e2f057ad4a970db31abea5287, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1797034631}
@@ -376,6 +421,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &1142642342 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6175816482397386010, guid: c6f85f8e2f057ad4a970db31abea5287, type: 3}
+  m_PrefabInstance: {fileID: 832529821}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &1167780353 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8133500822530226432, guid: c6f85f8e2f057ad4a970db31abea5287, type: 3}
+  m_PrefabInstance: {fileID: 832529821}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1167780358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1167780353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16292ef217f99b149aa107ae8fa1088a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IdleReward
+  rewardCSVData: {fileID: 4900000, guid: 6a6ab591548859e4a84386680347c7a1, type: 3}
+  maxIdleTime: 100
+  testClearStageNum: 1
 --- !u!1 &1616981116
 GameObject:
   m_ObjectHideFlags: 0
