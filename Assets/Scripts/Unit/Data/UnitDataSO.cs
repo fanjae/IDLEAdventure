@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public abstract class UnitDataSO : ScriptableObject
 {
@@ -24,6 +24,9 @@ public abstract class UnitDataSO : ScriptableObject
     [Header("공격 타입")]
     [SerializeField] private AttackType attackType = AttackType.Melee;
 
+    [Header("전투 설정")]
+    [SerializeField] private GameObject battlePrefab;
+
     //기본 정보
     public string UnitID => unitID;
     public string UnitName => unitName;
@@ -41,4 +44,7 @@ public abstract class UnitDataSO : ScriptableObject
     public float MoveSpeed => moveSpeed;
     //공격 타입
     public AttackType AttackType => attackType;
+
+
+    public GameObject BattlePrefab => battlePrefab;
 }

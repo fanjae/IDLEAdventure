@@ -34,10 +34,6 @@ public class SkillDataSO : ScriptableObject
     [SerializeField, Min(1)] private int attackBuff = 25;
     [SerializeField, Min(0.1f)] private float buffDuration = 6.0f;
 
-    [Header("전투 설정")]
-    [SerializeField] private GameObject battlePrefab;
-
-    
     public string SkillName => skillName;
     public SkillEffectType EffectType => effectType;
     public float DamageRatio => damageRatio;
@@ -57,7 +53,5 @@ public class SkillDataSO : ScriptableObject
     public GameObject BuffVfxPrefab => buffVfxPrefab;
     public int AttackBuff => attackBuff;
     public float BuffDuration => buffDuration;
-
-    public GameObject BattlePrefab => battlePrefab;
 
 }
