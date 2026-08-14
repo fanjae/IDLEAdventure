@@ -30,7 +30,7 @@ public sealed class SlotDragController : MonoBehaviour
 
     public bool IsDragging => dragObj != null;
 
-    private readonly RaycastHit[] raycastHits = new RaycastHit[8];
+    private readonly RaycastHit[] raycastHits = new RaycastHit[64];
 
     private void Awake()
     {

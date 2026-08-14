@@ -7,6 +7,10 @@ public class HeroData : UnitDataSO
     [SerializeField] private HeroClassType classType;
     [SerializeField] private HeroRole role;
 
+    [Header("스킬 정보")]
+    [SerializeField] private SkillDataSO skillData;
+
     public HeroClassType ClassType => classType;
     public HeroRole Role => role;
+    public SkillDataSO SkillData => skillData;
 }

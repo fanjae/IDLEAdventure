@@ -87,7 +87,7 @@ public sealed class StageEnemySpawner : MonoBehaviour
 
         battleUnit.Initialize(enemyData.enemyLevel);
         //없어도 됨
-        battleUnit.ApplyStats(enemyData.maxHp, battleUnit.AttackPower, battleUnit.Defense);
+        //battleUnit.ApplyStats(enemyData.maxHp, battleUnit.AttackPower, battleUnit.Defense);
 
         if (slotHighlightController != null)
         {

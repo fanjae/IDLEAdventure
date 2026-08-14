@@ -70,6 +70,21 @@ public sealed class SlotHighlightController : MonoBehaviour
         }
     }
 
+    public void HideSlots()
+    {
+        currentTargetSlot = -1;
+
+        for (int i = 1; i < slotSpriteRenderers.Length; i++)
+        {
+            if (slotSpriteRenderers[i] == null)
+            {
+                continue;
+            }
+
+            slotSpriteRenderers[i].enabled = false;
+        }
+    }
+
     // 드래그 시작
     public void StartDragHighlight()
     {

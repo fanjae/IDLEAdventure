@@ -23,8 +23,17 @@ public class BattleUIController : MonoBehaviour
     [SerializeField] private GameObject selectionNoticePanel;
     [SerializeField] private TMP_Text selectionNoticeText;
 
+    //
+    [SerializeField] private GameObject victory;
+    [SerializeField] private GameObject defeat;
+    //
+
     [Header("씬 이동")]
     [SerializeField] private string mainSceneName = "MainScene";
+
+    //
+    [SerializeField] private string battleSceneName = "BattleScene 2";
+    //
 
     private readonly Stack<GameObject> pageHistory = new Stack<GameObject>();
     private readonly List<string> expeditionHeroIds = new List<string>();
@@ -41,8 +50,13 @@ public class BattleUIController : MonoBehaviour
     public string SelectedFormationHeroId => selectedFormationHeroId;
     public IReadOnlyList<string> ExpeditionHeroIds => expeditionHeroIds;
 
+    //
+    private static readonly List<string> runtimeHeroIds = new List<string>();
+    //
+
     private void Awake()
     {
+        Debug.Log($"[BattleUIController Awake] Scene = {gameObject.scene.name}");
         Instance = this;
 
         pagePanels = new[]
@@ -53,16 +67,55 @@ public class BattleUIController : MonoBehaviour
             battleHudPanel
         };
 
-        ConfigureHeroRosters();
-        selectionNoticePanel?.SetActive(false);
 
-        if (stageSelectPanel == null)
+        Debug.Log($"StageSelectPanel null = {stageSelectPanel == null}");
+        Debug.Log($"FormationPanel null = {formationPanel == null}");
+
+        //ConfigureHeroRosters();
+        //
+        //selectionNoticePanel?.SetActive(false);
+        if (selectionNoticePanel != null)
         {
-            Debug.LogError("Stage Select Panel is not assigned.", this);
-            return;
+            selectionNoticePanel.SetActive(false);
+        }
+        //
+
+        //
+        //if (stageSelectPanel == null)
+        //{
+        //    Debug.LogError("Stage Select Panel is not assigned.", this);
+        //    return;
+        //}
+
+        if (stageSelectPanel != null)
+        {
+            Debug.Log("BattleScene 진입 - Formation 켜지냐");
+            ConfigureHeroRosters();
+            OpenStageSelect();
+        }
+        else if (formationPanel != null)
+        {
+            ShowPage(formationPanel);
+            ConfigureHeroRosters();
+
+            //formationPanel.transform.parent.gameObject.SetActive(true);
+
+
+            expeditionHeroIds.Clear();
+            expeditionHeroIds.AddRange(runtimeHeroIds);
+
+            formationRoster?.SetHeroFilter(expeditionHeroIds);
+            formationRoster?.SetSelectedHeroIds(null);
+
+            Debug.Log($"BattleScene Formation 진입 완료 / 영웅 수: {expeditionHeroIds.Count}");
+
         }
 
-        OpenStageSelect();
+        //
+
+
+
+       // OpenStageSelect();
         ClosePausePopup();
         CloseSettingsPopup();
         CloseBattleResultPopup();
@@ -77,6 +130,15 @@ public class BattleUIController : MonoBehaviour
     {
         UnsubscribeFromHeroRosters();
 
+        //
+        if (BattleManager.Instance != null)
+        {
+            BattleManager.Instance.OnBattleStarted -= HandleBattleStarted;
+            BattleManager.Instance.OnBattleEnded -= HandleBattleEnded;
+        }
+        //
+
+
         if (Instance == this)
             Instance = null;
     }
@@ -86,6 +148,33 @@ public class BattleUIController : MonoBehaviour
         UnsubscribeFromHeroRosters();
     }
 
+
+
+    private void Start()
+    {
+        //
+        if (BattleManager.Instance != null)
+        {
+            BattleManager.Instance.OnBattleStarted += HandleBattleStarted;
+            BattleManager.Instance.OnBattleEnded += HandleBattleEnded;
+        }
+        //
+
+        if (formationPanel == null)
+        {
+            return;
+        }
+
+        Debug.Log(
+            $"[Start 이후] Formation activeSelf = {formationPanel.activeSelf}, " +
+            $"activeInHierarchy = {formationPanel.activeInHierarchy}",
+            formationPanel);
+    }
+
+
+
+
+
     private void UnsubscribeFromHeroRosters()
     {
         if (heroSelectRoster != null)
@@ -94,15 +183,56 @@ public class BattleUIController : MonoBehaviour
             heroSelectRoster.OnSelectionDenied -= ShowSelectionNotice;
         }
 
+        //if (formationRoster != null)
+        //{
+        //    formationRoster.OnSelectionChanged -= HandleFormationSelectionChanged;
+        //}
+
+        //
         if (formationRoster != null)
         {
-            formationRoster.OnSelectionChanged -= HandleFormationSelectionChanged;
+            formationRoster.OnHeroClicked -= HandleFormationHeroClicked;
         }
+        //
     }
+
+    //
+    private void HandleBattleStarted()
+    {
+        ShowPage(battleHudPanel);
+    }
+    //
+
+    //
+
+    private void HandleBattleEnded(UnitTeam winner)
+    {
+        if (victory != null)
+        {
+            victory.SetActive(winner == UnitTeam.Hero);
+        }
+
+        if (defeat != null)
+        {
+            defeat.SetActive(winner == UnitTeam.Enemy);
+        }
+
+        ShowBattleResult();
+    }
+
+    //
 
     // 스테이지 선택 화면 엶
     public void OpenStageSelect()
     {
+        //
+        if (stageSelectPanel == null)
+        {
+            return;
+        }
+
+        //
+
         pageHistory.Clear();
         ShowPage(stageSelectPanel);
         ClosePausePopup();
@@ -132,6 +262,19 @@ public class BattleUIController : MonoBehaviour
             return;
         }
 
+        //
+        if (formationPanel == null)
+        {
+            StageRuntimeData.SelectStage(selectedStageNumber);
+
+            runtimeHeroIds.Clear();
+            runtimeHeroIds.AddRange(expeditionHeroIds);
+
+            SceneManager.LoadScene(battleSceneName);
+            return;
+        }
+        //
+
         formationRoster?.SetHeroFilter(expeditionHeroIds);
         formationRoster?.SetSelectedHeroIds(null);
         SetSelectedFormationHero(null);
@@ -141,7 +284,16 @@ public class BattleUIController : MonoBehaviour
     // 현재 배치 확정하고 전투 HUD 엶
     public void StartBattle()
     {
-        OpenPage(battleHudPanel);
+        //OpenPage(battleHudPanel);
+
+        if (BattleManager.Instance == null)
+        {
+            Debug.LogError("BattleManager를 찾을 수 없습니다.", this);
+            return;
+        }
+
+        BattleManager.Instance.StartBattle();
+
     }
 
     // 전투 HUD 위에 결과 팝업 엶
@@ -275,10 +427,28 @@ public class BattleUIController : MonoBehaviour
 
     private void ShowPage(GameObject targetPage)
     {
+        //foreach (GameObject page in pagePanels)
+        //{
+        //    if (page != null)
+        //        page.SetActive(page == targetPage);
+        //}
+
+        //currentPage = targetPage;
+
+        Debug.Log($"[ShowPage 호출] Target = {(targetPage != null ? targetPage.name : "NULL")}");
+
         foreach (GameObject page in pagePanels)
         {
-            if (page != null)
-                page.SetActive(page == targetPage);
+            if (page == null)
+            {
+                continue;
+            }
+
+            bool isActive = page == targetPage;
+
+            Debug.Log($"[ShowPage] {page.name} → {isActive}");
+
+            page.SetActive(isActive);
         }
 
         currentPage = targetPage;
@@ -301,11 +471,19 @@ public class BattleUIController : MonoBehaviour
             heroSelectRoster.OnSelectionDenied += ShowSelectionNotice;
         }
 
+        //if (formationRoster != null)
+        //{
+        //    formationRoster.OnSelectionChanged += HandleFormationSelectionChanged;
+        //}
+
+        //
         if (formationRoster != null)
         {
-            formationRoster.OnSelectionChanged += HandleFormationSelectionChanged;
+            formationRoster.OnHeroClicked += HandleFormationHeroClicked;
         }
+        //
     }
+
 
     private void HandleExpeditionSelectionChanged(IReadOnlyList<string> selectedHeroIds)
     {
@@ -313,13 +491,29 @@ public class BattleUIController : MonoBehaviour
         expeditionHeroIds.AddRange(selectedHeroIds);
     }
 
-    private void HandleFormationSelectionChanged(IReadOnlyList<string> selectedHeroIds)
+
+    //
+    private void HandleFormationHeroClicked(string heroId)
     {
-        SetSelectedFormationHero(selectedHeroIds.Count > 0 ? selectedHeroIds[0] : null);
+        OnFormationHeroSelected?.Invoke(heroId);
     }
+    //
+    
+
+    //
+    //private void HandleFormationSelectionChanged(IReadOnlyList<string> selectedHeroIds)
+    //{
+    //    SetSelectedFormationHero(selectedHeroIds.Count > 0 ? selectedHeroIds[0] : null);
+    //}
 
     private void SetSelectedFormationHero(string heroId)
     {
+        //selectedFormationHeroId = heroId;
+
+        //if (!string.IsNullOrEmpty(heroId))
+        //{
+        //    OnFormationHeroSelected?.Invoke(heroId);
+        //}
         if (selectedFormationHeroId == heroId)
         {
             return;
@@ -328,6 +522,7 @@ public class BattleUIController : MonoBehaviour
         selectedFormationHeroId = heroId;
         OnFormationHeroSelected?.Invoke(selectedFormationHeroId);
     }
+    //
 
     private void Update()
     {

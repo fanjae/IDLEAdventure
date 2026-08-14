@@ -26,6 +26,12 @@ public sealed class HeroDictionaryPresenter : MonoBehaviour
 
     [SerializeField] private GameObject detailOverlay;
     [SerializeField] private Image detailPortraitImage;
+    [SerializeField] private Image detailSkillIcon;
+    [SerializeField] private Button skillIconButton;
+    [SerializeField] private Button skillInfoDismissButton;
+    [SerializeField] private GameObject skillInfoPanel;
+    [SerializeField] private TMP_Text skillNameText;
+    [SerializeField] private TMP_Text skillDescriptionText;
     [SerializeField] private TMP_Text detailText;
     [SerializeField] private Button closeDetailButton;
 
@@ -33,6 +39,7 @@ public sealed class HeroDictionaryPresenter : MonoBehaviour
 
     private HeroController heroController;
     private RosterFilter currentFilter;
+    private SkillDataSO selectedSkillData;
 
     private void Awake()
     {
@@ -40,6 +47,8 @@ public sealed class HeroDictionaryPresenter : MonoBehaviour
         ownedTabButton?.onClick.AddListener(ShowOwned);
         unownedTabButton?.onClick.AddListener(ShowUnowned);
         closeDetailButton?.onClick.AddListener(CloseDetail);
+        skillIconButton?.onClick.AddListener(ToggleSkillInfo);
+        skillInfoDismissButton?.onClick.AddListener(CloseSkillInfo);
 
         if (cardTemplate != null)
         {
@@ -47,6 +56,16 @@ public sealed class HeroDictionaryPresenter : MonoBehaviour
         }
 
         CloseDetail();
+    }
+
+    private void OnDestroy()
+    {
+        allTabButton?.onClick.RemoveListener(ShowAll);
+        ownedTabButton?.onClick.RemoveListener(ShowOwned);
+        unownedTabButton?.onClick.RemoveListener(ShowUnowned);
+        closeDetailButton?.onClick.RemoveListener(CloseDetail);
+        skillIconButton?.onClick.RemoveListener(ToggleSkillInfo);
+        skillInfoDismissButton?.onClick.RemoveListener(CloseSkillInfo);
     }
 
     private void OnEnable()
@@ -155,10 +174,15 @@ public sealed class HeroDictionaryPresenter : MonoBehaviour
 
     public void CloseDetail()
     {
+        CloseSkillInfo();
+
         if (detailOverlay != null)
         {
             detailOverlay.SetActive(false);
         }
+
+        selectedSkillData = null;
+        SetSkillIcon(null);
     }
 
     private HeroDictionaryCardView GetCardView(int index)
@@ -228,9 +252,62 @@ public sealed class HeroDictionaryPresenter : MonoBehaviour
             detailText.text = CreateDetailText(heroData, ownedHero, isOwned);
         }
 
+        selectedSkillData = heroData.SkillData;
+        SetSkillIcon(selectedSkillData);
+        UpdateSkillInfo(selectedSkillData);
+        CloseSkillInfo();
+
         if (detailOverlay != null)
         {
             detailOverlay.SetActive(true);
+        }
+    }
+
+    private void SetSkillIcon(SkillDataSO skillData)
+    {
+        if (detailSkillIcon == null)
+        {
+            return;
+        }
+
+        Sprite icon = skillData != null ? skillData.Icon : null;
+        detailSkillIcon.sprite = icon;
+        detailSkillIcon.preserveAspect = true;
+        detailSkillIcon.enabled = icon != null;
+    }
+
+    private void ToggleSkillInfo()
+    {
+        if (skillInfoPanel == null || selectedSkillData == null || detailSkillIcon == null || detailSkillIcon.sprite == null)
+        {
+            return;
+        }
+
+        skillInfoPanel.SetActive(!skillInfoPanel.activeSelf);
+    }
+
+    private void CloseSkillInfo()
+    {
+        if (skillInfoPanel != null)
+        {
+            skillInfoPanel.SetActive(false);
+        }
+    }
+
+    private void UpdateSkillInfo(SkillDataSO skillData)
+    {
+        if (skillNameText != null)
+        {
+            skillNameText.text = skillData != null && !string.IsNullOrWhiteSpace(skillData.DisplayName)
+                ? skillData.DisplayName
+                : "스킬";
+        }
+
+        if (skillDescriptionText != null)
+        {
+            skillDescriptionText.text = skillData != null && !string.IsNullOrWhiteSpace(skillData.Description)
+                ? skillData.Description
+                : "스킬 설명이 아직 등록되지 않았습니다.";
         }
     }
 
