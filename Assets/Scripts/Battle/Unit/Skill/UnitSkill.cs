@@ -32,9 +32,8 @@ public class UnitSkill : MonoBehaviour
     {
         get
         {
-            if (skillData == null) return 0.0f;
-            float cooldown = skillData.Cooldown;
-            if (cooldown <= 0.0f) return 1.0f;
+            if (!hasBattleStarted || skillData == null) return 0.0f;
+            if (skillData.Cooldown <= 0.0f) return 1.0f;
 
             float remainingTime = Mathf.Max(0.0f, nextSkillAvailableTime - Time.time);
             return Mathf.Clamp01(1.0f - remainingTime / skillData.Cooldown);
@@ -54,16 +53,39 @@ public class UnitSkill : MonoBehaviour
 
         skillSafetyEndTime = 0.0f;
 
+        hasBattleStarted = false;
+        nextSkillAvailableTime = 0.0f;
+
+        if (BattleManager.Instance != null)
+        {
+            BattleManager.Instance.OnBattleStarted += HandleBattleStarted;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (BattleManager.Instance != null)
+        {
+            BattleManager.Instance.OnBattleStarted -= HandleBattleStarted;
+        }
+    }
+
+    //전투 시작
+    private void HandleBattleStarted()
+    {
+        hasBattleStarted = true;
+
         if (skillData == null)
         {
             nextSkillAvailableTime = 0.0f;
             return;
         }
+        //전투가 실제로 시작된 순간부터 첫 스킬 쿨타임 시작
         nextSkillAvailableTime = Time.time + skillData.Cooldown;
     }
-
     public bool CanUseSkill()
     {
+        if (!hasBattleStarted) return false;
         if (unit == null || unit.IsDead || skillData == null || isUsingSkill) return false;
         if (Time.time < nextSkillAvailableTime) return false;
 
