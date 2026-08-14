@@ -26,6 +26,10 @@ public sealed class BattleHeroRosterPresenter : MonoBehaviour
     public event System.Action<IReadOnlyList<string>> OnSelectionChanged;
     public event System.Action<string> OnSelectionDenied;
 
+    //
+    public event System.Action<string> OnHeroClicked;
+    //
+
     public IReadOnlyList<string> SelectedHeroIds => selectedHeroIds;
 
     private void Awake()
@@ -172,6 +176,10 @@ public sealed class BattleHeroRosterPresenter : MonoBehaviour
 
         Refresh();
         OnSelectionChanged?.Invoke(selectedHeroIds);
+
+        //
+        OnHeroClicked?.Invoke(heroId);
+        //
     }
 
     private void SubscribeToHeroData()
