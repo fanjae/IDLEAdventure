@@ -15,6 +15,8 @@ public sealed class SlotHighlightController : MonoBehaviour
 
     private SpriteRenderer[] slotSpriteRenderers;
 
+    private SpriteRenderer[] enemySlotSpriteRenderers;
+
     private int currentTargetSlot = -1;
 
     private readonly Dictionary<SpriteRenderer, Sprite> enemyOriginalSprites = new();
@@ -70,6 +72,7 @@ public sealed class SlotHighlightController : MonoBehaviour
         }
     }
 
+    //슬롯 숨기기
     public void HideSlots()
     {
         currentTargetSlot = -1;
@@ -82,6 +85,21 @@ public sealed class SlotHighlightController : MonoBehaviour
             }
 
             slotSpriteRenderers[i].enabled = false;
+        }
+
+        if (enemySlotSpriteRenderers == null)
+        {
+            return;
+        }
+
+        for (int i = 1; i < enemySlotSpriteRenderers.Length; i++)
+        {
+            if (enemySlotSpriteRenderers[i] == null)
+            {
+                continue;
+            }
+
+            enemySlotSpriteRenderers[i].enabled = false;
         }
     }
 
@@ -194,6 +212,38 @@ public sealed class SlotHighlightController : MonoBehaviour
             }
 
             slotSpriteRenderers[i] = spriteRenderer;
+        }
+    }
+
+    //적 슬롯 스프라이트 저장
+    public void CacheEnemySlots(Transform[] enemySlots)
+    {
+        if (enemySlots == null || enemySlots.Length <= 1)
+        {
+            return;
+        }
+
+        enemySlotSpriteRenderers = new SpriteRenderer[enemySlots.Length];
+
+        for (int i = 1; i < enemySlots.Length; i++)
+        {
+            Transform slot = enemySlots[i];
+
+            if (slot == null)
+            {
+                continue;
+            }
+
+            SpriteRenderer spriteRenderer = slot.GetComponentInChildren<SpriteRenderer>(true);
+
+            if (spriteRenderer == null)
+            {
+                Debug.LogWarning($"{i}번 적 슬롯에서 SpriteRenderer를 찾을 수 없음");
+
+                continue;
+            }
+
+            enemySlotSpriteRenderers[i] = spriteRenderer;
         }
     }
 

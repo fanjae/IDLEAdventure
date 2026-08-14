@@ -33,6 +33,10 @@ public sealed class StageEnemySpawner : MonoBehaviour
         {
             throw new Exception("StageEnemySpawner의 Enemy Root가 설정되지 않음");
         }
+        if (slotHighlightController != null)
+        {
+            slotHighlightController.CacheEnemySlots(slots);
+        }
     }
 
 
