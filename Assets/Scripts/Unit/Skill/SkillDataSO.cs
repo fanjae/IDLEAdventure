@@ -18,8 +18,8 @@ public class SkillDataSO : ScriptableObject
     [SerializeField, Min(0.1f)] private float cooldown = 6.0f;
 
     [Header("스킬 안전 종료 시간")]
-    //SkillEnd 애니메이션 이벤트 누락 대비용
-    [SerializeField, Min(0.1f)] private float actionDuration = 10.0f;
+    //SkillEnd 애니메이션 이벤트 누락 시 스킬 상태를 복구하기 위한 시간
+    [SerializeField, Min(0.1f)] private float skillSafetyDuration = 10.0f;
 
     [Header("배리어 설정")]
     [SerializeField] private GameObject barrierVfxPrefab;
@@ -40,13 +40,16 @@ public class SkillDataSO : ScriptableObject
     [SerializeField, Min(0.1f)] private float buffDuration = 6.0f;
 
     public string SkillName => skillName;
+
     public string DisplayName => displayName;
     public Sprite Icon => icon;
     public string Description => description;
+
     public SkillEffectType EffectType => effectType;
     public float DamageRatio => damageRatio;
     public float Cooldown => cooldown;
-    public float ActionDuration => actionDuration;
+
+    public float SkillSafetyDuration => skillSafetyDuration;
 
     public int BlockCount => blockCount;
     public GameObject BarrierVfxPrefab => barrierVfxPrefab;
