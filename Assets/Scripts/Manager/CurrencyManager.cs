@@ -49,13 +49,6 @@ public class CurrencyManager : Singleton<CurrencyManager>
             currencies[(CurrencyType)i] = 0;
         }
     }
-    // 테스트를 위해 초기 재화 지급용
-    private void Start()
-    {
-        // 메인 화면의 Gold, Gem UI 확인을 위해 두 재화 지급.
-        AddCurrency(CurrencyType.GOLD, 10000);
-        AddCurrency(CurrencyType.GEM, 1000);
-    }
 
     // 재화 획득 함수
     public void AddCurrency(CurrencyType type, int amount)

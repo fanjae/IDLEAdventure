@@ -8,6 +8,11 @@ public class StageClearRewardTest : MonoBehaviour
 {
     [Header("Setting Reward")]
     [SerializeField] private TextAsset rewardCSVData;    // 보상 테이블로 사용할 CSV 데이터 연결
+    [SerializeField] private int testClearStageNum;
+
+    // 배틀 매니저 이벤트를 받아오기 위함.
+    [Header("Binding BattleManager")]
+    [SerializeField] private BattleManager battleManager;
 
     // 스테이지 단계별 보상 테이블 저장용 딕셔너리 | Key: 스테이지 번호, Value: CSV에서 받아온 보상 테이블 데이터
     private Dictionary<int, StageRewardData> stageRewards = new Dictionary<int, StageRewardData>();
@@ -15,6 +20,18 @@ public class StageClearRewardTest : MonoBehaviour
     private void Start()
     {
         stageRewards = RewardCSVParser.Parse(rewardCSVData);
+
+        if (battleManager != null)
+        {
+            battleManager.OnBattleEnded += GiveStageClearReward;
+        }
+    }
+    private void OnDestroy()
+    {
+        if (battleManager != null)
+        {
+            battleManager.OnBattleEnded -= GiveStageClearReward;
+        }
     }
 
     // 스테이지 보상 딕셔너리 기반 보상 지급 함수
@@ -36,6 +53,27 @@ public class StageClearRewardTest : MonoBehaviour
         else
         {
             Debug.Log($"스테이지 {stageNum}의 클리어 보상 데이터가 존재하지 않습니다.");
+        }
+    }
+    public void GiveStageClearReward(UnitTeam winner)
+    {
+        if (winner == UnitTeam.Enemy) return;
+        if (stageRewards.TryGetValue(testClearStageNum, out StageRewardData stageRewardData))
+        {
+            foreach (KeyValuePair<string, IReward> reward in stageRewardData.Rewards)
+            {
+                int amount = (int)reward.Value.RewardValue;
+
+                if (amount > 0)
+                {
+                    reward.Value.GiveReward(amount);
+                }
+            }
+            Debug.Log($"스테이지 {testClearStageNum}의 클리어 보상을 획득했습니다.");
+        }
+        else
+        {
+            Debug.Log($"스테이지 {testClearStageNum}의 클리어 보상 데이터가 존재하지 않습니다.");
         }
     }
 
