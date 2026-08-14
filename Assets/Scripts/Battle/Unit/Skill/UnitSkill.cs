@@ -22,7 +22,24 @@ public class UnitSkill : MonoBehaviour
     private bool isUsingSkill; //스킬 사용 중인지 확인
     private bool hasAppliedSkillEffect; //한 번의 스킬에서 효과가 중복 적용되는 것 방지용
 
+    private bool hasBattleStarted;
+
     public bool IsUsingSkill => isUsingSkill;
+
+    public bool HasSkill => skillData != null;
+
+    public float CooldownRatio
+    {
+        get
+        {
+            if (skillData == null) return 0.0f;
+            float cooldown = skillData.Cooldown;
+            if (cooldown <= 0.0f) return 1.0f;
+
+            float remainingTime = Mathf.Max(0.0f, nextSkillAvailableTime - Time.time);
+            return Mathf.Clamp01(1.0f - remainingTime / skillData.Cooldown);
+        }
+    }
 
     public void Initialize(BattleUnit unit)
     {
