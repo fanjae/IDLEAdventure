@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class UnitAttack : MonoBehaviour
 {
+    private const float AttackHitExtraRange = 0.3f;//공격 타격 판정에 추가로 허용할 거리
+
     [Header("원거리 공격 설정")]
     [SerializeField] private RangedProjectile projectilePrefab;
     [SerializeField] private Transform projectileSpawnPoint;
@@ -11,22 +13,22 @@ public class UnitAttack : MonoBehaviour
 
     private BattleUnit unit;
     //공격 애니메이션의 공격?타격? 시점까지 공격 대상을 보관?저장?하는 용
-    private BattleUnit pendingTarget;
+    private BattleUnit attackTarget;
 
     private AttackType attackType;
 
     private int attackPower;
     private float attackSpeed;
-    private float nextAttackTime;
 
+    private float nextAttackAvailableTime;
     private float attackSafetyEndTime;
 
     //공격 애니메이션이 진행 중인지 체크하는 용
     private bool isAttacking;
     //중복 타격 방지용
-    private bool damageApplied;
+    private bool hasAppliedDamage;
 
-    private bool hasLoggedMissingProjectile;//프리펩 누락 오류가 매 프레임 출력되는 것을 방지하는 용
+    private bool hasLoggedMissingProjectile;//원거리 공격 프리팹 누락 로그가 반복 출력되는 것을 방지
 
     public bool IsAttacking => isAttacking;
 
@@ -37,12 +39,14 @@ public class UnitAttack : MonoBehaviour
         this.attackPower = Mathf.Max(0, attackPower);
         this.attackSpeed = Mathf.Max(0.1f, attackSpeed);
 
-        pendingTarget = null;
-        nextAttackTime = 0.0f;
+        attackTarget = null;
+
+        nextAttackAvailableTime = 0.0f;
         attackSafetyEndTime = 0.0f;
 
         isAttacking = false;
-        damageApplied = false;
+        hasAppliedDamage = false;
+
         hasLoggedMissingProjectile = false;
     }
 
@@ -67,7 +71,7 @@ public class UnitAttack : MonoBehaviour
         if (unit == null || target == null) return false;
         if (unit.IsDead || target.IsDead) return false;
         if (isAttacking) return false;
-        if (Time.time < nextAttackTime) return false;
+        if (Time.time < nextAttackAvailableTime) return false;
         if (attackType == AttackType.Ranged && projectilePrefab == null)
         {
             LogMissingProjectile();
@@ -75,29 +79,30 @@ public class UnitAttack : MonoBehaviour
         }
         if (!unit.TryPlayAttackAnimation()) return false;
 
-        pendingTarget = target;
+        attackTarget = target;
 
         isAttacking = true;     
-        damageApplied = false;
-        //공격 시작점 기준으로 다음 공격 가능 시간 계산
-        nextAttackTime = Time.time + GetAttackInterval();
-        //AttackEnd 이벤트 누락 방지 용
+        hasAppliedDamage = false;
+
+        //공격 시작 시점을 기준으로 다음 공격 가능 시간 계산
+        nextAttackAvailableTime = Time.time + GetAttackInterval();
+        //AttackEnd 애니메이션 이벤트 누락 대비
         attackSafetyEndTime = Time.time + attackSafetyDuration;
         return true;
     }
-    //공격 애니메이션의 실제 타격 프레임에서 호출
+    //AttackHit 애니메이션 이벤트에서 호출
     public void ApplyAttackDamage()
     {
         if (!isAttacking) return;
-        if (damageApplied) return;
+        if (hasAppliedDamage) return;
 
-        BattleUnit target = pendingTarget;
+        BattleUnit target = attackTarget;
 
         if (unit == null || target == null) return;
         if (unit.IsDead || target.IsDead) return;
-        if (!unit.IsTargetInAttackRange(target, 0.3f)) return;
+        if (!unit.IsTargetInAttackRange(target, AttackHitExtraRange)) return;
 
-        damageApplied = true;
+        hasAppliedDamage = true;
 
         int finalDamage = DamageCalculator.Calculate(attackPower, target.Defense);
         if (attackType == AttackType.Ranged)
@@ -108,13 +113,16 @@ public class UnitAttack : MonoBehaviour
         int appliedDamage = target.TakeDamage(finalDamage);
         Debug.Log($"{unit.name} -> {target.name} / 피해량 : {appliedDamage}");
     }
+    //AttackEnd 애니메이션 이벤트에서 호출
     public void CompleteAttack()
     {
         if (!isAttacking) return;
 
         isAttacking = false;
-        damageApplied = false;
-        pendingTarget = null;
+        hasAppliedDamage = false;
+
+        attackTarget = null;
+        
         attackSafetyEndTime = 0.0f;
     }
     private void FireProjectile(BattleUnit target, int damage)
@@ -133,36 +141,35 @@ public class UnitAttack : MonoBehaviour
 
         projectile.Initialize(target, damage);
     }
-    //추후에 만드신다는 EquipmentController나 레벨 시스템이 계산할 때
-    //최종 공격력을 적용할 때 사용(필요없으시다면 안 써도 됩니다.)
+    //외부 능력치 변경 시 실제 기본 공격력 갱신
     public void SetAttackPower(int newAttackPower)
     {
         attackPower = Mathf.Max(0, newAttackPower);
     }
-    //상태가 변경되거나 사망 시 예약된 공격 취소
+    //상태 변경 또는 사망 등으로 진행 중인 공격 취소
     public void CancelAttack()
     {
-        pendingTarget = null;
+        attackTarget = null;
 
         isAttacking = false;
-        damageApplied = false;
+        hasAppliedDamage = false;
 
         attackSafetyEndTime = 0.0f;
     }
-    //전투 재시작하거나 오브젝트 풀 재사용 시 공격 대상과 쿨 초기화
+    //전투 재시작 또는 오브젝트 재사용 시 공격 상태 초기화
     public void ResetAttack()
     {
-        pendingTarget = null;
+        attackTarget = null;
 
-        nextAttackTime = 0.0f;
+        nextAttackAvailableTime = 0.0f;
         attackSafetyEndTime = 0.0f;
 
         isAttacking = false;
-        damageApplied = false;
+        hasAppliedDamage = false;
     }
     private float GetAttackInterval()
     {
-        return 1.0f / attackSpeed;  //공속이 1이면 1초마다 공격.  2면 0.5초마다 공격.
+        return 1.0f / attackSpeed;  //공속 1 = 1초 / 공속 2 = 0.5초
     }
 
     //TryAttack이 매 프레임마다 호출되다보니
