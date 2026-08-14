@@ -12,15 +12,15 @@ public class UnitSkill : MonoBehaviour
     [SerializeField] private Transform skillVfxPoint;
 
     private BattleUnit unit;
-    private BattleUnit pendingTarget; //스킬 시작 당시의 대상을 보관하는 용
+    private BattleUnit skillTarget; //스킬 시작 당시의 대상을 보관하는 용
 
     private UnitBuff unitBuff;
 
-    private float nextSkillTime;
-    private float skillEndTime;
+    private float nextSkillAvailableTime;
+    private float skillSafetyEndTime;
 
     private bool isUsingSkill; //스킬 사용 중인지 확인
-    private bool effectApplied; //한 번의 스킬에서 효과가 중복 적용되는 것 방지용
+    private bool hasAppliedSkillEffect; //한 번의 스킬에서 효과가 중복 적용되는 것 방지용
 
     public bool IsUsingSkill => isUsingSkill;
 
@@ -30,128 +30,133 @@ public class UnitSkill : MonoBehaviour
 
         unitBuff = GetComponent<UnitBuff>();
 
-        pendingTarget = null;
+        skillTarget = null;
+
         isUsingSkill = false;
-        effectApplied = false;
-        skillEndTime = 0.0f;
+        hasAppliedSkillEffect = false;
+
+        skillSafetyEndTime = 0.0f;
 
         if (skillData == null)
         {
-            nextSkillTime = 0.0f;
+            nextSkillAvailableTime = 0.0f;
             return;
         }
-        nextSkillTime = Time.time + skillData.Cooldown;
+        nextSkillAvailableTime = Time.time + skillData.Cooldown;
     }
 
     public bool CanUseSkill()
     {
         if (unit == null || unit.IsDead || skillData == null || isUsingSkill) return false;
-        if (Time.time < nextSkillTime) return false;
+        if (Time.time < nextSkillAvailableTime) return false;
 
-        BattleUnit target = FindSkillTarget();
+        BattleUnit target = GetSkillTarget();
         return IsValidTarget(target);
     }
     public bool UseSkill()
     {
         if (!CanUseSkill()) return false;
 
-        BattleUnit target = FindSkillTarget();
+        BattleUnit target = GetSkillTarget();
         if (!IsValidTarget(target)) return false;
-        //애니메이션을 시작할 수 없으면, 스킬 사용 상태도 시작하지 않음
+        //애니메이션을 시작할 수 있을 때만 스킬 사용 상태로 진입
         if (!unit.TryPlaySkillAnimation()) return false;
 
-        pendingTarget = target;
+        skillTarget = target;
 
         isUsingSkill = true;
-        effectApplied = false;
+        hasAppliedSkillEffect = false;
 
-        nextSkillTime = Time.time + skillData.Cooldown;
-        //End 이벤트 누락 대비용
-        skillEndTime = Time.time + skillData.ActionDuration;
+        //스킬 시작 시점을 기준으로 다음 사용 가능 시간 계산
+        nextSkillAvailableTime = Time.time + skillData.Cooldown;
+        //SkillEnd 애니메이션 이벤트 누락 대비
+        skillSafetyEndTime = Time.time + skillData.SkillSafetyDuration;
 
         unit.StopMove();
         return true;
     }
+    //SkillEnd 이벤트가 누락됐을 때 스킬 상태 복구
     public void UpdateSkill()
     {
         if (!isUsingSkill) return;
 
-        if (Time.time < skillEndTime) return;
+        if (Time.time < skillSafetyEndTime) return;
 
         //확인용
         Debug.LogWarning($"{name} : SkillEnd Event 가 호출되지 않아서 스킬 상태를 복구함.", this);
 
         CompleteSkill();
     }
-    //SkillActivate 애니메이션 이벤트에서 호출하는 용
+    //SkillActivate 애니메이션 이벤트에서 호출
     public void ApplySkillEffect()
     {
-        if (!isUsingSkill || effectApplied || skillData == null) return;
+        if (!isUsingSkill || hasAppliedSkillEffect || skillData == null) return;
 
         switch (skillData.EffectType)
         {
             case SkillEffectType.Damage:
-                if (!IsValidTarget(pendingTarget)) return;
-                effectApplied = true;
+                if (!IsValidTarget(skillTarget)) return;
+                hasAppliedSkillEffect = true;
                 unit.FaceTarget();
-                ApplyDamage(pendingTarget);
+                ApplyDamage(skillTarget);
                 break;
             case SkillEffectType.Heal:
-                if (!IsValidTarget(pendingTarget)) return;
-                effectApplied = true;
-                ApplyHeal(pendingTarget);
+                if (!IsValidTarget(skillTarget)) return;
+                hasAppliedSkillEffect = true;
+                ApplyHeal(skillTarget);
                 break;
             case SkillEffectType.Barrier:
-                effectApplied = true;
+                hasAppliedSkillEffect = true;
                 ApplyBarrier();
                 break;
             case SkillEffectType.ProjectileDamage:
-                if (!IsValidTarget(pendingTarget)) return;
-                effectApplied = true;
+                if (!IsValidTarget(skillTarget)) return;
+                hasAppliedSkillEffect = true;
                 unit.FaceTarget();
-                FireProjectile(pendingTarget);
+                FireProjectile(skillTarget);
                 break;
             case SkillEffectType.Buff:
-                effectApplied = true;
+                hasAppliedSkillEffect = true;
                 ApplyBuff();
                 break;
         }
     }
-    //SkillEnd 애니메이션 이벤트에서 호출하는 용
+    //SkillEnd 애니메이션 이벤트에서 호출
     public void CompleteSkill()
     {
         if (!isUsingSkill) return;
 
         isUsingSkill = false;
-        effectApplied = false;
-        pendingTarget = null;
-        skillEndTime = 0.0f;
+        hasAppliedSkillEffect = false;
+        skillTarget = null;
+        skillSafetyEndTime = 0.0f;
     }
-
+    //상태 변경 또는 사망 등으로 진행 중인 스킬 취소
     public void CancelSkill()
     {
         isUsingSkill = false;
-        effectApplied = false;
-        pendingTarget = null;
-        skillEndTime = 0.0f;
+        hasAppliedSkillEffect = false;
+        skillTarget = null;
+        skillSafetyEndTime = 0.0f;
     }
+    //전투 재시작 또는 오브젝트 재사용 시 스킬 상태 초기화
     public void ResetSkill()
     {
         isUsingSkill = false;
-        effectApplied = false;
-        pendingTarget = null;
-        skillEndTime = 0.0f;
+        hasAppliedSkillEffect = false;
+        skillTarget = null;
+        skillSafetyEndTime = 0.0f;
 
         if (skillData == null)
         {
-            nextSkillTime = 0.0f;
+            nextSkillAvailableTime = 0.0f;
             return;
         }
 
-        nextSkillTime = Time.time + skillData.Cooldown;
+        nextSkillAvailableTime = Time.time + skillData.Cooldown;
     }
 
-    private BattleUnit FindSkillTarget()
+    private BattleUnit GetSkillTarget()
     {
         if (unit == null || skillData == null) return null;
 
@@ -234,7 +239,7 @@ public class UnitSkill : MonoBehaviour
         if (target == null || skillData.ProjectilePrefab == null) return;
 
         Vector3 spawnPosition = projectileSpawnPoint != null ? projectileSpawnPoint.position : transform.position + Vector3.up;
-        //발사하는 순간 타겟이 있던 방향으로
+        //발사하는 순간 타겟이 있던 방향 저장
         Vector3 direction = target.transform.position - spawnPosition;
         direction.y = 0.0f;
         if (direction.sqrMagnitude <= 0.001f) direction = unit.transform.forward;

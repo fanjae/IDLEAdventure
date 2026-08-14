@@ -32,8 +32,8 @@ public class BattleUnit : MonoBehaviour
     private int maxHp;
     private int attackPower;
     private int defense;
-
-    private int attackModifier;
+    //버프 등.. 전투 중 임시로 적용되는 공격력 보정 값
+    private int attackPowerModifier;
 
     private bool isInitialized;
 
@@ -41,7 +41,7 @@ public class BattleUnit : MonoBehaviour
     public UnitTeam Team => team;
     public int Level => level;
     public int MaxHp => maxHp;
-    public int AttackPower => Mathf.Max(0, attackPower + attackModifier);
+    public int AttackPower => Mathf.Max(0, attackPower + attackPowerModifier);
     public int Defense => defense;
 
     public BattleUnit Target { get; private set; }
@@ -154,9 +154,9 @@ public class BattleUnit : MonoBehaviour
         level = Mathf.Max(1, unitLevel);
 
         // 영웅은 보유 데이터 기준 최종 능력치 적용(0812 추가)
-        if (!TryApplyHeroStat())
+        if (!TryApplyOwnedHeroStats())
         {
-            CalculateLevelStats();
+            CalculateBaseLevelStats();
         }
 
         health.Initialize(maxHp);
@@ -220,7 +220,7 @@ public class BattleUnit : MonoBehaviour
 
 
     // 보유 영웅 데이터 기준으로 최종 능력치 적용 (0812 추가)
-    private bool TryApplyHeroStat()
+    private bool TryApplyOwnedHeroStats()
     {
         if (team != UnitTeam.Hero)
         {
@@ -294,11 +294,12 @@ public class BattleUnit : MonoBehaviour
     {
         if (target == null || unitData == null) return false;
 
-        Vector3 dir = target.transform.position - transform.position;
-        dir.y = 0.0f;//수평 거리만 확인하기 위해서 y는 0
-        float range = unitData.AttackRange + Mathf.Max(0.0f, extraRange);
+        Vector3 direction = target.transform.position - transform.position;
+        //높이 차이는 제외하고 수평 거리만 비교
+        direction.y = 0.0f;
+        float attackRange = unitData.AttackRange + Mathf.Max(0.0f, extraRange);
         //제곱 거리 비교로 계산. (불필요한 제곱근 계산 X)
-        return dir.sqrMagnitude <= range * range;
+        return direction.sqrMagnitude <= attackRange * attackRange;
     }
     public void MoveToTarget()
     {
@@ -431,15 +432,15 @@ public class BattleUnit : MonoBehaviour
         unitAnimator?.SetMove(isMoving);
     }
 
-    //레벨을 추가하게 되면서 만든 레벨 능력치 계산용
-    private void CalculateLevelStats()
+    //UnitDataSO + 레벨 성장치만 계산하는 함수
+    private void CalculateBaseLevelStats()
     {
         level = Mathf.Max(1, level);
-        int levelPerIncrease = level - 1;
+        int levelIncrease = level - 1;
         
-        maxHp = Mathf.Max(1, unitData.MaxHp + unitData.HpPerLevel * levelPerIncrease);
-        attackPower = Mathf.Max(0, unitData.Attack + unitData.AttackPerLevel *  levelPerIncrease);
-        defense = Mathf.Max(0, unitData.Defense +  unitData.DefensePerLevel * levelPerIncrease);
+        maxHp = Mathf.Max(1, unitData.MaxHp + unitData.HpPerLevel * levelIncrease);
+        attackPower = Mathf.Max(0, unitData.Attack + unitData.AttackPerLevel *  levelIncrease);
+        defense = Mathf.Max(0, unitData.Defense +  unitData.DefensePerLevel * levelIncrease);
     }
 
     public void SetLevel(int newLevel)
@@ -449,13 +450,13 @@ public class BattleUnit : MonoBehaviour
         //아직 전투 초기화 전이라면, 이후에 Initialize에서 레벨능력치 계산
         if (!isInitialized) return;
 
-        ApplyLevelStats();
+        ApplyBaseLevelStats();
     }
-    private void ApplyLevelStats()
+    private void ApplyBaseLevelStats()
     {
         //기본 능력치와 레벨 성장값만 계산하게 해두었습니다.
         //추후에 장비 시스템 연결 후에는 최종 능력치 계산을 통해 재계산해야할 것 같습니다.
-        CalculateLevelStats();
+        CalculateBaseLevelStats();
 
         health.SetMaxHp(maxHp, true);
         attack.SetAttackPower(AttackPower);
@@ -463,13 +464,13 @@ public class BattleUnit : MonoBehaviour
 
     public void SetAttackModifier(int value)
     {
-        attackModifier = value;
+        attackPowerModifier = value;
         //UnitAttack이 실제로 사용하는 공격력도 갱신
         attack?.SetAttackPower(AttackPower);
     }
     public void ClearAttackModifier()
     {
-        attackModifier = 0;
+        attackPowerModifier = 0;
         //원래대로 복구
         attack?.SetAttackPower(AttackPower);
     }
