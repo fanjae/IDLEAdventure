@@ -14,6 +14,8 @@ public class UnitSkill : MonoBehaviour
     private BattleUnit unit;
     private BattleUnit pendingTarget; //스킬 시작 당시의 대상을 보관하는 용
 
+    private UnitBuff unitBuff;
+
     private float nextSkillTime;
     private float skillEndTime;
 
@@ -25,6 +27,8 @@ public class UnitSkill : MonoBehaviour
     public void Initialize(BattleUnit unit)
     {
         this.unit = unit;
+
+        unitBuff = GetComponent<UnitBuff>();
 
         pendingTarget = null;
         isUsingSkill = false;
@@ -83,8 +87,6 @@ public class UnitSkill : MonoBehaviour
     public void ApplySkillEffect()
     {
         if (!isUsingSkill || effectApplied || skillData == null) return;
-        //같은 스킬 Event가 중복되어도 한 번만 적용
-        effectApplied = true;
 
         switch (skillData.EffectType)
         {
@@ -108,6 +110,10 @@ public class UnitSkill : MonoBehaviour
                 effectApplied = true;
                 unit.FaceTarget();
                 FireProjectile(pendingTarget);
+                break;
+            case SkillEffectType.Buff:
+                effectApplied = true;
+                ApplyBuff();
                 break;
         }
     }
@@ -160,6 +166,8 @@ public class UnitSkill : MonoBehaviour
                 return unit;
             case SkillEffectType.ProjectileDamage:
                 return unit.Target;
+            case SkillEffectType.Buff:
+                return unit;
         }
 
         return null;
@@ -180,6 +188,8 @@ public class UnitSkill : MonoBehaviour
                 return target == unit;
             case SkillEffectType.ProjectileDamage://사거리는 공격 사거리와 동일하게 설정하였음.(굳이 다를 필요가 없을 것 같음)
                 return target.Team != unit.Team && unit.IsTargetInAttackRange(target);
+            case SkillEffectType.Buff:
+                return target == unit;
         }
 
         return false;
@@ -212,6 +222,12 @@ public class UnitSkill : MonoBehaviour
     {
         unit.ActivateBarrier(skillData.BlockCount, skillData.BarrierVfxPrefab);
     }
+    private void ApplyBuff()
+    {
+        if (unitBuff == null) return;
+
+        unitBuff.ApplyAttackBuff(skillData.AttackBuff, skillData.BuffDuration, skillData.BuffVfxPrefab, skillVfxPoint);
+    }
     //투사체 스킬 발사 함수
     private void FireProjectile(BattleUnit target)
     {
@@ -240,16 +256,8 @@ public class UnitSkill : MonoBehaviour
     }
     private void PlayHealTargetVfx(BattleUnit target)
     {
-        if (target == null)
-        {
-            Debug.LogWarning("[Heal Target VFX] target == null");
-            return;
-        }
-        if (skillData.HealTargetVfxPrefab == null)
-        {
-            Debug.LogWarning("[Heal Target VFX] Prefab이 연결되지 않음");
-            return;
-        }
+        if (target == null) return;
+        if (skillData.HealTargetVfxPrefab == null) return;
 
         GameObject vfx = Instantiate(skillData.HealTargetVfxPrefab, target.transform.position, Quaternion.identity, target.transform);
 

@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17ded5d891b976d42927654fced35c25, type: 3}
   m_Name: Healer_Heal
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
-  skillName: 
-  icon: {fileID: 21300000, guid: a194088e469e57c45980751c4af4e357, type: 3}
+  skillName: HealerHeal
   effectType: 1
   damageRatio: 1.5
   cooldown: 10
@@ -25,3 +24,5 @@ MonoBehaviour:
   healCastVfxPrefab: {fileID: 805668277512953704, guid: 5b2f495877dea7e4bb35c6fdd14d8672, type: 3}
   healTargetVfxPrefab: {fileID: 3596470342651629080, guid: 85eb7a31b98950945a0b9b1fc45f7349, type: 3}
   healVfxDuration: 1.5
+  hitInterval: 0.2
+  skillRange: 3

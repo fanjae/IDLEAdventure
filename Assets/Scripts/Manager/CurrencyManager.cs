@@ -8,7 +8,7 @@ using UnityEngine;
 public enum CurrencyType
 {
     None = -1,
-    GOLD, EXP, UPGRADE, GEM, DIAMOND,     // 이후 추가될 재화 추가
+    GOLD, EXP, UPGRADE, GEM,     // 이후 추가될 재화 추가
     Length
 }
 /// <summary>
@@ -103,7 +103,7 @@ public class CurrencyManager : Singleton<CurrencyManager>
             Gold = currencies[CurrencyType.GOLD],
             Exp = currencies[CurrencyType.EXP],
             Upgrade = currencies[CurrencyType.UPGRADE],
-            Diamond = currencies[CurrencyType.DIAMOND]
+            Gem = currencies[CurrencyType.GEM]
         };
     }
 
@@ -121,11 +121,11 @@ public class CurrencyManager : Singleton<CurrencyManager>
         currencies[CurrencyType.GOLD] = saveData.Currency.Gold;
         currencies[CurrencyType.EXP] = saveData.Currency.Exp;
         currencies[CurrencyType.UPGRADE] = saveData.Currency.Upgrade;
-        currencies[CurrencyType.DIAMOND] = saveData.Currency.Diamond;
+        currencies[CurrencyType.GEM] = saveData.Currency.Gem;
 
         OnCurrencyChanged?.Invoke(CurrencyType.GOLD, currencies[CurrencyType.GOLD]);
         OnCurrencyChanged?.Invoke(CurrencyType.EXP, currencies[CurrencyType.EXP]);
         OnCurrencyChanged?.Invoke(CurrencyType.UPGRADE, currencies[CurrencyType.UPGRADE]);
-        OnCurrencyChanged?.Invoke(CurrencyType.DIAMOND, currencies[CurrencyType.DIAMOND]);
+        OnCurrencyChanged?.Invoke(CurrencyType.GEM, currencies[CurrencyType.GEM]);
     }
 }
