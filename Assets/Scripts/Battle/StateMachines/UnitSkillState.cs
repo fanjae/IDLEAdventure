@@ -21,6 +21,7 @@ public class UnitSkillState : IUnitState
 
         unit.UpdateSkill();//SkillEnd 누락 대비 체크용
 
+        //스킬이 진행 중이면 현재 상태 유지
         if (unit.IsUsingSkill) return;
         if (!unit.HasValidTarget())
         {

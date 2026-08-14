@@ -1,4 +1,4 @@
-﻿
+
 public class UnitStateMachine
 {
     private readonly UnitIdleState idleState;
@@ -32,6 +32,7 @@ public class UnitStateMachine
 
     public void ChangeState(UnitState newState)
     {
+        //같은 상태로 다시 전환하지 않음
         if (currentState != null && CurrentState == newState) return;
 
         IUnitState nextState = GetState(newState);

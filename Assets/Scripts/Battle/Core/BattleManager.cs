@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,8 +10,8 @@ public class BattleManager : MonoBehaviour
     [Header("전투 설정")]
     [SerializeField] private bool autoStart = true;
 
-    private readonly List<BattleUnit> heroes = new();
-    private readonly List<BattleUnit> enemies = new();
+    private readonly List<BattleUnit> heroUnits = new();
+    private readonly List<BattleUnit> enemyUnits = new();
 
     public event Action OnBattleStarted;
     public event Action<UnitTeam> OnBattleEnded;
@@ -33,7 +33,7 @@ public class BattleManager : MonoBehaviour
     {
         if (!autoStart) yield break;
 
-        // 모든 BattleUnit의 Start와 등록이 끝날 때까지 대기
+        // 모든 BattleUnit의 Start와 등록이 끝난 뒤 전투 시작
         yield return null;
 
         StartBattle();
@@ -48,15 +48,15 @@ public class BattleManager : MonoBehaviour
     {
         if (unit == null) return;
 
-        List<BattleUnit> units = unit.Team == UnitTeam.Hero? heroes : enemies;
-        if (!units.Contains(unit)) units.Add(unit);//같은 유닛 중복 등록 방지
+        List<BattleUnit> teamUnits = unit.Team == UnitTeam.Hero? heroUnits : enemyUnits;
+        if (!teamUnits.Contains(unit)) teamUnits.Add(unit);//같은 유닛 중복 등록 방지
     }
     public void UnregisterUnit(BattleUnit unit)
     {
         if (unit == null) return;
 
-        heroes.Remove(unit);
-        enemies.Remove(unit);
+        heroUnits.Remove(unit);
+        enemyUnits.Remove(unit);
     }
 
     public void StartBattle()
@@ -65,12 +65,12 @@ public class BattleManager : MonoBehaviour
 
         RemoveInvalidUnits();
 
-        if (!HasAliveUnit(heroes))
+        if (!HasAliveUnit(heroUnits))
         {
             Debug.LogWarning("전투에 참가할 영웅이 없습니다.");
             return;
         }
-        if (!HasAliveUnit(enemies))
+        if (!HasAliveUnit(enemyUnits))
         {
             Debug.LogWarning("전투에 참가할 적이 없습니다.");
             return;
@@ -89,17 +89,17 @@ public class BattleManager : MonoBehaviour
     {
         if (requester == null || requester.IsDead) return null;
 
-        List<BattleUnit> candidates = requester.Team == UnitTeam.Hero ? enemies : heroes;
+        List<BattleUnit> targetCandidates = requester.Team == UnitTeam.Hero ? enemyUnits : heroUnits;
         BattleUnit closestTarget = null;
-        float closestDistance = float.MaxValue;
+        float closestDistanceSqr = float.MaxValue;
 
-        for (int i = candidates.Count - 1; i >= 0; i--)
+        for (int i = targetCandidates.Count - 1; i >= 0; i--)
         {
-            BattleUnit candidate = candidates[i];
+            BattleUnit candidate = targetCandidates[i];
 
             if (candidate == null)
             {
-                candidates.RemoveAt(i);
+                targetCandidates.RemoveAt(i);
                 continue;
             }
             if (!candidate.gameObject.activeInHierarchy || candidate.IsDead)
@@ -107,12 +107,13 @@ public class BattleManager : MonoBehaviour
                 continue;
             }
 
-            Vector3 dir = candidate.transform.position - requester.transform.position;
-            dir.y = 0f;
-            float distance = dir.sqrMagnitude;
-            if (distance >= closestDistance) continue;
+            Vector3 direction = candidate.transform.position - requester.transform.position;
+            //높이 차이는 제외하고 수평 거리만 비교
+            direction.y = 0f;
+            float distanceSqr = direction.sqrMagnitude;
+            if (distanceSqr >= closestDistanceSqr) continue;
 
-            closestDistance = distance;
+            closestDistanceSqr = distanceSqr;
             closestTarget = candidate;
         }
 
@@ -128,8 +129,8 @@ public class BattleManager : MonoBehaviour
 
     private void CheckBattleResult()
     {
-        bool hasAliveHero = HasAliveUnit(heroes);
-        bool hasAliveEnemy = HasAliveUnit(enemies);
+        bool hasAliveHero = HasAliveUnit(heroUnits);
+        bool hasAliveEnemy = HasAliveUnit(enemyUnits);
 
         Debug.Log($"전투 결과 / " + $"생존 영웅 : {hasAliveHero}, " + $"생존 적 : {hasAliveEnemy}");
 
@@ -158,15 +159,15 @@ public class BattleManager : MonoBehaviour
 
     private void RemoveInvalidUnits()
     {
-        heroes.RemoveAll(unit => unit == null);
-        enemies.RemoveAll(unit => unit == null);
+        heroUnits.RemoveAll(unit => unit == null);
+        enemyUnits.RemoveAll(unit => unit == null);
     }
 
     public BattleUnit GetLowestHpAlly(BattleUnit requester)
     {
         if (requester == null || requester.IsDead) return null;
 
-        List<BattleUnit> allies = requester.Team == UnitTeam.Hero ? heroes : enemies;
+        List<BattleUnit> allies = requester.Team == UnitTeam.Hero ? heroUnits : enemyUnits;
         BattleUnit lowestHpAlly = null;
         float lowestHpRatio = 1.0f;
 
@@ -180,6 +181,7 @@ public class BattleManager : MonoBehaviour
                 continue;
             }
             if (!ally.gameObject.activeInHierarchy || ally.IsDead || ally.MaxHp <= 0) continue;
+            //이미 최대 체력이면 힐 대상에서 제외
             if (ally.CurrentHp >= ally.MaxHp) continue;
 
             float hpRatio = (float)ally.CurrentHp / ally.MaxHp;
