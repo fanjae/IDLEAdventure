@@ -36,6 +36,23 @@ public class UnitMovement : MonoBehaviour
         unit.updateUpAxis = true;
         unit.autoRepath = true;
     }
+    private void Start()
+    {
+        SetNavMeshAgentEnabled(false);
+        if (BattleManager.Instance != null)
+        {
+            BattleManager.Instance.OnBattleStarted += HandleBattleStarted;
+        }
+    }
+    private void OnDestroy()
+    {
+        if (BattleManager.Instance != null)
+        {
+            BattleManager.Instance.OnBattleStarted -= HandleBattleStarted;
+        }
+    }
+
+
     public void Initialize(float moveSpeed, float attackRange)
     {
         unit.speed = Mathf.Max(0.1f, moveSpeed);
@@ -77,5 +94,18 @@ public class UnitMovement : MonoBehaviour
 
         Quaternion targetRotation = Quaternion.LookRotation(dir.normalized);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
+    }
+
+    private void HandleBattleStarted()
+    {
+        SetNavMeshAgentEnabled(true);
+    }
+    //배치 단계 NavMeshAgent 활성화/비활성화
+    public void SetNavMeshAgentEnabled(bool isEnabled)
+    {
+        if (unit == null) return;
+        if (unit.enabled == isEnabled) return;
+
+        unit.enabled = isEnabled;
     }
 }

@@ -35,6 +35,7 @@ public class BattleUIController : MonoBehaviour
     [SerializeField] private string battleSceneName = "BattleScene 2";
     //
 
+
     private readonly Stack<GameObject> pageHistory = new Stack<GameObject>();
     private readonly List<string> expeditionHeroIds = new List<string>();
     private GameObject[] pagePanels;
