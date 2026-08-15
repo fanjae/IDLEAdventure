@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 // 클래스 공용 장비 데이터
 [CreateAssetMenu(fileName = "NewEquipment",menuName = "Game Data/Item/Equipment")]
@@ -14,8 +14,8 @@ public class EquipmentSO : ItemSO
 
     [Header("Equipment Requirement")]
 
-    // 장비를 사용하거나 획득하는 기준 레벨
-    [SerializeField, Min(1)] private int requiredLevel = 1;
+    // 장비를 제작 가능한 레벨
+    [SerializeField, Min(1)] private int craftLevel = 1;
 
     [Header("Base Stats")]
 
@@ -27,7 +27,7 @@ public class EquipmentSO : ItemSO
 
     public HeroClassType TargetClass => targetClass;
     public EquipmentSlotType SlotType => slotType;
-    public int RequiredLevel => requiredLevel;
+    public int CraftLevel => craftLevel;
 
     public int Attack => attack;
     public int Defense => defense;
