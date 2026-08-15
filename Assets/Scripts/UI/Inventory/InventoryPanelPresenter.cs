@@ -111,6 +111,6 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
     // 슬롯 순서에 따른 등장 애니메이션 지연 시간 계산
     private static float GetSlotAnimationDelay(int slotIndex)
     {
-        return slotIndex * 0.03f;
+        return slotIndex * 0.02f;
     }
 }
