@@ -246,6 +246,23 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &279857866 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4518490516838581734, guid: dd2769c7902ef494c9a41f0c95324061, type: 3}
+  m_PrefabInstance: {fileID: 4134772062414287985}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &279857867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279857866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6174a9228c584974c985cb64648352d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossBehaviorTree
 --- !u!1 &489416291
 GameObject:
   m_ObjectHideFlags: 0
@@ -749,7 +766,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4518490516838581734, guid: dd2769c7902ef494c9a41f0c95324061, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 279857867}
   m_SourcePrefab: {fileID: 100100000, guid: dd2769c7902ef494c9a41f0c95324061, type: 3}
 --- !u!1001 &4239276436868267952
 PrefabInstance:

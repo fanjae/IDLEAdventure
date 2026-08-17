@@ -23,6 +23,12 @@ public class UnitSkillState : IUnitState
 
         //스킬이 진행 중이면 현재 상태 유지
         if (unit.IsUsingSkill) return;
+        //보스 스킬 종료 후, 다음 행동 결정 BT가 함. Animator상태 때문에 시작 실패할 수도 있으므로 재시도
+        if (unit.UsesExternalDecision)
+        {
+            if (unit.CanUseSkill()) unit.UseSkill();
+            return;
+        }
         if (!unit.HasValidTarget())
         {
             unit.ClearTarget();
