@@ -1,4 +1,4 @@
-﻿
+
 public class UnitMoveState : IUnitState
 {
     private readonly BattleUnit unit;
@@ -19,6 +19,12 @@ public class UnitMoveState : IUnitState
         if (!unit.CanBattle)
         {
             unit.StopMove();
+            return;
+        }
+        //행동 판단은 BT가 함
+        if (unit.UsesExternalDecision)
+        {
+            if (unit.HasValidTarget()) unit.MoveToTarget();
             return;
         }
         if (!unit.HasValidTarget())

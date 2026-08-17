@@ -37,12 +37,16 @@ public class BattleUnit : MonoBehaviour
 
     private bool isInitialized;
 
+    private bool usesExternalDecision; //외부(BT)에서 행동 결정을 받는지 체크하는 용
+
     public UnitDataSO UnitData => unitData;
     public UnitTeam Team => team;
     public int Level => level;
     public int MaxHp => maxHp;
     public int AttackPower => Mathf.Max(0, attackPower + attackPowerModifier);
     public int Defense => defense;
+
+    public bool UsesExternalDecision => usesExternalDecision;
 
     public BattleUnit Target { get; private set; }
     public int CurrentHp
@@ -371,6 +375,11 @@ public class BattleUnit : MonoBehaviour
         skill?.CancelSkill();
     }
 
+    public void ChangeState(UnitState newState)
+    {
+        stateMachine?.ChangeState(newState);
+    }
+
     public int TakeDamage(int damage)
     {
         int appliedDamage = health.TakeDamage(damage);
@@ -473,5 +482,10 @@ public class BattleUnit : MonoBehaviour
         attackPowerModifier = 0;
         //원래대로 복구
         attack?.SetAttackPower(AttackPower);
+    }
+
+    public void SetExternalDecision(bool useExternalDecision)
+    {
+        usesExternalDecision = useExternalDecision;
     }
 }

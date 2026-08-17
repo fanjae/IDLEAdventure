@@ -25,6 +25,15 @@ public class UnitAttackState : IUnitState
             unit.StopMove();
             return;
         }
+        //보스 행동 선택은 BT가 함
+        if (unit.UsesExternalDecision)
+        {
+            if (!unit.HasValidTarget()) return;
+            unit.FaceTarget();
+            if (!unit.IsAttacking) unit.TryAttack();
+            return;
+        }
+        //보스 이외의 일반 유닛 FSM 판단
         if (!unit.HasValidTarget())
         {
             unit.CancelAttack();
