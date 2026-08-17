@@ -4,15 +4,13 @@ using System.Collections.Generic;
 // 영웅 레벨 공명 관련 기능을 처리하는 컨트롤러
 public sealed class ResonanceController
 {
-    private readonly HeroController heroController;
-    private readonly List<string> coreHeroIds = new();
-    private readonly List<string> slotHeroIds = new();
+    private const int MaxResonanceSlotCount = 4;
 
-    // 현재 공명 기준 영웅 ID 목록 반환
-    public IReadOnlyList<string> CoreHeroIds => coreHeroIds;
+    private readonly HeroController heroController;
+    private readonly List<string> resonanceSlotHeroIds = new();
 
     // 현재 공명 슬롯 영웅 ID 목록 반환
-    public IReadOnlyList<string> SlotHeroIds => slotHeroIds;
+    public IReadOnlyList<string> ResonanceSlotHeroIds => resonanceSlotHeroIds;
 
     public ResonanceController(HeroController heroController)
     {
@@ -22,10 +20,16 @@ public sealed class ResonanceController
         }
 
         this.heroController = heroController;
+
+        // 공명 슬롯 영웅 레벨 변경 시 공명 레벨 재적용
+        heroController.OnHeroLevelChanged += HandleHeroLevelChanged;
+
+        // 공명 활성 상태에서 신규 영웅 획득 시 공명 레벨 적용
+        heroController.OnHeroCollectionChanged += HandleHeroCollectionChanged;
     }
 
-    // 보유 중인 영웅을 공명 기준 영웅으로 등록
-    public bool TryAddCoreHero(string heroId)
+    // 보유 중인 영웅을 공명 슬롯에 등록
+    public bool TryAddResonanceSlotHero(string heroId)
     {
         if (string.IsNullOrEmpty(heroId))
         {
@@ -39,45 +43,56 @@ public sealed class ResonanceController
         }
 
         // 이미 등록된 영웅은 중복 등록하지 않음
-        if (coreHeroIds.Contains(heroId))
+        if (resonanceSlotHeroIds.Contains(heroId))
         {
             return false;
         }
 
-        coreHeroIds.Add(heroId);
+        // 공명 슬롯은 최대 4명까지 등록
+        if (resonanceSlotHeroIds.Count >= MaxResonanceSlotCount)
+        {
+            return false;
+        }
+
+        resonanceSlotHeroIds.Add(heroId);
+
+        // 슬롯 4명이 모두 등록된 경우 공명 레벨 적용
+        ApplyResonanceLevel();
+
         return true;
     }
 
-    // 공명 기준 영웅 등록 해제
-    public bool TryRemoveCoreHero(string heroId)
+    // 공명 슬롯 영웅 등록 해제
+    public bool TryRemoveResonanceSlotHero(string heroId)
     {
         if (string.IsNullOrEmpty(heroId))
         {
             return false;
         }
 
-        return coreHeroIds.Remove(heroId);
+        return resonanceSlotHeroIds.Remove(heroId);
     }
 
-    // 지정한 영웅이 공명 기준 영웅인지 확인
-    public bool ContainsCoreHero(string heroId)
+    // 지정한 영웅이 공명 슬롯에 등록되어 있는지 확인
+    public bool ContainsResonanceSlotHero(string heroId)
     {
-        return coreHeroIds.Contains(heroId);
+        return resonanceSlotHeroIds.Contains(heroId);
     }
 
-    // 현재 공명 기준 영웅 중 가장 낮은 레벨 반환
+    // 공명 슬롯 4명의 실제 레벨 중 가장 낮은 레벨 반환
     public bool TryGetResonanceLevel(out int resonanceLevel)
     {
         resonanceLevel = 0;
 
-        if (coreHeroIds.Count == 0)
+        // 슬롯 4명이 모두 등록된 경우에만 공명 활성화
+        if (resonanceSlotHeroIds.Count != MaxResonanceSlotCount)
         {
             return false;
         }
 
         int minLevel = int.MaxValue;
 
-        foreach (string heroId in coreHeroIds)
+        foreach (string heroId in resonanceSlotHeroIds)
         {
             // 등록된 기준 영웅의 현재 보유 데이터 조회
             if (!heroController.TryGetHero(heroId, out OwnedHeroData hero))
@@ -95,70 +110,55 @@ public sealed class ResonanceController
         return true;
     }
 
-    // 보유 중인 영웅을 공명 슬롯에 등록
-    public bool TryAddSlotHero(string heroId)
+    // 현재 공명 레벨보다 낮은 보유 영웅의 실제 레벨 동기화
+    public bool ApplyResonanceLevel()
     {
-        if (string.IsNullOrEmpty(heroId))
-        {
-            return false;
-        }
-
-        // 보유하지 않은 영웅은 등록하지 않음
-        if (!heroController.ContainsHero(heroId))
-        {
-            return false;
-        }
-
-        // 공명 기준 영웅은 슬롯에 등록하지 않음
-        if (coreHeroIds.Contains(heroId))
-        {
-            return false;
-        }
-
-        // 이미 등록된 영웅은 중복 등록하지 않음
-        if (slotHeroIds.Contains(heroId))
-        {
-            return false;
-        }
-
-        slotHeroIds.Add(heroId);
-        return true;
-    }
-
-    // 공명 슬롯 영웅의 공명 레벨 기준 최종 능력치 계산
-    public bool TryGetResonanceHeroStat(string heroId, out HeroStat stat)
-    {
-        stat = default;
-
-        if (string.IsNullOrEmpty(heroId))
-        {
-            return false;
-        }
-
-        // 공명 슬롯에 등록되지 않은 영웅은 계산하지 않음
-        if (!slotHeroIds.Contains(heroId))
-        {
-            return false;
-        }
-
-        // 현재 기준 영웅을 기준으로 공명 레벨 계산
         if (!TryGetResonanceLevel(out int resonanceLevel))
         {
             return false;
         }
 
-        return heroController.TryGetHeroStat(heroId, resonanceLevel, out stat);
-    }
-
-    // 공명 슬롯 영웅 등록 해제
-    public bool TryRemoveSlotHero(string heroId)
-    {
-        if (string.IsNullOrEmpty(heroId))
+        foreach (OwnedHeroData hero in heroController.Heroes)
         {
-            return false;
+            // 공명 슬롯 영웅은 자신의 현재 레벨 유지
+            if (resonanceSlotHeroIds.Contains(hero.HeroId))
+            {
+                continue;
+            }
+
+            // 공명 레벨 이상인 영웅은 변경하지 않음
+            if (hero.Level >= resonanceLevel)
+            {
+                continue;
+            }
+
+            heroController.TrySetHeroLevel(hero.HeroId, resonanceLevel);
         }
 
-        return slotHeroIds.Remove(heroId);
+        return true;
+    }
+
+    // 보유 영웅 레벨 변경 시 공명 레벨 갱신
+    private void HandleHeroLevelChanged(OwnedHeroData hero)
+    {
+        if (hero == null)
+        {
+            return;
+        }
+
+        // 공명 슬롯 영웅의 레벨 변경만 공명 레벨에 영향
+        if (!resonanceSlotHeroIds.Contains(hero.HeroId))
+        {
+            return;
+        }
+
+        ApplyResonanceLevel();
+    }
+
+    // 보유 영웅 목록 변경 시 현재 공명 레벨 적용
+    private void HandleHeroCollectionChanged()
+    {
+        ApplyResonanceLevel();
     }
 
     // 현재 공명 상태를 저장 데이터에 반영
@@ -171,8 +171,7 @@ public sealed class ResonanceController
 
         saveData.Resonance = new ResonanceSaveData
         {
-            CoreHeroIds = new List<string>(coreHeroIds),
-            SlotHeroIds = new List<string>(slotHeroIds)
+            ResonanceSlotHeroIds = new List<string>(resonanceSlotHeroIds)
         };
     }
 
@@ -184,51 +183,25 @@ public sealed class ResonanceController
             throw new ArgumentNullException(nameof(saveData));
         }
 
-
         // 저장된 공명 데이터가 없는 경우 기본 데이터 사용
         saveData.Resonance ??= new ResonanceSaveData();
-        saveData.Resonance.CoreHeroIds ??= new List<string>();
-        saveData.Resonance.SlotHeroIds ??= new List<string>();
+        saveData.Resonance.ResonanceSlotHeroIds ??= new List<string>();
 
+        // 현재 공명 슬롯 상태 초기화
+        resonanceSlotHeroIds.Clear();
 
-        // 현재 공명 상태 초기화
-        coreHeroIds.Clear();
-        slotHeroIds.Clear();
-
-
-        foreach (string heroId in saveData.Resonance.CoreHeroIds)
+        foreach (string heroId in saveData.Resonance.ResonanceSlotHeroIds)
         {
+            // 공명 슬롯은 최대 4명까지만 복원
+            if (resonanceSlotHeroIds.Count >= MaxResonanceSlotCount)
+            {
+                break;
+            }
+
             if (string.IsNullOrEmpty(heroId))
             {
                 continue;
             }
-
-
-            // 현재 보유 중인 영웅만 기준 영웅으로 복원
-            if (!heroController.ContainsHero(heroId))
-            {
-                continue;
-            }
-
-
-            // 중복된 기준 영웅 데이터는 제외
-            if (coreHeroIds.Contains(heroId))
-            {
-                continue;
-            }
-
-
-            coreHeroIds.Add(heroId);
-        }
-
-
-        foreach (string heroId in saveData.Resonance.SlotHeroIds)
-        {
-            if (string.IsNullOrEmpty(heroId))
-            {
-                continue;
-            }
-
 
             // 현재 보유 중인 영웅만 공명 슬롯에 복원
             if (!heroController.ContainsHero(heroId))
@@ -236,22 +209,16 @@ public sealed class ResonanceController
                 continue;
             }
 
-
-            // 기준 영웅은 공명 슬롯에 복원하지 않음
-            if (coreHeroIds.Contains(heroId))
+            // 중복된 공명 슬롯 데이터는 제외
+            if (resonanceSlotHeroIds.Contains(heroId))
             {
                 continue;
             }
 
-
-            // 중복된 슬롯 영웅 데이터는 제외
-            if (slotHeroIds.Contains(heroId))
-            {
-                continue;
-            }
-
-
-            slotHeroIds.Add(heroId);
+            resonanceSlotHeroIds.Add(heroId);
         }
+
+        // 복원된 공명 슬롯을 기준으로 보유 영웅 레벨 동기화
+        ApplyResonanceLevel();
     }
 }
