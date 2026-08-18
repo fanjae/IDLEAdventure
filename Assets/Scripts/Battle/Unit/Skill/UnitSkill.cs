@@ -158,6 +158,12 @@ public class UnitSkill : MonoBehaviour
                 hasAppliedSkillEffect = true;
                 ApplyBuff();
                 break;
+            case SkillEffectType.AreaDamage:
+                if (!IsValidTarget(skillTarget)) return;
+                hasAppliedSkillEffect = true;
+                unit.FaceTarget();
+                ApplyAreaDamage(skillTarget);
+                break;
         }
     }
     //SkillEnd 애니메이션 이벤트에서 호출
@@ -176,6 +182,7 @@ public class UnitSkill : MonoBehaviour
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
         skillTarget = null;
+
         skillSafetyEndTime = 0.0f;
     }
     //전투 재시작 또는 오브젝트 재사용 시 스킬 상태 초기화
@@ -184,6 +191,7 @@ public class UnitSkill : MonoBehaviour
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
         skillTarget = null;
+
         skillSafetyEndTime = 0.0f;
 
         if (skillData == null)
@@ -212,6 +220,8 @@ public class UnitSkill : MonoBehaviour
                 return unit.Target;
             case SkillEffectType.Buff:
                 return unit;
+            case SkillEffectType.AreaDamage:
+                return unit.Target;
         }
 
         return null;
@@ -234,6 +244,8 @@ public class UnitSkill : MonoBehaviour
                 return target.Team != unit.Team && unit.IsTargetInAttackRange(target);
             case SkillEffectType.Buff:
                 return target == unit;
+            case SkillEffectType.AreaDamage:
+                return target.Team != unit.Team && unit.IsTargetInAttackRange(target);
         }
 
         return false;
@@ -307,4 +319,18 @@ public class UnitSkill : MonoBehaviour
 
         Destroy(vfx, skillData.HealVfxDuration);
     }
+
+    
+    private void ApplyAreaDamage(BattleUnit target)
+    {
+        if (target == null) return;
+        if (skillData.AreaDamagePrefab == null) return;
+
+        Vector3 targetPosition = target.transform.position;
+        int skillAttack = Mathf.RoundToInt(unit.AttackPower * skillData.DamageRatio);
+        AreaSkillDamage areaSkill = Instantiate(skillData.AreaDamagePrefab, targetPosition, Quaternion.identity);
+        areaSkill.SetAreaRadius(skillData.AreaRadius);
+        areaSkill.ApplyDamage(unit, skillAttack);
+    }
+
 }
