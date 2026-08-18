@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 // 공명 패널의 보유 영웅 목록 UI 관리
@@ -8,6 +9,7 @@ public sealed class ResonancePanelController : MonoBehaviour
     [SerializeField] private ResonanceHeroCardView heroCardPrefab;
     [SerializeField] private HeroClassIconCatalog classIconCatalog;
     [SerializeField] private ResonanceSlotView[] resonanceSlots;
+    [SerializeField] private TMP_Text resonanceLevelText;
 
     private readonly List<ResonanceHeroCardView> heroCardViews = new();
 
@@ -19,6 +21,7 @@ public sealed class ResonancePanelController : MonoBehaviour
     {
         RefreshResonanceSlots();
         RefreshHeroList();
+        RefreshResonanceLevel();
     }
 
     private void OnEnable()
@@ -187,5 +190,23 @@ public sealed class ResonancePanelController : MonoBehaviour
         }
 
         resonanceController.TryRemoveResonanceSlotHero(heroId);
+    }
+
+    // 현재 공명 레벨 표시 갱신
+    private void RefreshResonanceLevel()
+    {
+        if (resonanceLevelText == null)
+        {
+            return;
+        }
+
+        // 공명 슬롯 4명이 모두 등록되지 않은 경우 미적용 상태로 표시
+        if (resonanceController == null || !resonanceController.TryGetResonanceLevel(out int resonanceLevel))
+        {
+            resonanceLevelText.text = "공명 레벨 : 미적용";
+            return;
+        }
+
+        resonanceLevelText.text = $"공명 레벨 : {resonanceLevel}";
     }
 }
