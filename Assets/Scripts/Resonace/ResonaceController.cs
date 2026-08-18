@@ -12,6 +12,9 @@ public sealed class ResonanceController
     // 현재 공명 슬롯 영웅 ID 목록 반환
     public IReadOnlyList<string> ResonanceSlotHeroIds => resonanceSlotHeroIds;
 
+    // 공명 슬롯 구성 변경 알림
+    public event Action OnResonanceSlotChanged;
+
     public ResonanceController(HeroController heroController)
     {
         if (heroController == null)
@@ -59,6 +62,9 @@ public sealed class ResonanceController
         // 슬롯 4명이 모두 등록된 경우 공명 레벨 적용
         ApplyResonanceLevel();
 
+        // 공명 슬롯 변경 알림
+        OnResonanceSlotChanged?.Invoke();
+
         return true;
     }
 
@@ -70,7 +76,15 @@ public sealed class ResonanceController
             return false;
         }
 
-        return resonanceSlotHeroIds.Remove(heroId);
+        if (!resonanceSlotHeroIds.Remove(heroId))
+        {
+            return false;
+        }
+
+        // 공명 슬롯 변경 알림
+        OnResonanceSlotChanged?.Invoke();
+
+        return true;
     }
 
     // 지정한 영웅이 공명 슬롯에 등록되어 있는지 확인
@@ -220,5 +234,8 @@ public sealed class ResonanceController
 
         // 복원된 공명 슬롯을 기준으로 보유 영웅 레벨 동기화
         ApplyResonanceLevel();
+
+        // 복원된 공명 슬롯 변경 알림
+        OnResonanceSlotChanged?.Invoke();
     }
 }
