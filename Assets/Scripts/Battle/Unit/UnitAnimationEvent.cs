@@ -16,13 +16,7 @@ public class UnitAnimationEvent : MonoBehaviour
 
         unit.AttackHitEvent();
     }
-    //Attack애니메이션 종료 시점
-    public void AttackEnd()
-    {
-        if (unit == null) return;
-
-        unit.AttackEndEvent();
-    }
+    
     //Skill애니메이션 실제 발생 시점
     public void SkillActivate()
     {
