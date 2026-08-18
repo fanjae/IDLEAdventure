@@ -39,6 +39,10 @@ public class SkillDataSO : ScriptableObject
     [SerializeField, Min(1)] private int attackBuff = 25;
     [SerializeField, Min(0.1f)] private float buffDuration = 6.0f;
 
+    [Header("광역 피해 스킬")]
+    [SerializeField] private AreaSkillDamage areaDamagePrefab;
+    [SerializeField, Min(0.1f)] private float areaRadius = 2.5f;
+
     public string SkillName => skillName;
 
     public string DisplayName => displayName;
@@ -64,5 +68,8 @@ public class SkillDataSO : ScriptableObject
     public GameObject BuffVfxPrefab => buffVfxPrefab;
     public int AttackBuff => attackBuff;
     public float BuffDuration => buffDuration;
+
+    public AreaSkillDamage AreaDamagePrefab => areaDamagePrefab;
+    public float AreaRadius => areaRadius;
 
 }
