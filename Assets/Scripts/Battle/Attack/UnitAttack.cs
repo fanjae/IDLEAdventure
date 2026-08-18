@@ -25,6 +25,8 @@ public class UnitAttack : MonoBehaviour
 
     //공격 애니메이션이 진행 중인지 체크하는 용
     private bool isAttacking;
+    //실제로 Attack Animator State에 진입했는지 체크하는 용
+    private bool hasEnteredAttackAnimation;
     //중복 타격 방지용
     private bool hasAppliedDamage;
 
@@ -45,6 +47,7 @@ public class UnitAttack : MonoBehaviour
         attackSafetyEndTime = 0.0f;
 
         isAttacking = false;
+        hasEnteredAttackAnimation = false;
         hasAppliedDamage = false;
 
         hasLoggedMissingProjectile = false;
@@ -58,11 +61,28 @@ public class UnitAttack : MonoBehaviour
             CancelAttack();
             return;
         }
+        
+        bool attackAnimationActive = unit.IsAttackAnimationActive();
+        //실제 Attack 애니메이션 상태에 진입했는지 확인
+        if (!hasEnteredAttackAnimation)
+        {
+            if (attackAnimationActive) hasEnteredAttackAnimation = true;
+            CheckAttackSafety();
+            return;
+        }
+        //Attack 상태에 들어간 이후, Attack 상태를 완전히 빠져나오면 공격 종료
+        if (!attackAnimationActive)
+        {
+            CompleteAttack();
+            return;
+        }
+        CheckAttackSafety();
+    }
+
+    private void CheckAttackSafety()
+    {
         if (Time.time < attackSafetyEndTime) return;
-
-        //확인용
-        Debug.LogWarning($"{name} : AttackEnd Event가 호출되지 않아서 공격 상태를 복구함", this);
-
+        Debug.LogWarning($"{name} : 공격 애니메이션 종료를 확인하지 못해서 공격 상태를 복구함", this);
         CompleteAttack();
     }
 
@@ -82,6 +102,7 @@ public class UnitAttack : MonoBehaviour
         attackTarget = target;
 
         isAttacking = true;     
+        hasEnteredAttackAnimation = false;
         hasAppliedDamage = false;
 
         //공격 시작 시점을 기준으로 다음 공격 가능 시간 계산
@@ -113,16 +134,16 @@ public class UnitAttack : MonoBehaviour
         int appliedDamage = target.TakeDamage(finalDamage);
         Debug.Log($"{unit.name} -> {target.name} / 피해량 : {appliedDamage}");
     }
-    //AttackEnd 애니메이션 이벤트에서 호출
+    //공격 종료 시 공격 상태 및 대상 정보 정리
     public void CompleteAttack()
     {
         if (!isAttacking) return;
 
         isAttacking = false;
+        hasEnteredAttackAnimation = false;
         hasAppliedDamage = false;
 
         attackTarget = null;
-        
         attackSafetyEndTime = 0.0f;
     }
     private void FireProjectile(BattleUnit target, int damage)
@@ -152,6 +173,7 @@ public class UnitAttack : MonoBehaviour
         attackTarget = null;
 
         isAttacking = false;
+        hasEnteredAttackAnimation = false;
         hasAppliedDamage = false;
 
         attackSafetyEndTime = 0.0f;
@@ -165,6 +187,7 @@ public class UnitAttack : MonoBehaviour
         attackSafetyEndTime = 0.0f;
 
         isAttacking = false;
+        hasEnteredAttackAnimation = false;
         hasAppliedDamage = false;
     }
     private float GetAttackInterval()
