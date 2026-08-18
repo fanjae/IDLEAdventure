@@ -28,7 +28,11 @@ public class UnitAttackState : IUnitState
         //보스 행동 선택은 BT가 함
         if (unit.UsesExternalDecision)
         {
-            if (!unit.HasValidTarget()) return;
+            if (!unit.HasValidTarget())
+            {
+                unit.CancelAttack();
+                return;
+            }
             unit.FaceTarget();
             if (!unit.IsAttacking) unit.TryAttack();
             return;

@@ -14,7 +14,7 @@ public class Bootstrapper
     {
         Debug.Log("초기 생성 호출.");
 
-        CurrencyManager currency = CurrencyManager.Instance;
+        CurrencyManager currencyManager = CurrencyManager.Instance;
 
         ItemDatabaseSO itemDatabase = Resources.Load<ItemDatabaseSO>("GameData/ItemDatabase");
 
@@ -39,6 +39,10 @@ public class Bootstrapper
         HeroManager heroManager = HeroManager.Instance;
         heroManager.Initialize(heroDatabase, inventoryManager.Controller);
 
+        // 공명 시스템 초기화
+        ResonanceManager resonanceManager = ResonanceManager.Instance;
+        resonanceManager.Initialize(heroManager.Controller);
+
         // 저장 데이터 초기화
         SaveManager saveManager = SaveManager.Instance;
         saveManager.Initialize();
@@ -47,7 +51,7 @@ public class Bootstrapper
         inventoryManager.Controller.LoadSaveData(saveManager.CurrentData);
 
         // 저장된 재화 상태 복원
-        currency.LoadSaveData(saveManager.CurrentData);
+        currencyManager.LoadSaveData(saveManager.CurrentData);
 
         // 저장된 보유 영웅 상태 복원
         heroManager.Controller.LoadSaveData(saveManager.CurrentData);
@@ -65,6 +69,8 @@ public class Bootstrapper
         gachaManager.Initialize(gachaDatabase);
         gachaManager.LoadSaveData(saveManager.CurrentData);
 
+        // 저장된 공명 상태 복원
+        resonanceManager.Controller.LoadSaveData(saveManager.CurrentData);
 
         // 방치 시간 적용은 아직 되지 않았기에 추가
         TestSaveManager testSaveManager = TestSaveManager.Instance;

@@ -32,4 +32,33 @@ public sealed class HeroStatCalculator
 
         return new HeroStat(Math.Max(1, maxHp), Math.Max(0, attack), Math.Max(0, defense));
     }
+
+    // 지정한 적용 레벨을 기준으로 영웅 최종 능력치 계산
+    public HeroStat Calculate(OwnedHeroData hero, int appliedLevel)
+    {
+        if (hero == null)
+        {
+            throw new ArgumentNullException(nameof(hero));
+        }
+
+        if (appliedLevel < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(appliedLevel));
+        }
+
+        HeroData heroData = hero.HeroData;
+        int levelIncrease = Math.Max(0, appliedLevel - 1);
+
+        int maxHp = heroData.MaxHp + heroData.HpPerLevel * levelIncrease;
+        int attack = heroData.Attack + heroData.AttackPerLevel * levelIncrease;
+        int defense = heroData.Defense + heroData.DefensePerLevel * levelIncrease;
+
+        EquipmentStat equipmentStat = equipmentStatCalculator.Calculate(heroData.ClassType);
+
+        maxHp += equipmentStat.Health;
+        attack += equipmentStat.Attack;
+        defense += equipmentStat.Defense;
+
+        return new HeroStat(Math.Max(1, maxHp), Math.Max(0, attack), Math.Max(0, defense));
+    }
 }

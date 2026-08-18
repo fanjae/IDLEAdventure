@@ -21,10 +21,15 @@ public class UnitMoveState : IUnitState
             unit.StopMove();
             return;
         }
-        //행동 판단은 BT가 함
+        //보스의 행동 판단은 BT가 함. 여기서는 실행만 담당.
         if (unit.UsesExternalDecision)
         {
-            if (unit.HasValidTarget()) unit.MoveToTarget();
+            if (!unit.HasValidTarget())
+            {
+                unit.StopMove();
+                return;
+            }
+            unit.MoveToTarget();
             return;
         }
         if (!unit.HasValidTarget())

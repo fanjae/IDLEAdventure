@@ -362,6 +362,7 @@ GameObject:
   - component: {fileID: 3493823941382845112}
   - component: {fileID: 5222419429994905107}
   - component: {fileID: 300575927191161593}
+  - component: {fileID: 6443411608181078598}
   m_Layer: 0
   m_Name: Enemy_Boss_Orc
   m_TagString: Untagged
@@ -378,7 +379,7 @@ Transform:
   m_GameObject: {fileID: 4518490516838581734}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 6.04, y: 0, z: 5.76}
+  m_LocalPosition: {x: -5.91, y: -0, z: 2.12}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -527,6 +528,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimator
   animator: {fileID: 8431677298854403406}
+--- !u!114 &6443411608181078598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4518490516838581734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6174a9228c584974c985cb64648352d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossBehaviorTree
 --- !u!1 &5122333517071968307
 GameObject:
   m_ObjectHideFlags: 0
