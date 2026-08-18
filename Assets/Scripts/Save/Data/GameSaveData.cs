@@ -16,4 +16,7 @@ public sealed class GameSaveData
 
     // 재화 저장 데이터
     public CurrencySaveData Currency { get; set; } = new();
+
+    // 배너별 천장 진행도 저장 데이터
+    public GachaSaveData Gacha { get; set; } = new();
 }

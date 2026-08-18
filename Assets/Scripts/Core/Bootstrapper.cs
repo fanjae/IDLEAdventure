@@ -52,6 +52,19 @@ public class Bootstrapper
         // 저장된 보유 영웅 상태 복원
         heroManager.Controller.LoadSaveData(saveManager.CurrentData);
 
+        // 가챠 데이터베이스가 없으면 개발 확인용 기본 배너를 사용함
+        GachaDatabaseSO gachaDatabase = Resources.Load<GachaDatabaseSO>("GameData/GachaDatabase");
+        if (gachaDatabase == null)
+        {
+            Debug.LogWarning("GachaDatabase 없음. 개발용 기본 배너 사용함.");
+            gachaDatabase = GachaDatabaseSO.CreateDevelopmentDatabase(heroDatabase);
+        }
+
+        // 저장된 배너별 천장 진행도를 복원함
+        GachaManager gachaManager = GachaManager.Instance;
+        gachaManager.Initialize(gachaDatabase);
+        gachaManager.LoadSaveData(saveManager.CurrentData);
+
 
         // 방치 시간 적용은 아직 되지 않았기에 추가
         TestSaveManager testSaveManager = TestSaveManager.Instance;

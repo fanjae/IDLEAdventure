@@ -87,6 +87,12 @@ public sealed class HeroController
         return heroCollection.Contains(heroId);
     }
 
+    // 가챠 풀이 존재하는 영웅 데이터만 가리키는지 확인함
+    public bool IsKnownHero(string heroId)
+    {
+        return heroDatabase.TryGetHero(heroId, out _);
+    }
+
     // 보유 영웅의 레벨 변경
     public bool TrySetHeroLevel(string heroId, int level)
     {
