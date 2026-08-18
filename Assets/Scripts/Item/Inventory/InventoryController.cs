@@ -168,4 +168,29 @@ public sealed class InventoryController
         OnInventoryChanged?.Invoke();
         OnEquipmentChanged?.Invoke();
     }
+
+    // 지정한 클래스에 장착 가능한 미장착 장비가 있는지 확인
+    public bool HasEquippableEquipment(HeroClassType heroClass)
+    {
+        return equipmentService.HasEquippableEquipment(heroClass);
+    }
+
+    // 지정한 클래스에 현재 장착 장비보다 좋은 미장착 장비가 있는지 확인
+    public bool HasBetterEquippableEquipment(HeroClassType heroClass)
+    {
+        return equipmentService.HasBetterEquippableEquipment(heroClass);
+    }
+
+    // 지정한 클래스에 현재 장착 장비보다 좋은 장비 일괄 장착
+    public bool TryAutoEquipBetterEquipment(HeroClassType heroClass)
+    {
+        bool result = equipmentService.TryAutoEquipBetterEquipment(heroClass);
+
+        if (result)
+        {
+            OnEquipmentChanged?.Invoke();
+        }
+
+        return result;
+    }
 }
