@@ -10,7 +10,7 @@ public class QuestData : ScriptableObject
 {
     // 퀘스트 기본 정보들
     [Header("Quest Info")]
-    [SerializeField] private int qeustId;
+    [SerializeField] private int questId;
     [SerializeField] private string questName;
     [SerializeField] private QuestType questType;
     // 퀘스트 목표 위치
@@ -21,7 +21,7 @@ public class QuestData : ScriptableObject
     [SerializeField] private QuestDialogueData dialogueData;
     
     // 프로퍼티
-    public int QuestId => qeustId;
+    public int QuestId => questId;
     public string QuestName => questName;
     public QuestType QuestType => questType;
 
