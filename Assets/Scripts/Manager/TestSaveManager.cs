@@ -1,19 +1,27 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ÀúÀåµÉ ³»¿ë Å¬·¡½º.
+/// ì €ì¥ë  ë‚´ìš© í´ë˜ìŠ¤.
 /// </summary>
 [Serializable]
 public class SaveData
 {
     [Header("Save Data")]
-    [SerializeField] private int[] currencyDatas = new int[(int)CurrencyType.Length];    // µû·Î È£ÃâµÉ °÷ ¾øÀÌ ´Ü¼ø ÀúÀå, ºÒ·¯¿À±â¸¸ ÇÒ °ÍÀÌ±â¿¡ ¹è¿­·Î ÀúÀå
-    [SerializeField] private long lastGetIdleRewardTime;    // ½Ã°£Àº int·Î Ç¥ÇöÇÏ±â¿¡ Å©±â°¡ Ä¿¼­ long »ç¿ë
+    [SerializeField] private int[] currencyDatas = new int[(int)CurrencyType.Length];    // ë”°ë¡œ í˜¸ì¶œë  ê³³ ì—†ì´ ë‹¨ìˆœ ì €ì¥, ë¶ˆëŸ¬ì˜¤ê¸°ë§Œ í•  ê²ƒì´ê¸°ì— ë°°ì—´ë¡œ ì €ì¥
+    [SerializeField] private long lastGetIdleRewardTime;    // ì‹œê°„ì€ intë¡œ í‘œí˜„í•˜ê¸°ì— í¬ê¸°ê°€ ì»¤ì„œ long ì‚¬ìš©
 
-    // ÇÁ·ÎÆÛÆ¼
+    // í€˜ìŠ¤íŠ¸ í…ŒìŠ¤íŠ¸ìš© ì¶”ê°€
+    [SerializeField] private int currentMainQeustId;
+    [SerializeField] private List<int> acceptSubQuestIds = new List<int>();
+
+    // í”„ë¡œí¼í‹°
     public int[] CurrencyDatas => currencyDatas;
     public long LastGetIdleRewardTime => lastGetIdleRewardTime;
+
+    public int CurrentMainQuestId => currentMainQeustId;
+    public List<int> AcceptSubQuestIds => acceptSubQuestIds;
 
     public void SetCurrency(CurrencyType type, int amount)
     {
@@ -23,12 +31,18 @@ public class SaveData
     {
         lastGetIdleRewardTime = time;
     }
+
+    public void SetQuestData(int mainId, List<int> subIds)
+    {
+        currentMainQeustId = mainId;
+        acceptSubQuestIds = new List<int>(subIds);
+    }
 }
 /// <summary>
-/// ÀÓ½Ã ÀúÀå¿ë Å¬·¡½º. <br/>
-/// ÀúÀå ÆÄÆ®°¡ ±¸ÇöµÇ¸é Áö¿ï ½ºÅ©¸³Æ®. <br/>
-/// ¹æÄ¡ º¸»ó Å×½ºÆ®¸¦ À§ÇØ ÀÓ½Ã·Î PlayerPrefs¸¦ ÀÌ¿ëÇÑ ÀúÀå ±¸Çö. <br/>
-/// ÇöÀç ÀúÀå ¸ñ·Ï <br/>
+/// ì„ì‹œ ì €ì¥ìš© í´ë˜ìŠ¤. <br/>
+/// ì €ì¥ íŒŒíŠ¸ê°€ êµ¬í˜„ë˜ë©´ ì§€ìš¸ ìŠ¤í¬ë¦½íŠ¸. <br/>
+/// ë°©ì¹˜ ë³´ìƒ í…ŒìŠ¤íŠ¸ë¥¼ ìœ„í•´ ì„ì‹œë¡œ PlayerPrefsë¥¼ ì´ìš©í•œ ì €ì¥ êµ¬í˜„. <br/>
+/// í˜„ì¬ ì €ì¥ ëª©ë¡ <br/>
 /// LastTime, Gold, Exp, Upagrade
 /// </summary>
 public class TestSaveManager : Singleton<TestSaveManager>
@@ -51,11 +65,16 @@ public class TestSaveManager : Singleton<TestSaveManager>
             string key = $"Test_Currency_{i}";
             PlayerPrefs.SetInt(key, currentSaveData.CurrencyDatas[i]);
         }
-        Debug.Log("[Test | PlayerPrebs] ÇöÀç ÀçÈ­ ÀúÀå");
+        Debug.Log("[Test | PlayerPrebs] í˜„ì¬ ì¬í™” ì €ì¥");
 
         PlayerPrefs.SetString("Text_LastGetIdleRewardTime", currentSaveData.LastGetIdleRewardTime.ToString());
-        Debug.Log("[Test | PlayerPrefs] ÃÖ±Ù ¹æÄ¡ º¸»ó È¹µæ ½Ã°£ ÀúÀå");
-        
+        Debug.Log("[Test | PlayerPrefs] ìµœê·¼ ë°©ì¹˜ ë³´ìƒ íšë“ ì‹œê°„ ì €ì¥");
+
+        PlayerPrefs.SetInt("Test_MainQuestId", currentSaveData.CurrentMainQuestId);
+
+        string subQuestsStr = string.Join(",", currentSaveData.AcceptSubQuestIds);
+        PlayerPrefs.SetString("Test_SubQeustIds", subQuestsStr);
+
         PlayerPrefs.Save();
     }
     public void LoadGame()
@@ -73,5 +92,30 @@ public class TestSaveManager : Singleton<TestSaveManager>
         {
             currentSaveData.SetLastIdleRewardTime(Convert.ToInt64(tempSaveData));
         }
+
+        // í€˜ìŠ¤íŠ¸ í…ŒìŠ¤íŠ¸ìš© ì¶”ê°€
+        int mainId = PlayerPrefs.GetInt("Test_MainQuestId", 0);
+
+        if (mainId == 0)
+        {
+            mainId = 1000;
+        }
+
+        string subQeusts = PlayerPrefs.GetString("Test_SubQeustIds", string.Empty);
+        List<int> subIds = new List<int>();
+
+        if (!string.IsNullOrEmpty(subQeusts))
+        {
+            string[] split = subQeusts.Split(',');
+            foreach (string num in split)
+            {
+                if (int.TryParse(num, out int id))
+                {
+                    subIds.Add(id);
+                }
+            }
+        }
+
+        currentSaveData.SetQuestData(mainId, subIds);
     }
 }

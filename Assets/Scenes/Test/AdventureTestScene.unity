@@ -842,7 +842,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f1b170773bf530449ea2ba557e13b22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AdventurePlayerAutoState
-  testTarget: {fileID: 1474704525}
 --- !u!114 &914916705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1061,6 +1060,7 @@ GameObject:
   - component: {fileID: 1235070338}
   - component: {fileID: 1235070337}
   - component: {fileID: 1235070336}
+  - component: {fileID: 1235070339}
   m_Layer: 5
   m_Name: QuestButton
   m_TagString: Untagged
@@ -1132,9 +1132,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 914916704}
-        m_TargetAssemblyTypeName: AdventurePlayerAutoState, Assembly-CSharp
-        m_MethodName: OnClickQuestButton
+      - m_Target: {fileID: 1235070339}
+        m_TargetAssemblyTypeName: QuestTest, Assembly-CSharp
+        m_MethodName: OnClickMainQuestButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1182,6 +1182,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1235070334}
   m_CullTransparentMesh: 1
+--- !u!114 &1235070339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1235070334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e67ad9659a6d1b48b2501a6f3d77ba0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestTest
+  questNameText: {fileID: 799656164}
+  playerStateMachine: {fileID: 914916706}
 --- !u!1 &1474704521
 GameObject:
   m_ObjectHideFlags: 0
