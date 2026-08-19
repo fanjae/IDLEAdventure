@@ -17,4 +17,6 @@ public sealed class GameSaveData
     public CurrencySaveData Currency { get; set; } = new();
 
     public ResonanceSaveData Resonance = new();
+
+    public StageProgressSaveData StageProgress { get; set; } = new();
 }
