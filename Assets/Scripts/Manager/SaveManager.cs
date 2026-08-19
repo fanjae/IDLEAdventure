@@ -29,6 +29,12 @@ public sealed class SaveManager : Singleton<SaveManager>
             heroManager.Controller.WriteSaveData(CurrentData);
         }
 
+        // 현재 생성되어 있는 공명 상태를 저장 데이터에 반영
+        if (ResonanceManager.TryGetExistingInstance(out ResonanceManager resonanceManager) && resonanceManager.IsInitialized)
+        {
+            resonanceManager.Controller.WriteSaveData(CurrentData);
+        }
+
         // 현재 생성되어 있는 재화 상태를 저장 데이터에 반영
         if (CurrencyManager.TryGetExistingInstance(out CurrencyManager currencyManager))
         {
