@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -5,9 +6,8 @@ using UnityEngine;
 /// </summary>
 public class AdventurePlayerAutoState : AdventurePlayerState
 {
-    // 테스트 이동용 위치
-    [Header("Test Target")]
-    [SerializeField] private Transform testTarget;
+    // 퀘스트 파트에서 받아올 다이얼로그 출력 함수를 저장하기 위한 변수.
+    private Action onArrived;
 
     public override void OnEnter()
     {
@@ -25,9 +25,14 @@ public class AdventurePlayerAutoState : AdventurePlayerState
         AutoMove();
     }
 
-    public void SetTarget(Vector3 targetPos)
+    public void SetTarget(Vector3 targetPos, Action onArrived = null)
     {
-        stateMachine.Agent.SetDestination(targetPos);
+        this.onArrived = onArrived;
+
+        if (stateMachine.Agent != null)
+        {
+            stateMachine.Agent.SetDestination(targetPos);
+        }
     }
     
     private void AutoMove()
@@ -57,23 +62,19 @@ public class AdventurePlayerAutoState : AdventurePlayerState
         }
     }
     // 이동 강제 종료 함수
+    // 도착 시 실행할 함수 제거 후 수동 조작 상태로 전환.
     private void StopAutoMove()
     {
+        onArrived = null;
         stateMachine.ChangeState(stateMachine.PlayerControlState);
     }
     // 목표에 제대로 도착 시 실행할 함수
+    // 수동 조작 상태로 전환 후 저장된 Action 함수 실행 후 제거.
     private void OnArrived()
     {
         stateMachine.ChangeState(stateMachine.PlayerControlState);
-    }
 
-    // 테스트용 퀘스트 버튼 클릭 시 정해진 위치로 이동하게끔 한 함수
-    public void OnClickQuestButton()
-    {
-        if (testTarget != null)
-        {
-            stateMachine.ChangeState(this);
-            SetTarget(testTarget.position);
-        }
+        onArrived?.Invoke();
+        onArrived = null;
     }
 }

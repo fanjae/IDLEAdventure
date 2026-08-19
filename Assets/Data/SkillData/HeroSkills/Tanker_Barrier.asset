@@ -12,18 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17ded5d891b976d42927654fced35c25, type: 3}
   m_Name: Tanker_Barrier
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
-  skillName: TankerBarrier
+  skillName: Tanker_Barrier
   displayName: "\uBC29\uC5B4"
   icon: {fileID: 21300000, guid: efaa088c147046740a2e38e84af4fde8, type: 3}
   description: "\uCFE8\uD0C0\uC784:12"
   effectType: 2
   damageRatio: 0
   cooldown: 12
-  actionDuration: 10
-  blockCount: 5
+  skillSafetyDuration: 10
   barrierVfxPrefab: {fileID: 8317995573969936937, guid: f71e31c3adafbec498702a94b12a583c, type: 3}
+  blockCount: 5
   projectilePrefab: {fileID: 0}
   projectileSpeed: 10
   healCastVfxPrefab: {fileID: 0}
   healTargetVfxPrefab: {fileID: 0}
   healVfxDuration: 1.5
+  buffVfxPrefab: {fileID: 0}
+  attackBuff: 25
+  buffDuration: 6
+  areaDamagePrefab: {fileID: 0}
+  areaRadius: 2.5
+  whirlwindVfxPrefab: {fileID: 0}
+  multiHitDuration: 3
+  multiHitInterval: 0.2
+  multiHitRadius: 2

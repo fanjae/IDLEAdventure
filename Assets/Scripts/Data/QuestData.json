@@ -1,0 +1,43 @@
+{
+  "quests": [
+    {
+      "quest_id": 10001,
+      "quest_type": "Main",
+      "title": "여정의 시작",
+      "tasks": [
+        {
+          "task_order": 1,
+          "task_type": "Dialogue",
+          "target_id": "NPC_Elder",
+          "dialogue_id": 50010,
+          "auto_move_pos": { "x": 0.0, "y": 0.0, "z": 10.0 },
+          "has_choice": false
+        },
+        {
+          "task_order": 2,
+          "task_type": "Hunt",
+          "target_id": "Monster_Goblin",
+          "dialogue_id": 0,
+          "auto_move_pos": { "x": 5.0, "y": 0.0, "z": 12.5 },
+          "has_choice": false
+        }
+      ]
+    },
+    {
+      "quest_id": 20001,
+      "quest_type": "Sub",
+      "title": "잃어버린 고양이 찾기",
+      "tasks": [
+        {
+          "task_order": 1,
+          "task_type": "Dialogue",
+          "target_id": "NPC_Girl",
+          "dialogue_id": 60010,
+          "auto_move_pos": { "x": -5.0, "y": 0.0, "z": -8.0 },
+          "has_choice": true,
+          "choice_group_id": 7001
+        }
+      ]
+    }
+  ]
+}

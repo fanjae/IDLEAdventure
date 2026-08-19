@@ -43,6 +43,12 @@ public class SkillDataSO : ScriptableObject
     [SerializeField] private AreaSkillDamage areaDamagePrefab;
     [SerializeField, Min(0.1f)] private float areaRadius = 2.5f;
 
+    [Header("다단히트 광역 스킬")]
+    [SerializeField] private GameObject whirlwindVfxPrefab;
+    [SerializeField, Min(0.1f)] private float multiHitDuration = 3.0f;
+    [SerializeField, Min(0.05f)] private float multiHitInterval = 0.2f;
+    [SerializeField, Min(0.1f)] private float multiHitRadius = 2.0f;
+
     public string SkillName => skillName;
 
     public string DisplayName => displayName;
@@ -72,4 +78,8 @@ public class SkillDataSO : ScriptableObject
     public AreaSkillDamage AreaDamagePrefab => areaDamagePrefab;
     public float AreaRadius => areaRadius;
 
+    public GameObject WhirlwindVfxPrefab => whirlwindVfxPrefab;
+    public float MultiHitDuration => multiHitDuration;
+    public float MultiHitInterval => multiHitInterval;
+    public float MultiHitRadius => multiHitRadius;
 }

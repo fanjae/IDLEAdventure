@@ -4,7 +4,7 @@ using UnityEngine;
 /// 게임 실행 시 불러와야 할 것들 호출하는 클래스. <br/>
 /// 보통 매니저들이 들어올 것으로 보인다. <br/>
 /// 현재 추가된 목록 <br/>
-/// SaveManager, CurrencyManager, InventoryManager, HeroManager
+/// SaveManager, CurrencyManager, InventoryManager, HeroManager, QuestManager
 /// </summary>
 public class Bootstrapper
 {
@@ -61,6 +61,9 @@ public class Bootstrapper
 
         // 방치 시간 적용은 아직 되지 않았기에 추가
         TestSaveManager testSaveManager = TestSaveManager.Instance;
+
+        // 퀘스트 매니저 추가
+        QuestManager questManager = QuestManager.Instance;
 
         Debug.Log("초기 호출 완료.");
     }
