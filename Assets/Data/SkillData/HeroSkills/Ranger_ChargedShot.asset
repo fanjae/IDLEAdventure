@@ -12,16 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17ded5d891b976d42927654fced35c25, type: 3}
   m_Name: Ranger_ChargedShot
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
-  skillName: RangerChargedShot
+  skillName: Ranger_ChargedShot
+  displayName: 
   icon: {fileID: 21300000, guid: a264b9691384ff24096807124427e688, type: 3}
+  description: 
   effectType: 3
   damageRatio: 1.5
   cooldown: 10
-  actionDuration: 10
-  blockCount: 1
+  skillSafetyDuration: 10
   barrierVfxPrefab: {fileID: 0}
+  blockCount: 1
   projectilePrefab: {fileID: 7650556263332480521, guid: d1090cf15c64c2941862b17e0daaaff6, type: 3}
   projectileSpeed: 10
   healCastVfxPrefab: {fileID: 0}
   healTargetVfxPrefab: {fileID: 0}
   healVfxDuration: 1.5
+  buffVfxPrefab: {fileID: 0}
+  attackBuff: 25
+  buffDuration: 6
+  areaDamagePrefab: {fileID: 0}
+  areaRadius: 2.5
+  whirlwindVfxPrefab: {fileID: 0}
+  multiHitDuration: 3
+  multiHitInterval: 0.2
+  multiHitRadius: 2

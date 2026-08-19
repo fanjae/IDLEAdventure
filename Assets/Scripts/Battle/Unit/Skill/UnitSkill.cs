@@ -15,6 +15,7 @@ public class UnitSkill : MonoBehaviour
     private BattleUnit skillTarget; //스킬 시작 당시의 대상을 보관하는 용
 
     private UnitBuff unitBuff;
+    private WhirlwindSkillDamage whirlwindSkillDamage;
 
     private float nextSkillAvailableTime;
     private float skillSafetyEndTime;
@@ -45,6 +46,8 @@ public class UnitSkill : MonoBehaviour
         this.unit = unit;
 
         unitBuff = GetComponent<UnitBuff>();
+        whirlwindSkillDamage = GetComponent<WhirlwindSkillDamage>();
+        if (whirlwindSkillDamage != null) whirlwindSkillDamage.Initialize(unit);
 
         skillTarget = null;
 
@@ -164,12 +167,21 @@ public class UnitSkill : MonoBehaviour
                 unit.FaceTarget();
                 ApplyAreaDamage(skillTarget);
                 break;
+                //휠윈드
+            case SkillEffectType.Whirlwind:
+                if (!IsValidTarget(skillTarget)) return;
+                if (whirlwindSkillDamage == null) return;
+                hasAppliedSkillEffect = true;
+                unit.FaceTarget();
+                StartWhirlwind();
+                break;
         }
     }
     //SkillEnd 애니메이션 이벤트에서 호출
     public void CompleteSkill()
     {
         if (!isUsingSkill) return;
+        if (whirlwindSkillDamage != null) whirlwindSkillDamage.StopWhirlwind();
 
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
@@ -179,6 +191,8 @@ public class UnitSkill : MonoBehaviour
     //상태 변경 또는 사망 등으로 진행 중인 스킬 취소
     public void CancelSkill()
     {
+        if (whirlwindSkillDamage != null) whirlwindSkillDamage.StopWhirlwind();
+
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
         skillTarget = null;
@@ -188,6 +202,8 @@ public class UnitSkill : MonoBehaviour
     //전투 재시작 또는 오브젝트 재사용 시 스킬 상태 초기화
     public void ResetSkill()
     {
+        if (whirlwindSkillDamage != null) whirlwindSkillDamage.StopWhirlwind();
+
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
         skillTarget = null;
@@ -222,6 +238,8 @@ public class UnitSkill : MonoBehaviour
                 return unit;
             case SkillEffectType.AreaDamage:
                 return unit.Target;
+            case SkillEffectType.Whirlwind:
+                return unit.Target;
         }
 
         return null;
@@ -245,6 +263,8 @@ public class UnitSkill : MonoBehaviour
             case SkillEffectType.Buff:
                 return target == unit;
             case SkillEffectType.AreaDamage:
+                return target.Team != unit.Team && unit.IsTargetInAttackRange(target);
+            case SkillEffectType.Whirlwind:
                 return target.Team != unit.Team && unit.IsTargetInAttackRange(target);
         }
 
@@ -320,7 +340,7 @@ public class UnitSkill : MonoBehaviour
         Destroy(vfx, skillData.HealVfxDuration);
     }
 
-    
+    //광역 단타 스킬
     private void ApplyAreaDamage(BattleUnit target)
     {
         if (target == null) return;
@@ -331,6 +351,21 @@ public class UnitSkill : MonoBehaviour
         AreaSkillDamage areaSkill = Instantiate(skillData.AreaDamagePrefab, targetPosition, Quaternion.identity);
         areaSkill.SetAreaRadius(skillData.AreaRadius);
         areaSkill.ApplyDamage(unit, skillAttack);
+    }
+    //휠윈드
+    private void StartWhirlwind()
+    {
+        if (whirlwindSkillDamage == null) return;
+
+        Transform vfxPoint = skillVfxPoint != null ? skillVfxPoint : transform;
+
+        whirlwindSkillDamage.StartWhirlwind(
+            skillData.MultiHitDuration,
+            skillData.MultiHitInterval,
+            skillData.MultiHitRadius,
+            skillData.DamageRatio,
+            skillData.WhirlwindVfxPrefab,
+            vfxPoint);
     }
 
 }

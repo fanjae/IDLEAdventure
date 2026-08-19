@@ -38,5 +38,6 @@ public enum SkillEffectType
     Barrier,
     ProjectileDamage,
     Buff,
-    AreaDamage
+    AreaDamage,
+    Whirlwind
 }
