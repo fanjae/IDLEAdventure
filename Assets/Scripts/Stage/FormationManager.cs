@@ -9,6 +9,10 @@ public sealed class FormationManager : MonoBehaviour
     [SerializeField] private SlotDragController slotDragController;
     [SerializeField] private SlotHighlightController slotHighlightController;
 
+    // 0820 추가
+    [Header("배치 UI")]
+    [SerializeField] private FormationHeroListController heroListController;
+
     [Header("소환된 영웅 부모")]
     [SerializeField] private Transform heroRoot;
 
@@ -32,14 +36,15 @@ public sealed class FormationManager : MonoBehaviour
         }
     }
 
+    // 08020 수정 (heroListController를 연결하도록 교체)
     private void Start()
     {
-        if (BattleUIController.Instance == null)
+        if (heroListController == null)
         {
-            throw new Exception("FormationManager: BattleUIController가 없음");
+            throw new Exception("FormationManager의 Hero List Controller가 연결 안됨");
         }
 
-        BattleUIController.Instance.OnFormationHeroSelected += HandleFormationHeroSelected;
+        heroListController.OnHeroSelected += HandleFormationHeroSelected;
 
         if (BattleManager.Instance != null)
         {
@@ -47,11 +52,12 @@ public sealed class FormationManager : MonoBehaviour
         }
     }
 
+    // 08020 수정 (heroListController를 연결하도록 교체)
     private void OnDestroy()
     {
-        if (BattleUIController.Instance != null)
+        if (heroListController != null)
         {
-            BattleUIController.Instance.OnFormationHeroSelected -= HandleFormationHeroSelected;
+            heroListController.OnHeroSelected -= HandleFormationHeroSelected;
         }
 
         if (BattleManager.Instance != null)

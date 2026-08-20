@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 // 전투 배치 영웅 목록 UI 관리
@@ -7,7 +9,10 @@ public sealed class FormationHeroListController : MonoBehaviour
     [SerializeField] private FormationHeroCardView heroCardPrefab;
     [SerializeField] private HeroClassIconCatalog classIconCatalog;
 
+    private readonly List<FormationHeroCardView> cardViews = new();
     private HeroController heroController;
+
+    public event Action<string> OnHeroSelected;
 
     private void Start()
     {
@@ -16,6 +21,7 @@ public sealed class FormationHeroListController : MonoBehaviour
 
     private void OnDestroy()
     {
+        ClearCards();
         Unsubscribe();
     }
 
@@ -56,7 +62,21 @@ public sealed class FormationHeroListController : MonoBehaviour
         {
             FormationHeroCardView cardView = Instantiate(heroCardPrefab, content);
             cardView.Bind(hero, classIconCatalog);
+            cardView.OnSelected += HandleHeroSelected;
+
+            cardViews.Add(cardView);
         }
+    }
+
+    // 영웅 카드 선택 처리
+    private void HandleHeroSelected(string heroId)
+    {
+        if (string.IsNullOrEmpty(heroId))
+        {
+            return;
+        }
+
+        OnHeroSelected?.Invoke(heroId);
     }
 
     // 영웅 레벨 변경 시 목록 갱신
@@ -68,10 +88,18 @@ public sealed class FormationHeroListController : MonoBehaviour
     // 생성된 영웅 카드 제거
     private void ClearCards()
     {
-        for (int index = content.childCount - 1; index >= 0; index--)
+        foreach (FormationHeroCardView cardView in cardViews)
         {
-            Destroy(content.GetChild(index).gameObject);
+            if (cardView == null)
+            {
+                continue;
+            }
+
+            cardView.OnSelected -= HandleHeroSelected;
+            Destroy(cardView.gameObject);
         }
+
+        cardViews.Clear();
     }
 
     // 영웅 데이터 이벤트 구독 해제
