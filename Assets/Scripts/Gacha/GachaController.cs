@@ -7,15 +7,17 @@ using UnityEngine;
 public sealed class GachaController
 {
     private readonly GachaDatabaseSO database;
+    private readonly HeroDatabaseSO heroDatabase;
     private readonly Dictionary<string, GachaBannerProgressSaveData> progressByGroup = new(StringComparer.Ordinal);
 
     public event Action<GachaDrawResult> OnDrawCompleted;
     public IReadOnlyList<GachaBannerDataSO> Banners => database.Banners;
 
     // 정적 배너 데이터와 런타임 진행도 컨테이너를 연결함
-    public GachaController(GachaDatabaseSO database)
+    public GachaController(GachaDatabaseSO database, HeroDatabaseSO heroDatabase)
     {
         this.database = database ?? throw new ArgumentNullException(nameof(database));
+        this.heroDatabase = heroDatabase ?? throw new ArgumentNullException(nameof(heroDatabase));
     }
 
     // 배너에서 지정 횟수만큼 소환을 시도함
@@ -30,7 +32,7 @@ public sealed class GachaController
             return false;
         }
 
-        if (drawCount <= 0)
+        if (drawCount != 1 && drawCount != 10)
         {
             failure = GachaDrawFailure.InvalidDrawCount;
             return false;
@@ -58,9 +60,40 @@ public sealed class GachaController
         GachaBannerProgressSaveData progress = GetOrCreateProgress(banner.PityGroupId);
         List<GachaRolledEntry> selectedEntries = RollEntries(banner, drawCount, progress.PullCountSinceTier2, out int nextPityCount);
 
-        if (selectedEntries.Any(rolledEntry => !HeroManager.Instance.Controller.IsKnownHero(rolledEntry.Entry.HeroId)))
+        HeroController heroController = HeroManager.Instance.Controller;
+        if (selectedEntries.Any(rolledEntry => !heroDatabase.TryGetHero(rolledEntry.Entry.HeroId, out _)))
         {
             failure = GachaDrawFailure.HeroDataNotFound;
+            return false;
+        }
+
+        List<string> heroIdsToGrant = new();
+        List<GachaPullResult> pullResults = new(selectedEntries.Count);
+        HashSet<string> heroIdsAcquiredInThisDraw = new(StringComparer.Ordinal);
+        int totalDuplicateGold = 0;
+
+        foreach (GachaRolledEntry rolledEntry in selectedEntries)
+        {
+            GachaHeroPoolEntry entry = rolledEntry.Entry;
+            bool isDuplicate = heroController.ContainsHero(entry.HeroId) || !heroIdsAcquiredInThisDraw.Add(entry.HeroId);
+            int convertedGold = isDuplicate ? banner.GetDuplicateGold(entry.Rarity) : 0;
+
+            if (isDuplicate)
+            {
+                totalDuplicateGold += convertedGold;
+            }
+            else
+            {
+                heroIdsToGrant.Add(entry.HeroId);
+            }
+
+            pullResults.Add(new GachaPullResult(entry.HeroId, entry.Rarity, entry.IsPickup, rolledEntry.IsPity, isDuplicate, convertedGold));
+        }
+
+        // 다중 소환 전체가 지급 가능한지 먼저 검증해 부분 지급을 막음
+        if (!GachaHeroGrantPreflight.CanGrantAll(heroController, heroDatabase, heroIdsToGrant))
+        {
+            failure = GachaDrawFailure.HeroGrantFailed;
             return false;
         }
 
@@ -70,28 +103,20 @@ public sealed class GachaController
             return false;
         }
 
-        List<GachaPullResult> pullResults = new(selectedEntries.Count);
-
-        foreach (GachaRolledEntry rolledEntry in selectedEntries)
+        // 사전 검증한 신규 영웅을 지급함. 현재 HeroController 공개 API만 사용함.
+        foreach (string heroId in heroIdsToGrant)
         {
-            GachaHeroPoolEntry entry = rolledEntry.Entry;
-            bool isDuplicate = HeroManager.Instance.Controller.ContainsHero(entry.HeroId);
-            int convertedGold = 0;
-
-            if (isDuplicate)
+            if (!heroController.TryAcquireHero(heroId))
             {
-                convertedGold = banner.GetDuplicateGold(entry.Rarity);
-                CurrencyManager.Instance.AddCurrency(CurrencyType.GOLD, convertedGold);
-            }
-            else if (!HeroManager.Instance.Controller.TryAcquireHero(entry.HeroId))
-            {
-                // 사전 검증 후 실패한 경우 소모한 보석을 복구함
                 CurrencyManager.Instance.AddCurrency(CurrencyType.GEM, gemCost);
                 failure = GachaDrawFailure.HeroGrantFailed;
                 return false;
             }
+        }
 
-            pullResults.Add(new GachaPullResult(entry.HeroId, entry.Rarity, entry.IsPickup, rolledEntry.IsPity, isDuplicate, convertedGold));
+        if (totalDuplicateGold > 0)
+        {
+            CurrencyManager.Instance.AddCurrency(CurrencyType.GOLD, totalDuplicateGold);
         }
 
         progress.PullCountSinceTier2 = nextPityCount;

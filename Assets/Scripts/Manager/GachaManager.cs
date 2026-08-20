@@ -23,11 +23,16 @@ public sealed class GachaManager : Singleton<GachaManager>
     }
 
     // 가챠 데이터베이스를 기준으로 컨트롤러를 생성함
-    public void Initialize(GachaDatabaseSO database)
+    public void Initialize(GachaDatabaseSO database, HeroDatabaseSO heroDatabase)
     {
         if (database == null)
         {
             throw new ArgumentNullException(nameof(database));
+        }
+
+        if (heroDatabase == null)
+        {
+            throw new ArgumentNullException(nameof(heroDatabase));
         }
 
         if (IsInitialized)
@@ -35,7 +40,7 @@ public sealed class GachaManager : Singleton<GachaManager>
             return;
         }
 
-        controller = new GachaController(database);
+        controller = new GachaController(database, heroDatabase);
     }
 
     // 현재 천장 진행도를 저장 데이터에 반영함

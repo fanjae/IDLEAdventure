@@ -66,7 +66,7 @@ public class Bootstrapper
 
         // 저장된 배너별 천장 진행도를 복원함
         GachaManager gachaManager = GachaManager.Instance;
-        gachaManager.Initialize(gachaDatabase);
+        gachaManager.Initialize(gachaDatabase, heroDatabase);
         gachaManager.LoadSaveData(saveManager.CurrentData);
 
         // 저장된 공명 상태 복원

@@ -239,6 +239,7 @@ public sealed class GachaPanelPresenter : MonoBehaviour
         string status = failure switch
         {
             GachaDrawFailure.NotEnoughGem => "보석이 부족함",
+            GachaDrawFailure.InvalidDrawCount => "1회 또는 10회 소환만 가능함",
             GachaDrawFailure.InvalidPool => "소환 영웅 풀이 설정되지 않음",
             GachaDrawFailure.HeroSystemUnavailable => "영웅 데이터를 불러오는 중임",
             GachaDrawFailure.HeroDataNotFound => "소환 영웅 데이터를 찾을 수 없음",
