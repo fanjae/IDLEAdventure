@@ -54,4 +54,28 @@ public sealed class HeroManager : Singleton<HeroManager>
         // 장비 변경시 영웅 최종 능력치 전달
         inventoryController.OnEquipmentChanged += controller.NotifyStatChanged;
     }
+
+    // 보유 영웅 제거 및 관련 참조 정리
+    public bool TryRemoveOwnedHero(string heroId)
+    {
+        if (!IsInitialized || string.IsNullOrEmpty(heroId))
+        {
+            return false;
+        }
+
+        if (!controller.ContainsHero(heroId))
+        {
+            return false;
+        }
+
+        if (ResonanceManager.TryGetExistingInstance(out ResonanceManager resonanceManager) && resonanceManager.IsInitialized)
+        {
+            if (resonanceManager.Controller.ContainsResonanceSlotHero(heroId))
+            {
+                resonanceManager.Controller.TryRemoveResonanceSlotHero(heroId);
+            }
+        }
+
+        return controller.TryRemoveHero(heroId);
+    }
 }
