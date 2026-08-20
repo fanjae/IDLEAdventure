@@ -74,8 +74,7 @@ public sealed class HeroController
         stat = statCalculator.Calculate(hero);
         return true;
     }
-
-    // 지정한 적용 레벨을 기준으로 보유 영웅의 최종 능력치 계산
+     // 지정한 적용 레벨을 기준으로 보유 영웅의 최종 능력치 계산
     public bool TryGetHeroStat(string heroId, int appliedLevel, out HeroStat stat)
     {
         stat = default;
@@ -187,6 +186,4 @@ public sealed class HeroController
         // 보유 영웅 목록 변경 이벤트 호출
         OnHeroCollectionChanged?.Invoke();
     }
-
-
 }
