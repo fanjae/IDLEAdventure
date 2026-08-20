@@ -7,6 +7,9 @@ public sealed class StageManager : MonoBehaviour
     [SerializeField] private StageEnemySpawner stageEnemySpawner;
 
     [SerializeField] private StageFieldLoader stageFieldLoader;
+    [SerializeField] private BattleManager battleManager;
+
+    private StageProgressController stageProgressController;
 
     private int currentStageId;
 
@@ -23,6 +26,13 @@ public sealed class StageManager : MonoBehaviour
         {
             throw new Exception("StageManager의 StageFieldLoader가 없습니다.");
         }
+
+        if (battleManager == null)
+        {
+            throw new Exception("StageManager의 BattleManager가 없습니다.");
+        }
+
+        stageProgressController = new StageProgressController();
     }
 
     private void Start()
@@ -64,5 +74,27 @@ public sealed class StageManager : MonoBehaviour
         stageEnemySpawner.LoadStage(stage);
 
         Debug.Log($"{currentStageId}번 스테이지 준비 완료");
+    }
+
+    private void OnEnable()
+    {
+        battleManager.OnBattleEnded += HandleBattleEnded;
+    }
+
+    private void OnDisable()
+    {
+        battleManager.OnBattleEnded -= HandleBattleEnded;
+    }
+
+    // 전투 승리 시 현재 스테이지 진행도 갱신
+    private void HandleBattleEnded(UnitTeam winner)
+    {
+        if (winner != UnitTeam.Hero)
+        {
+            return;
+        }
+
+        stageProgressController.CompleteStage(currentStageId);
+        SaveManager.Instance.Save();
     }
 }

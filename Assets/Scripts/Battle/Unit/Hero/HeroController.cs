@@ -186,4 +186,18 @@ public sealed class HeroController
         // 보유 영웅 목록 변경 이벤트 호출
         OnHeroCollectionChanged?.Invoke();
     }
+
+    // UnitID에 해당하는 보유 영웅 제거
+    public bool TryRemoveHero(string heroId)
+    {
+        if (!heroCollection.TryRemove(heroId))
+        {
+            return false;
+        }
+
+        OnHeroCollectionChanged?.Invoke();
+        OnHeroStatChanged?.Invoke();
+
+        return true;
+    }
 }
