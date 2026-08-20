@@ -39,5 +39,6 @@ public enum SkillEffectType
     ProjectileDamage,
     Buff,
     AreaDamage,
-    Whirlwind
+    Whirlwind,
+    Laser
 }

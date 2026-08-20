@@ -1,5 +1,5 @@
 using System;
-//조건 검사
+//현재 상황을 확인하는 노드
 public class BTCondition : BTNode
 {
     private readonly Func<bool> condition;

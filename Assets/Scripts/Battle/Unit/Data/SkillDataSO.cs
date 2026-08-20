@@ -49,6 +49,11 @@ public class SkillDataSO : ScriptableObject
     [SerializeField, Min(0.05f)] private float multiHitInterval = 0.2f;
     [SerializeField, Min(0.1f)] private float multiHitRadius = 2.0f;
 
+    [Header("레이저 스킬")]
+    [SerializeField] private GameObject laserPrefab;
+    [SerializeField, Min(0.1f)] private float laserDuration = 3.0f;
+    [SerializeField, Min(0.05f)] private float laserHitInterval = 0.2f;
+
     public string SkillName => skillName;
 
     public string DisplayName => displayName;
@@ -82,4 +87,8 @@ public class SkillDataSO : ScriptableObject
     public float MultiHitDuration => multiHitDuration;
     public float MultiHitInterval => multiHitInterval;
     public float MultiHitRadius => multiHitRadius;
+
+    public GameObject LaserPrefab => laserPrefab;
+    public float LaserDuration => laserDuration;
+    public float LaserHitInterval => laserHitInterval;
 }
