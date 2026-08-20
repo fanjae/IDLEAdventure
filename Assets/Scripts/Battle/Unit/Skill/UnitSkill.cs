@@ -46,6 +46,7 @@ public class UnitSkill : MonoBehaviour
         this.unit = unit;
 
         unitBuff = GetComponent<UnitBuff>();
+
         whirlwindSkillDamage = GetComponent<WhirlwindSkillDamage>();
         if (whirlwindSkillDamage != null) whirlwindSkillDamage.Initialize(unit);
 
@@ -175,6 +176,12 @@ public class UnitSkill : MonoBehaviour
                 unit.FaceTarget();
                 StartWhirlwind();
                 break;
+            case SkillEffectType.Laser:
+                if (!IsValidTarget(skillTarget)) return;
+                hasAppliedSkillEffect = true;
+                unit.FaceTarget();
+                StartLaser();
+                break;
         }
     }
     //SkillEnd 애니메이션 이벤트에서 호출
@@ -240,6 +247,8 @@ public class UnitSkill : MonoBehaviour
                 return unit.Target;
             case SkillEffectType.Whirlwind:
                 return unit.Target;
+            case SkillEffectType.Laser:
+                return unit.Target;
         }
 
         return null;
@@ -265,6 +274,8 @@ public class UnitSkill : MonoBehaviour
             case SkillEffectType.AreaDamage:
                 return target.Team != unit.Team && unit.IsTargetInAttackRange(target);
             case SkillEffectType.Whirlwind:
+                return target.Team != unit.Team && unit.IsTargetInAttackRange(target);
+            case SkillEffectType.Laser:
                 return target.Team != unit.Team && unit.IsTargetInAttackRange(target);
         }
 
@@ -366,6 +377,29 @@ public class UnitSkill : MonoBehaviour
             skillData.DamageRatio,
             skillData.WhirlwindVfxPrefab,
             vfxPoint);
+    }
+    //레이저
+    private void StartLaser()
+    {
+        if (skillTarget == null) return;
+        if (skillData.LaserPrefab == null) return;
+
+        Transform point = skillVfxPoint != null ? skillVfxPoint : transform;
+        Vector3 direction = skillTarget.transform.position - point.position;
+        direction.y = 0.0f;
+        if (direction.sqrMagnitude <= 0.001f) direction = unit.transform.forward;
+        direction.Normalize();
+
+        Quaternion rotation = Quaternion.FromToRotation(Vector3.right, direction);
+        GameObject laserObject = Instantiate(skillData.LaserPrefab, point.position, rotation);
+        LaserSkillDamage laser = laserObject.GetComponent<LaserSkillDamage>();
+        if (laser == null)
+        {
+            Destroy(laserObject);
+            return;
+        }
+        
+        laser.Initialize(unit, skillData.LaserDuration, skillData.LaserHitInterval, skillData.DamageRatio);
     }
 
 }

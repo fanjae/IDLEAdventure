@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-
+//여러 선택지 중 실행 가능한 행동을 찾는 노드
 public class BTSelector : BTNode
 {
     private readonly List<BTNode> children;
