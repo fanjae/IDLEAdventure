@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// 퀘스트 데이터를 담을 SO 클래스. <br/>
 /// 담고있는 정보 <br/>
-/// Quest ID, Name, Type, Target, Dialogue
+/// Quest ID, Name, Type, Target, TargetPrefab, Dialogue
 /// </summary>
 [CreateAssetMenu(fileName = "NewQuest", menuName = "Game Data/Quest/QuestData")]
 public class QuestData : ScriptableObject
@@ -16,6 +16,7 @@ public class QuestData : ScriptableObject
     // 퀘스트 목표 위치
     [Header("Target Data")]
     [SerializeField] private Vector3 target;
+    [SerializeField] private GameObject targetPrefab;
     // 퀴스트 대사
     [Header("Dialogue Data")]
     [SerializeField] private QuestDialogueData dialogueData;
@@ -26,6 +27,7 @@ public class QuestData : ScriptableObject
     public QuestType QuestType => questType;
 
     public Vector3 Target => target;
+    public GameObject TargetPrefab => targetPrefab;
 
     public QuestDialogueData DialogueData => dialogueData;
 }

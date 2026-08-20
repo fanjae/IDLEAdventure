@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,12 +19,22 @@ public class QuestManager : Singleton<QuestManager>
 {
     private Dictionary<int, QuestData> questDatas = new Dictionary<int, QuestData>();
 
+    [Header("MainQeust")]
     [SerializeField] private int currentMainQuestId;
-    [SerializeField] private List<int> acceptSubQuestIds = new List<int>();
+    [Header("SubQuests")]
+    [SerializeField] private List<int> acceptableSubQuestIds = new List<int>();
+    [SerializeField] private List<int> acceptedSubQuestIds = new List<int>();
+    [SerializeField] private List<int> clearSubQuestIds = new List<int>();
+
+    private const int maxSubQuestCount = 2;
+
+    public event Action OnSubQuestChanged;
 
     // 프로퍼티
     public int CurrentMainQuestId => currentMainQuestId;
-    public List<int> AcceptSubQuestIds => acceptSubQuestIds;
+    public List<int> AcceptableSubQuestIds => acceptableSubQuestIds;
+    public List<int> AcceptedSubQuestIds => acceptedSubQuestIds;
+    public List<int> ClearSubQuestIds => clearSubQuestIds;
 
     protected override void Awake()
     {
@@ -60,7 +71,7 @@ public class QuestManager : Singleton<QuestManager>
                 }
             }
         }
-        // 코드가 중복된 것 같아서 합쳐봤는데 합친 코드에서 오류가 생기면 복구하기 위해 남겨둠. >>> 못 접어두나?
+        #region 코드가 중복된 것 같아서 합쳐봤는데 합친 코드에서 오류가 생기면 복구하기 위해 남겨둠. >>> 못 접어두나?
         //// 지정된 경로에서 메인 퀘스트 데이터 받아오기.
         //QuestData[] mainQuests = Resources.LoadAll<QuestData>("GameData/Quests/Main");
         //if (mainQuests == null)
@@ -99,9 +110,28 @@ public class QuestManager : Singleton<QuestManager>
         //        Debug.Log($"{quest.QuestId} (은)는 중복된 퀘스트 Id입니다.");
         //    }
         //}
-        
+        #endregion
+
         LoadSaveData();
+        InitializeSubQuestLists();
         Debug.Log("퀘스트 초기화 완료.");
+    }
+    //
+    private void InitializeSubQuestLists()
+    {
+        acceptableSubQuestIds.Clear();
+
+        foreach (var quest in questDatas)
+        {
+            QuestData questData = quest.Value;
+
+            if (questData.QuestType == QuestType.Sub &&
+                !acceptedSubQuestIds.Contains(questData.QuestId) &&
+                !clearSubQuestIds.Contains(questData.QuestId))
+            {
+                acceptableSubQuestIds.Add(questData.QuestId);
+            } 
+        }
     }
 
     // 퀘스트 정보를 받아오는 함수.
@@ -122,18 +152,27 @@ public class QuestManager : Singleton<QuestManager>
     // 수락 하려는 서브 퀘스트 ID를 매개 변수로 받아와 해당 ID값을 acceptSubQuestIds에 담는다.
     public void AcceptSubQuest(int id)
     {
+        if (acceptedSubQuestIds.Count >= maxSubQuestCount)
+        {
+            Debug.LogWarning($"서브 퀘스트는 최대 {maxSubQuestCount}개 까지만 수락할 수 있습니다.");
+            return;
+        }
+
         QuestData quest = GetQuestData(id);
         if (quest == null) return;
 
         if (quest.QuestType == QuestType.Sub)
         {
-            if (!acceptSubQuestIds.Contains(id))
+            if (!acceptedSubQuestIds.Contains(id))
             {
-                acceptSubQuestIds.Add(id);
+                acceptableSubQuestIds.Remove(id);
+                acceptedSubQuestIds.Add(id);
+
                 UpdateSaveData();
                 Debug.Log($"{id} 서브 퀘스트를 수락했습니다.");
             }
         }
+        OnSubQuestChanged?.Invoke();
     }
     // 퀘스트 클리어 함수.
     // 클리어 할 퀘스트가 Main인지 Sub인지 확인하고,
@@ -159,22 +198,26 @@ public class QuestManager : Singleton<QuestManager>
             else
             {
                 Debug.Log("완료 시도하는 퀘스트와 ID가 다릅니다.");
+                return;
             }
         }
 
         else if (quest.QuestType == QuestType.Sub)
         {
-            if (acceptSubQuestIds.Contains(id))
+            if (acceptedSubQuestIds.Contains(id))
             {
                 Debug.Log($"{id} 서브 퀘스트를 클리어 했습니다.");
 
                 // 마찬가지로 보상 수령은 여기서 하는 게 좋을까?
-                acceptSubQuestIds.Remove(id);
+                acceptedSubQuestIds.Remove(id);
+                clearSubQuestIds.Add(id);
             }
             else
             {
                 Debug.Log("완료 시도하는 퀘스트와 ID가 다릅니다.");
+                return;
             }
+            OnSubQuestChanged?.Invoke();
         }
 
         else
@@ -194,7 +237,7 @@ public class QuestManager : Singleton<QuestManager>
         if (TestSaveManager.Instance != null && TestSaveManager.Instance.CurrentSaveData != null)
         {
             currentMainQuestId = TestSaveManager.Instance.CurrentSaveData.CurrentMainQuestId;
-            acceptSubQuestIds = new List<int>(TestSaveManager.Instance.CurrentSaveData.AcceptSubQuestIds);
+            acceptedSubQuestIds = new List<int>(TestSaveManager.Instance.CurrentSaveData.AcceptSubQuestIds);
             Debug.Log($"퀘스트 진행도 로드 완료.");
         }
     }
@@ -203,7 +246,7 @@ public class QuestManager : Singleton<QuestManager>
     {
         if (TestSaveManager.Instance != null)
         {
-            TestSaveManager.Instance.CurrentSaveData.SetQuestData(currentMainQuestId, acceptSubQuestIds);
+            TestSaveManager.Instance.CurrentSaveData.SetQuestData(currentMainQuestId, acceptedSubQuestIds);
             TestSaveManager.Instance.SaveGame();
         }
     }
