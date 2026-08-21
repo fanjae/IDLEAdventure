@@ -6,6 +6,12 @@ public sealed class FormationPanelController : MonoBehaviour
 {
     [SerializeField] private string mainSceneName = "ItemandSaveTestMainScene";
 
+    // 전투 시작 시 배치 패널 닫음
+    public void CloseFormationPanel()
+    {
+        gameObject.SetActive(false);
+    }
+
     // 메인 화면으로 이동
     public void ReturnToMain()
     {
