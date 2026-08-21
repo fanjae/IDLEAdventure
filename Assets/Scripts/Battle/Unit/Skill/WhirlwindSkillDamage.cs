@@ -4,92 +4,70 @@ using UnityEngine;
 
 public class WhirlwindSkillDamage : MonoBehaviour
 {
-    private BattleUnit unit;
+    private BattleUnit owner;
 
-    private Coroutine whirlwindCoroutine;
-    private GameObject whirlwindVfx;
+    private float duration;
+    private float hitInterval;
+    private float damageRatio;
 
-    public void Initialize(BattleUnit unit)
+    private readonly Dictionary<BattleUnit, float> nextHitTimes = new Dictionary<BattleUnit, float>();
+
+    public void Initialize(BattleUnit owner, float duration, float hitInterval, float damageRatio)
     {
-        this.unit = unit;
-    }
-
-    public void StartWhirlwind(float duration, float hitInterval, float radius, float damageRatio, GameObject vfxPrefab, Transform vfxPoint)
-    {
-        if (unit == null || unit.IsDead) return;
-        //만약 기존 실행이 남아있다면 중복 실행 방지
-        StopWhirlwind();
-        PlayVfx(vfxPrefab, vfxPoint);
-
-        whirlwindCoroutine = StartCoroutine(WhirlwindRoutine(duration, hitInterval, radius, damageRatio));
-    }
-    public void StopWhirlwind()
-    {
-        if (whirlwindCoroutine != null)
+        if (owner == null)
         {
-            StopCoroutine(whirlwindCoroutine);
-            whirlwindCoroutine = null;
+            Destroy(gameObject);
+            return;
         }
-        StopVfx();
+
+        this.owner = owner;
+        this.duration = duration;
+        this.hitInterval = hitInterval;
+        this.damageRatio = damageRatio;
+
+        StartCoroutine(WhirlwindRoutine());
     }
-    
-    private IEnumerator WhirlwindRoutine(float duration, float hitInterval, float radius, float damageRatio)
+
+    private IEnumerator WhirlwindRoutine()
     {
         float endTime = Time.time + duration;
         while (Time.time < endTime)
         {
-            if (unit == null || unit.IsDead)
+            if (owner == null || owner.IsDead || !owner.IsUsingSkill)
             {
-                whirlwindCoroutine = null;
-                StopVfx();
+                Destroy(gameObject);
                 yield break;
             }
-            ApplyDamage(radius, damageRatio);
-            yield return new WaitForSeconds(hitInterval);
+            yield return null;
         }
-        whirlwindCoroutine = null;
-        StopVfx();
+        if (owner != null && !owner.IsDead && owner.IsUsingSkill) owner.SkillEndEvent();
 
-        unit.SkillEndEvent();
+        Destroy(gameObject);
     }
-    private void ApplyDamage(float radius, float damageRatio)
+    private void OnTriggerStay(Collider other)
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, radius);
-        HashSet<BattleUnit> hitUnits = new HashSet<BattleUnit>();
-        for (int i = 0; i < hits.Length; i++)
+        if (owner == null || owner.IsDead || !owner.IsUsingSkill) return;
+
+        BattleUnit target = other.GetComponentInParent<BattleUnit>();
+        if (target ==  null) return;
+        if (target == owner) return;
+        if (target.IsDead) return;
+        if (target.Team == owner.Team) return;
+        if (nextHitTimes.TryGetValue(target, out float nextHitTime))
         {
-            BattleUnit target = hits[i].GetComponentInParent<BattleUnit>();
-
-            if (target == null) continue;
-            if (target == unit) continue;
-            if (target.IsDead) continue;
-            if (target.Team == unit.Team) continue;
-            if (!hitUnits.Add(target)) continue;
-
-            int skillAttack = Mathf.RoundToInt(unit.AttackPower * damageRatio);
-            int finalDamage = DamageCalculator.Calculate(skillAttack, target.Defense);
-            int appliedDamage = target.TakeDamage(finalDamage);
-            //확인용
-            Debug.Log($"[휠윈드] {unit.name} -> {target.name} / 피해량 : {appliedDamage}");
+            if (Time.time < nextHitTime) return;
         }
-    }
-    private void PlayVfx(GameObject vfxprefab, Transform vfxPoint)
-    {
-        if (vfxprefab == null) return;
 
-        Transform point = vfxPoint != null ? vfxPoint : transform;
-        whirlwindVfx = Instantiate(vfxprefab, point.position, point.rotation, point);
+        nextHitTimes[target] = Time.time + hitInterval;
+        int skillAttack = Mathf.RoundToInt(owner.AttackPower * damageRatio);
+        int finalDamage = DamageCalculator.Calculate(skillAttack, target.Defense);
+        target.TakeDamage(finalDamage);
     }
-    private void StopVfx()
+    private void OnTriggerExit(Collider other)
     {
-        if (whirlwindVfx == null) return;
-        Destroy(whirlwindVfx);
-        whirlwindVfx = null;
-    }
+        BattleUnit target = other.GetComponentInParent<BattleUnit>();
+        if (target == null) return;
 
-
-    private void OnDrawGizmosSelected()
-    {
-        if (unit == null) return;
+        nextHitTimes.Remove(target);
     }
 }
