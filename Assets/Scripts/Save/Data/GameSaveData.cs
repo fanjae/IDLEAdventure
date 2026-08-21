@@ -19,7 +19,10 @@ public sealed class GameSaveData
     public ResonanceSaveData Resonance = new();
 
     public StageProgressSaveData StageProgress { get; set; } = new();
-  
+
+    // 영웅 배치 저장 데이터
+    public FormationSaveData Formation { get; set; } = new();
+
     // 배너별 천장 진행도 저장 데이터
     public GachaSaveData Gacha { get; set; } = new();
 }

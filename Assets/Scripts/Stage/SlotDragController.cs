@@ -28,6 +28,9 @@ public sealed class SlotDragController : MonoBehaviour
 
     private readonly List<RaycastResult> uiRaycastResults = new();
 
+    // 0821 수정 
+    public event Action OnPlacementChanged;
+
     public bool IsDragging => dragObj != null;
 
     private readonly RaycastHit[] raycastHits = new RaycastHit[64];
@@ -194,6 +197,9 @@ public sealed class SlotDragController : MonoBehaviour
         }
 
         Debug.Log($"슬롯 변경: {dragSlotBase} → {targetSlot}");
+
+        // 영웅 배치 위치 변경 알림
+        OnPlacementChanged?.Invoke();
 
         FinishDrag();
     }
