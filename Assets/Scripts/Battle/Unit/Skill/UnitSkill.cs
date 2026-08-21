@@ -15,7 +15,6 @@ public class UnitSkill : MonoBehaviour
     private BattleUnit skillTarget; //스킬 시작 당시의 대상을 보관하는 용
 
     private UnitBuff unitBuff;
-    private WhirlwindSkillDamage whirlwindSkillDamage;
 
     private float nextSkillAvailableTime;
     private float skillSafetyEndTime;
@@ -46,9 +45,6 @@ public class UnitSkill : MonoBehaviour
         this.unit = unit;
 
         unitBuff = GetComponent<UnitBuff>();
-
-        whirlwindSkillDamage = GetComponent<WhirlwindSkillDamage>();
-        if (whirlwindSkillDamage != null) whirlwindSkillDamage.Initialize(unit);
 
         skillTarget = null;
 
@@ -171,7 +167,6 @@ public class UnitSkill : MonoBehaviour
                 //휠윈드
             case SkillEffectType.Whirlwind:
                 if (!IsValidTarget(skillTarget)) return;
-                if (whirlwindSkillDamage == null) return;
                 hasAppliedSkillEffect = true;
                 unit.FaceTarget();
                 StartWhirlwind();
@@ -188,7 +183,6 @@ public class UnitSkill : MonoBehaviour
     public void CompleteSkill()
     {
         if (!isUsingSkill) return;
-        if (whirlwindSkillDamage != null) whirlwindSkillDamage.StopWhirlwind();
 
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
@@ -198,8 +192,6 @@ public class UnitSkill : MonoBehaviour
     //상태 변경 또는 사망 등으로 진행 중인 스킬 취소
     public void CancelSkill()
     {
-        if (whirlwindSkillDamage != null) whirlwindSkillDamage.StopWhirlwind();
-
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
         skillTarget = null;
@@ -209,8 +201,6 @@ public class UnitSkill : MonoBehaviour
     //전투 재시작 또는 오브젝트 재사용 시 스킬 상태 초기화
     public void ResetSkill()
     {
-        if (whirlwindSkillDamage != null) whirlwindSkillDamage.StopWhirlwind();
-
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
         skillTarget = null;
@@ -366,17 +356,17 @@ public class UnitSkill : MonoBehaviour
     //휠윈드
     private void StartWhirlwind()
     {
-        if (whirlwindSkillDamage == null) return;
+        if (skillData.WhirlwindPrefab == null) return;
 
-        Transform vfxPoint = skillVfxPoint != null ? skillVfxPoint : transform;
-
-        whirlwindSkillDamage.StartWhirlwind(
-            skillData.MultiHitDuration,
-            skillData.MultiHitInterval,
-            skillData.MultiHitRadius,
-            skillData.DamageRatio,
-            skillData.WhirlwindVfxPrefab,
-            vfxPoint);
+        Transform point = skillVfxPoint != null ? skillVfxPoint : transform;
+        GameObject whirlwindObject = Instantiate(skillData.WhirlwindPrefab, point.position, point.rotation, point);
+        WhirlwindSkillDamage whirlwind = whirlwindObject.GetComponent<WhirlwindSkillDamage>();
+        if (whirlwind == null)
+        {
+            Destroy(whirlwindObject);
+            return;
+        }
+        whirlwind.Initialize(unit, skillData.WhirlwindDuration, skillData.WhirlwindHitInterval, skillData.DamageRatio);
     }
     //레이저
     private void StartLaser()
