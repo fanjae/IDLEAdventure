@@ -35,6 +35,12 @@ public sealed class BattleResultPanelController : MonoBehaviour
     // 전투 결과에 따라 결과 패널 표시
     private void HandleBattleEnded(UnitTeam winner)
     {
+        // 자동전투 승리 시에는 결과창을 표시하지 않음
+        if (StageRuntimeData.IsAutoBattle && winner == UnitTeam.Hero)
+        {
+            return;
+        }
+
         if (winPanel != null)
         {
             winPanel.SetActive(winner == UnitTeam.Hero);
