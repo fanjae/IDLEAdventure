@@ -10,25 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 17ded5d891b976d42927654fced35c25, type: 3}
-  m_Name: Tanker_Barrier
+  m_Name: Buff_Atk_Up
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
-  skillName: Tanker_Barrier
-  displayName: "\uBCF4\uD638\uB9C9"
-  icon: {fileID: 21300000, guid: efaa088c147046740a2e38e84af4fde8, type: 3}
-  description: "\uCFE8\uD0C0\uC784 : 12"
-  effectType: 2
-  damageRatio: 0
-  cooldown: 12
+  skillName: Buff_Atk_Up
+  displayName: "\uACF5\uACA9\uB825\uBC84\uD504"
+  icon: {fileID: 0}
+  description: "\uCFE8\uD0C0\uC784 : 10"
+  effectType: 4
+  damageRatio: 1.5
+  cooldown: 10
   skillSafetyDuration: 10
-  barrierVfxPrefab: {fileID: 8317995573969936937, guid: f71e31c3adafbec498702a94b12a583c, type: 3}
+  barrierVfxPrefab: {fileID: 0}
   blockCount: 5
   projectilePrefab: {fileID: 0}
   projectileSpeed: 10
   healCastVfxPrefab: {fileID: 0}
   healTargetVfxPrefab: {fileID: 0}
   healVfxDuration: 1.5
-  buffCastVfxPrefab: {fileID: 0}
-  buffVfxPrefab: {fileID: 0}
+  buffCastVfxPrefab: {fileID: 385743127462260663, guid: 6b159c0a5acc358439e1a994a0871578, type: 3}
+  buffVfxPrefab: {fileID: 5126489433114200694, guid: 858bb4a68b7ef4649843bd8b7aa37dd3, type: 3}
   attackBuff: 25
   buffDuration: 6
   buffCastVfxDuration: 1.5

@@ -4,6 +4,7 @@ public class UnitSkill : MonoBehaviour
 {
     [Header("스킬 설정")]
     [SerializeField] private SkillDataSO skillData;
+    [SerializeField] private SkillDataSO secondarySkillData;
 
     [Header("투사체 스킬 발사 위치")]
     [SerializeField] private Transform projectileSpawnPoint;
@@ -14,9 +15,10 @@ public class UnitSkill : MonoBehaviour
     private BattleUnit unit;
     private BattleUnit skillTarget; //스킬 시작 당시의 대상을 보관하는 용
 
-    private UnitBuff unitBuff;
+    private SkillDataSO activeSkillData;
 
     private float nextSkillAvailableTime;
+    private float nextSecondarySkillAvailableTime;
     private float skillSafetyEndTime;
 
     private bool isUsingSkill; //스킬 사용 중인지 확인
@@ -26,7 +28,7 @@ public class UnitSkill : MonoBehaviour
 
     public bool IsUsingSkill => isUsingSkill;
 
-    public bool HasSkill => skillData != null;
+    public bool HasSkill => skillData != null || secondarySkillData != null;
 
     public float CooldownRatio
     {
@@ -44,8 +46,7 @@ public class UnitSkill : MonoBehaviour
     {
         this.unit = unit;
 
-        unitBuff = GetComponent<UnitBuff>();
-
+        activeSkillData = null;
         skillTarget = null;
 
         isUsingSkill = false;
@@ -54,7 +55,9 @@ public class UnitSkill : MonoBehaviour
         skillSafetyEndTime = 0.0f;
 
         hasBattleStarted = false;
+
         nextSkillAvailableTime = 0.0f;
+        nextSecondarySkillAvailableTime = 0.0f;
 
         if (BattleManager.Instance != null)
         {
@@ -75,41 +78,79 @@ public class UnitSkill : MonoBehaviour
     {
         hasBattleStarted = true;
 
-        if (skillData == null)
+        if (skillData != null)
+        {
+            //전투가 실제로 시작된 순간부터 첫 스킬 쿨타임 시작
+            nextSkillAvailableTime = Time.time + skillData.Cooldown;
+        }
+        else
         {
             nextSkillAvailableTime = 0.0f;
-            return;
         }
-        //전투가 실제로 시작된 순간부터 첫 스킬 쿨타임 시작
-        nextSkillAvailableTime = Time.time + skillData.Cooldown;
+
+        if (secondarySkillData != null)
+        {
+            nextSecondarySkillAvailableTime = Time.time + secondarySkillData.Cooldown;
+        }
+        else
+        {
+            nextSecondarySkillAvailableTime = 0.0f;
+        }
+    }
+    private SkillDataSO GetAvailableSkill()
+    {
+        //1순위 스킬
+        if (IsSkillAvailable(skillData, nextSkillAvailableTime)) return skillData;
+        //2순위 스킬
+        if (IsSkillAvailable(secondarySkillData, nextSecondarySkillAvailableTime)) return secondarySkillData;
+
+        return null;
+    }
+    private bool IsSkillAvailable(SkillDataSO data, float nextAvailableTime)
+    {
+        if (data == null) return false;
+        if (Time.time < nextAvailableTime) return false;
+
+        BattleUnit target = GetSkillTarget(data);
+        return IsValidTarget(target, data);
     }
     public bool CanUseSkill()
     {
         if (!hasBattleStarted) return false;
-        if (unit == null || unit.IsDead || skillData == null || isUsingSkill) return false;
-        if (Time.time < nextSkillAvailableTime) return false;
+        if (unit == null || unit.IsDead || isUsingSkill) return false;
 
-        BattleUnit target = GetSkillTarget();
-        return IsValidTarget(target);
+        return GetAvailableSkill() != null;
     }
     public bool UseSkill()
     {
         if (!CanUseSkill()) return false;
 
-        BattleUnit target = GetSkillTarget();
-        if (!IsValidTarget(target)) return false;
+        SkillDataSO selectedSkill = GetAvailableSkill();
+        if (selectedSkill == null) return false;
+
+        BattleUnit target = GetSkillTarget(selectedSkill);
+        if (!IsValidTarget(target, selectedSkill)) return false;
         //애니메이션을 시작할 수 있을 때만 스킬 사용 상태로 진입
         if (!unit.TryPlaySkillAnimation()) return false;
 
+        activeSkillData = selectedSkill;
         skillTarget = target;
 
         isUsingSkill = true;
         hasAppliedSkillEffect = false;
 
-        //스킬 시작 시점을 기준으로 다음 사용 가능 시간 계산
-        nextSkillAvailableTime = Time.time + skillData.Cooldown;
+        //실제로 사용한 스킬만 쿨타임 시작
+        if (selectedSkill == skillData)
+        {
+            //스킬 시작 시점을 기준으로 다음 사용 가능 시간 계산
+            nextSkillAvailableTime = Time.time + selectedSkill.Cooldown;
+        }
+        else if (selectedSkill == secondarySkillData)
+        {
+            nextSecondarySkillAvailableTime = Time.time + selectedSkill.Cooldown;
+        }
         //SkillEnd 애니메이션 이벤트 누락 대비
-        skillSafetyEndTime = Time.time + skillData.SkillSafetyDuration;
+        skillSafetyEndTime = Time.time + selectedSkill.SkillSafetyDuration;
 
         unit.StopMove();
         return true;
@@ -129,53 +170,53 @@ public class UnitSkill : MonoBehaviour
     //SkillActivate 애니메이션 이벤트에서 호출
     public void ApplySkillEffect()
     {
-        if (!isUsingSkill || hasAppliedSkillEffect || skillData == null) return;
+        if (!isUsingSkill || hasAppliedSkillEffect || activeSkillData == null) return;
 
-        switch (skillData.EffectType)
+        switch (activeSkillData.EffectType)
         {
             case SkillEffectType.Damage:
-                if (!IsValidTarget(skillTarget)) return;
+                if (!IsValidTarget(skillTarget, activeSkillData)) return;
                 hasAppliedSkillEffect = true;
                 unit.FaceTarget();
-                ApplyDamage(skillTarget);
+                ApplyDamage(skillTarget, activeSkillData);
                 break;
             case SkillEffectType.Heal:
-                if (!IsValidTarget(skillTarget)) return;
+                if (!IsValidTarget(skillTarget, activeSkillData)) return;
                 hasAppliedSkillEffect = true;
-                ApplyHeal(skillTarget);
+                ApplyHeal(skillTarget, activeSkillData);
                 break;
             case SkillEffectType.Barrier:
                 hasAppliedSkillEffect = true;
-                ApplyBarrier();
+                ApplyBarrier(activeSkillData);
                 break;
             case SkillEffectType.ProjectileDamage:
-                if (!IsValidTarget(skillTarget)) return;
+                if (!IsValidTarget(skillTarget, activeSkillData)) return;
                 hasAppliedSkillEffect = true;
                 unit.FaceTarget();
-                FireProjectile(skillTarget);
+                FireProjectile(skillTarget, activeSkillData);
                 break;
             case SkillEffectType.Buff:
                 hasAppliedSkillEffect = true;
-                ApplyBuff();
+                ApplyBuff(activeSkillData);
                 break;
             case SkillEffectType.AreaDamage:
-                if (!IsValidTarget(skillTarget)) return;
+                if (!IsValidTarget(skillTarget, activeSkillData)) return;
                 hasAppliedSkillEffect = true;
                 unit.FaceTarget();
-                ApplyAreaDamage(skillTarget);
+                ApplyAreaDamage(skillTarget, activeSkillData);
                 break;
                 //휠윈드
             case SkillEffectType.Whirlwind:
-                if (!IsValidTarget(skillTarget)) return;
+                if (!IsValidTarget(skillTarget, activeSkillData)) return;
                 hasAppliedSkillEffect = true;
                 unit.FaceTarget();
-                StartWhirlwind();
+                StartWhirlwind(activeSkillData);
                 break;
             case SkillEffectType.Laser:
-                if (!IsValidTarget(skillTarget)) return;
+                if (!IsValidTarget(skillTarget, activeSkillData)) return;
                 hasAppliedSkillEffect = true;
                 unit.FaceTarget();
-                StartLaser();
+                StartLaser(activeSkillData);
                 break;
         }
     }
@@ -186,7 +227,10 @@ public class UnitSkill : MonoBehaviour
 
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
+
+        activeSkillData = null;
         skillTarget = null;
+
         skillSafetyEndTime = 0.0f;
     }
     //상태 변경 또는 사망 등으로 진행 중인 스킬 취소
@@ -194,6 +238,8 @@ public class UnitSkill : MonoBehaviour
     {
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
+
+        activeSkillData = null;
         skillTarget = null;
 
         skillSafetyEndTime = 0.0f;
@@ -203,24 +249,21 @@ public class UnitSkill : MonoBehaviour
     {
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
+
+        activeSkillData = null;
         skillTarget = null;
 
         skillSafetyEndTime = 0.0f;
 
-        if (skillData == null)
-        {
-            nextSkillAvailableTime = 0.0f;
-            return;
-        }
-
-        nextSkillAvailableTime = Time.time + skillData.Cooldown;
+        nextSkillAvailableTime = skillData != null ? Time.time + skillData.Cooldown : 0.0f;
+        nextSecondarySkillAvailableTime = secondarySkillData != null ? Time.time + secondarySkillData.Cooldown : 0.0f;
     }
 
-    private BattleUnit GetSkillTarget()
+    private BattleUnit GetSkillTarget(SkillDataSO data)
     {
-        if (unit == null || skillData == null) return null;
+        if (unit == null || data == null) return null;
 
-        switch (skillData.EffectType)
+        switch (data.EffectType)
         {
             case SkillEffectType.Damage:
                 return unit.Target;
@@ -243,11 +286,11 @@ public class UnitSkill : MonoBehaviour
 
         return null;
     }
-    private bool IsValidTarget(BattleUnit target)
+    private bool IsValidTarget(BattleUnit target, SkillDataSO data)
     {
         if (target == null || target.IsDead || !target.gameObject.activeInHierarchy) return false;
 
-        switch (skillData.EffectType)
+        switch (data.EffectType)
         {
             case SkillEffectType.Damage:
                 //피해를 입히는 스킬은 적대 진영에게만 사용
@@ -271,44 +314,63 @@ public class UnitSkill : MonoBehaviour
 
         return false;
     }
-    private void ApplyDamage(BattleUnit target)
+    private void ApplyDamage(BattleUnit target, SkillDataSO data)
     {
-        int skillAttack = Mathf.RoundToInt(unit.AttackPower * skillData.DamageRatio);
+        int skillAttack = Mathf.RoundToInt(unit.AttackPower * data.DamageRatio);
         int finalDamage = DamageCalculator.Calculate(skillAttack, target.Defense);
 
         int appliedDamage = target.TakeDamage(finalDamage);
         //기능 확인 용
         Debug.Log($"{unit.name} 스킬 사용 / {target.name} 피해 : {appliedDamage}");
     }
-    private void ApplyHeal(BattleUnit target)
+    private void ApplyHeal(BattleUnit target, SkillDataSO data)
     {
         if (target == null || target.IsDead) return;
 
         //시전자 발밑 VFX
-        PlayHealCastVfx();
+        PlayHealCastVfx(data);
 
-        int healAmount = Mathf.RoundToInt(unit.AttackPower * skillData.DamageRatio);
+        int healAmount = Mathf.RoundToInt(unit.AttackPower * data.DamageRatio);
         int appliedHeal = target.Heal(healAmount);
 
         //회복된 경우에만 대상 힐 VFX 표시
-        if (appliedHeal > 0) PlayHealTargetVfx(target);
+        if (appliedHeal > 0) PlayHealTargetVfx(target, data);
         //기능 확인 용
         Debug.Log($"[힐 스킬] {unit.name} -> {target.name} / 회복량 : {appliedHeal}");
     }
-    private void ApplyBarrier()
+    private void ApplyBarrier(SkillDataSO data)
     {
-        unit.ActivateBarrier(skillData.BlockCount, skillData.BarrierVfxPrefab);
+        unit.ActivateBarrier(data.BlockCount, data.BarrierVfxPrefab);
     }
-    private void ApplyBuff()
+    private void ApplyBuff(SkillDataSO data)
     {
-        if (unitBuff == null) return;
+        if (BattleManager.Instance == null) return;
+        //시전자 발밑 VFX
+        PlayBuffCastVfx(data);
 
-        unitBuff.ApplyAttackBuff(skillData.AttackBuff, skillData.BuffDuration, skillData.BuffVfxPrefab, skillVfxPoint);
+        var allies = BattleManager.Instance.GetAliveAllies(unit);
+        for (int i = 0; i < allies.Count; i++)
+        {
+            BattleUnit ally = allies[i];
+            if (ally == null || ally.IsDead) continue;
+
+            UnitBuff buff = ally.GetComponent<UnitBuff>();
+            if (buff == null) continue;
+            buff.ApplyAttackBuff(data.AttackBuff, data.BuffDuration, data.BuffVfxPrefab, null);
+        }
+    }
+    private void PlayBuffCastVfx(SkillDataSO data)
+    {
+        if (data.BuffCastVFxPrefab == null) return;
+
+        Transform point = skillVfxPoint != null ? skillVfxPoint : transform;
+        GameObject vfx = Instantiate(data.BuffCastVFxPrefab, point.position, point.rotation, point);
+        Destroy(vfx, data.BuffCastVfxDuration);
     }
     //투사체 스킬 발사 함수
-    private void FireProjectile(BattleUnit target)
+    private void FireProjectile(BattleUnit target, SkillDataSO data)
     {
-        if (target == null || skillData.ProjectilePrefab == null) return;
+        if (target == null || data.ProjectilePrefab == null) return;
 
         Vector3 spawnPosition = projectileSpawnPoint != null ? projectileSpawnPoint.position : transform.position + Vector3.up;
         //발사하는 순간 타겟이 있던 방향 저장
@@ -317,62 +379,62 @@ public class UnitSkill : MonoBehaviour
         if (direction.sqrMagnitude <= 0.001f) direction = unit.transform.forward;
         direction.Normalize();
 
-        int skillAttack = Mathf.RoundToInt(unit.AttackPower * skillData.DamageRatio);
-        SkillProjectile projectile = Instantiate(skillData.ProjectilePrefab, spawnPosition, Quaternion.identity);
-        projectile.Initialize(unit, direction, skillAttack, skillData.ProjectileSpeed);
+        int skillAttack = Mathf.RoundToInt(unit.AttackPower * data.DamageRatio);
+        SkillProjectile projectile = Instantiate(data.ProjectilePrefab, spawnPosition, Quaternion.identity);
+        projectile.Initialize(unit, direction, skillAttack, data.ProjectileSpeed);
     }
     //힐 관련
-    private void PlayHealCastVfx()
+    private void PlayHealCastVfx(SkillDataSO data)
     {
-        if (skillData.HealCastVfxPrefab == null) return;
+        if (data.HealCastVfxPrefab == null) return;
 
         Transform point = skillVfxPoint != null ? skillVfxPoint : transform;
-        GameObject vfx = Instantiate(skillData.HealCastVfxPrefab, point.position, point.rotation, point);
+        GameObject vfx = Instantiate(data.HealCastVfxPrefab, point.position, point.rotation, point);
 
-        Destroy(vfx, skillData.HealVfxDuration);
+        Destroy(vfx, data.HealVfxDuration);
     }
-    private void PlayHealTargetVfx(BattleUnit target)
+    private void PlayHealTargetVfx(BattleUnit target, SkillDataSO data)
     {
         if (target == null) return;
-        if (skillData.HealTargetVfxPrefab == null) return;
+        if (data.HealTargetVfxPrefab == null) return;
 
-        GameObject vfx = Instantiate(skillData.HealTargetVfxPrefab, target.transform.position, Quaternion.identity, target.transform);
+        GameObject vfx = Instantiate(data.HealTargetVfxPrefab, target.transform.position, Quaternion.identity, target.transform);
 
-        Destroy(vfx, skillData.HealVfxDuration);
+        Destroy(vfx, data.HealVfxDuration);
     }
 
     //광역 단타 스킬
-    private void ApplyAreaDamage(BattleUnit target)
+    private void ApplyAreaDamage(BattleUnit target, SkillDataSO data)
     {
         if (target == null) return;
-        if (skillData.AreaDamagePrefab == null) return;
+        if (data.AreaDamagePrefab == null) return;
 
         Vector3 targetPosition = target.transform.position;
-        int skillAttack = Mathf.RoundToInt(unit.AttackPower * skillData.DamageRatio);
-        AreaSkillDamage areaSkill = Instantiate(skillData.AreaDamagePrefab, targetPosition, Quaternion.identity);
-        areaSkill.SetAreaRadius(skillData.AreaRadius);
+        int skillAttack = Mathf.RoundToInt(unit.AttackPower * data.DamageRatio);
+        AreaSkillDamage areaSkill = Instantiate(data.AreaDamagePrefab, targetPosition, Quaternion.identity);
+        areaSkill.SetAreaRadius(data.AreaRadius);
         areaSkill.ApplyDamage(unit, skillAttack);
     }
     //휠윈드
-    private void StartWhirlwind()
+    private void StartWhirlwind(SkillDataSO data)
     {
-        if (skillData.WhirlwindPrefab == null) return;
+        if (data.WhirlwindPrefab == null) return;
 
         Transform point = skillVfxPoint != null ? skillVfxPoint : transform;
-        GameObject whirlwindObject = Instantiate(skillData.WhirlwindPrefab, point.position, point.rotation, point);
+        GameObject whirlwindObject = Instantiate(data.WhirlwindPrefab, point.position, point.rotation, point);
         WhirlwindSkillDamage whirlwind = whirlwindObject.GetComponent<WhirlwindSkillDamage>();
         if (whirlwind == null)
         {
             Destroy(whirlwindObject);
             return;
         }
-        whirlwind.Initialize(unit, skillData.WhirlwindDuration, skillData.WhirlwindHitInterval, skillData.DamageRatio);
+        whirlwind.Initialize(unit, data.WhirlwindDuration, data.WhirlwindHitInterval, data.DamageRatio);
     }
     //레이저
-    private void StartLaser()
+    private void StartLaser(SkillDataSO data)
     {
         if (skillTarget == null) return;
-        if (skillData.LaserPrefab == null) return;
+        if (data.LaserPrefab == null) return;
 
         Transform point = skillVfxPoint != null ? skillVfxPoint : transform;
         Vector3 direction = skillTarget.transform.position - point.position;
@@ -381,7 +443,7 @@ public class UnitSkill : MonoBehaviour
         direction.Normalize();
 
         Quaternion rotation = Quaternion.FromToRotation(Vector3.right, direction);
-        GameObject laserObject = Instantiate(skillData.LaserPrefab, point.position, rotation);
+        GameObject laserObject = Instantiate(data.LaserPrefab, point.position, rotation);
         LaserSkillDamage laser = laserObject.GetComponent<LaserSkillDamage>();
         if (laser == null)
         {
@@ -389,7 +451,7 @@ public class UnitSkill : MonoBehaviour
             return;
         }
         
-        laser.Initialize(unit, skillData.LaserDuration, skillData.LaserHitInterval, skillData.DamageRatio);
+        laser.Initialize(unit, data.LaserDuration, data.LaserHitInterval, data.DamageRatio);
     }
 
 }

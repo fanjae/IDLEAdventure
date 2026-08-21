@@ -603,6 +603,7 @@ GameObject:
   - component: {fileID: 4478850475087657100}
   - component: {fileID: 7185211492788445684}
   - component: {fileID: 6482133307226279500}
+  - component: {fileID: -4052169420828358049}
   m_Layer: 0
   m_Name: Hero_Mage
   m_TagString: Untagged
@@ -755,8 +756,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkill
   skillData: {fileID: 11400000, guid: 76de3e137c7d2454984a15f1a9398d66, type: 2}
+  secondarySkillData: {fileID: 0}
   projectileSpawnPoint: {fileID: 0}
   skillVfxPoint: {fileID: 3280454558311533173}
+--- !u!114 &-4052169420828358049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7578922995397340695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f480a671209d5654f9828380151f2327, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitBuff
 --- !u!1 &7853692371010549720
 GameObject:
   m_ObjectHideFlags: 0

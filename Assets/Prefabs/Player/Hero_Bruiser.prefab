@@ -107,6 +107,7 @@ GameObject:
   - component: {fileID: 4393432037128998468}
   - component: {fileID: 1067784452696970056}
   - component: {fileID: 4092121925701557559}
+  - component: {fileID: 4146129854414764090}
   m_Layer: 0
   m_Name: Hero_Bruiser
   m_TagString: Untagged
@@ -245,6 +246,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkill
   skillData: {fileID: 11400000, guid: 5ff10191d0275a8489636262dcdbbba5, type: 2}
+  secondarySkillData: {fileID: 0}
   projectileSpawnPoint: {fileID: 0}
   skillVfxPoint: {fileID: 74817813098625901}
 --- !u!114 &4092121925701557559
@@ -260,6 +262,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimator
   animator: {fileID: 719702930009131313}
+--- !u!114 &4146129854414764090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 35056667729312020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f480a671209d5654f9828380151f2327, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitBuff
 --- !u!1 &68010089814102321
 GameObject:
   m_ObjectHideFlags: 0

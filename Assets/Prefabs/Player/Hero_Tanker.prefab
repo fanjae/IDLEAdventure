@@ -4835,6 +4835,7 @@ GameObject:
   - component: {fileID: 6640888274503076808}
   - component: {fileID: 7025246349611711462}
   - component: {fileID: 9074417791259514073}
+  - component: {fileID: -7545877310919493244}
   m_Layer: 0
   m_Name: Hero_Tanker
   m_TagString: Untagged
@@ -4999,8 +5000,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkill
   skillData: {fileID: 11400000, guid: d5380b928d262aa4883c93b3cfb7a956, type: 2}
+  secondarySkillData: {fileID: 0}
   projectileSpawnPoint: {fileID: 0}
   skillVfxPoint: {fileID: 0}
+--- !u!114 &-7545877310919493244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1997512738005830746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f480a671209d5654f9828380151f2327, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitBuff
 --- !u!1 &2005234226908366482
 GameObject:
   m_ObjectHideFlags: 0

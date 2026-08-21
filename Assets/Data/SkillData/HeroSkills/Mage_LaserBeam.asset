@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Mage_LaserBeam
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
   skillName: Mage_LaserBeam
-  displayName: 
+  displayName: "\uB808\uC774\uC800"
   icon: {fileID: 0}
-  description: 
+  description: "\uCFE8\uD0C0\uC784 : 10"
   effectType: 7
-  damageRatio: 0.2
+  damageRatio: 0.4
   cooldown: 10
   skillSafetyDuration: 10
   barrierVfxPrefab: {fileID: 0}
@@ -27,15 +27,16 @@ MonoBehaviour:
   healCastVfxPrefab: {fileID: 0}
   healTargetVfxPrefab: {fileID: 0}
   healVfxDuration: 1.5
+  buffCastVfxPrefab: {fileID: 0}
   buffVfxPrefab: {fileID: 0}
   attackBuff: 25
   buffDuration: 6
+  buffCastVfxDuration: 1.5
   areaDamagePrefab: {fileID: 0}
   areaRadius: 2.5
-  whirlwindVfxPrefab: {fileID: 0}
-  multiHitDuration: 3
-  multiHitInterval: 0.2
-  multiHitRadius: 2
+  whirlwindPrefab: {fileID: 0}
+  whirlwindDuration: 3
+  whirlwindHitInterval: 0.2
   laserPrefab: {fileID: 6701422066709536033, guid: ed53df8f57e55384f95c8c9aa5a1b636, type: 3}
   laserDuration: 3
   laserHitInterval: 0.2
