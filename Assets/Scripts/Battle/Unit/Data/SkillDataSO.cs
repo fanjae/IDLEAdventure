@@ -35,9 +35,11 @@ public class SkillDataSO : ScriptableObject
     [SerializeField, Min(0.1f)] private float healVfxDuration = 1.5f;
 
     [Header("공격력 버프 스킬")]
-    [SerializeField] private GameObject buffVfxPrefab;
+    [SerializeField] private GameObject buffCastVfxPrefab;//시전자 발밑
+    [SerializeField] private GameObject buffVfxPrefab;    //버프 적용 대상
     [SerializeField, Min(1)] private int attackBuff = 25;
     [SerializeField, Min(0.1f)] private float buffDuration = 6.0f;
+    [SerializeField, Min(0.1f)] private float buffCastVfxDuration = 1.5f;
 
     [Header("광역 피해 스킬")]
     [SerializeField] private AreaSkillDamage areaDamagePrefab;
@@ -75,9 +77,11 @@ public class SkillDataSO : ScriptableObject
     public GameObject HealTargetVfxPrefab => healTargetVfxPrefab;
     public float HealVfxDuration => healVfxDuration;
 
+    public GameObject BuffCastVFxPrefab => buffCastVfxPrefab;
     public GameObject BuffVfxPrefab => buffVfxPrefab;
     public int AttackBuff => attackBuff;
     public float BuffDuration => buffDuration;
+    public float BuffCastVfxDuration => buffCastVfxDuration;
 
     public AreaSkillDamage AreaDamagePrefab => areaDamagePrefab;
     public float AreaRadius => areaRadius;

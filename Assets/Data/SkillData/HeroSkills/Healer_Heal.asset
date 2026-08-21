@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Healer_Heal
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
   skillName: Healer_Heal
-  displayName: 
+  displayName: "\uD790"
   icon: {fileID: 21300000, guid: a194088e469e57c45980751c4af4e357, type: 3}
-  description: 
+  description: "\uCFE8\uD0C0\uC784 : 7"
   effectType: 1
   damageRatio: 1.5
-  cooldown: 10
+  cooldown: 7
   skillSafetyDuration: 10
   barrierVfxPrefab: {fileID: 0}
   blockCount: 5
@@ -27,12 +27,16 @@ MonoBehaviour:
   healCastVfxPrefab: {fileID: 805668277512953704, guid: 5b2f495877dea7e4bb35c6fdd14d8672, type: 3}
   healTargetVfxPrefab: {fileID: 3596470342651629080, guid: 85eb7a31b98950945a0b9b1fc45f7349, type: 3}
   healVfxDuration: 1.5
+  buffCastVfxPrefab: {fileID: 0}
   buffVfxPrefab: {fileID: 0}
   attackBuff: 25
   buffDuration: 6
+  buffCastVfxDuration: 1.5
   areaDamagePrefab: {fileID: 0}
   areaRadius: 2.5
-  whirlwindVfxPrefab: {fileID: 0}
-  multiHitDuration: 3
-  multiHitInterval: 0.2
-  multiHitRadius: 2
+  whirlwindPrefab: {fileID: 0}
+  whirlwindDuration: 3
+  whirlwindHitInterval: 0.2
+  laserPrefab: {fileID: 0}
+  laserDuration: 3
+  laserHitInterval: 0.2

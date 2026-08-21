@@ -3300,6 +3300,7 @@ GameObject:
   - component: {fileID: 4517926449343517113}
   - component: {fileID: 662528977568671033}
   - component: {fileID: 362458707248704187}
+  - component: {fileID: 2010622909605572914}
   m_Layer: 0
   m_Name: Hero_Ranger
   m_TagString: Untagged
@@ -3451,8 +3452,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkill
   skillData: {fileID: 11400000, guid: 85661cc48da403e478e39a75a7fc4534, type: 2}
+  secondarySkillData: {fileID: 0}
   projectileSpawnPoint: {fileID: 7530454815029930944}
   skillVfxPoint: {fileID: 0}
+--- !u!114 &2010622909605572914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4741328425889936655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f480a671209d5654f9828380151f2327, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitBuff
 --- !u!1 &4853432889394642369
 GameObject:
   m_ObjectHideFlags: 0
