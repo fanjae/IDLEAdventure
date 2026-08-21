@@ -47,6 +47,12 @@ public sealed class FormationManager : MonoBehaviour
 
         heroListController.OnHeroSelected += HandleFormationHeroSelected;
 
+        // 영웅 슬롯 위치 변경 이벤트 연결
+        if (slotDragController != null)
+        {
+            slotDragController.OnPlacementChanged += HandlePlacementChanged;
+        }
+
         if (BattleManager.Instance != null)
         {
             BattleManager.Instance.OnBattleStarted += HandleBattleStarted;
