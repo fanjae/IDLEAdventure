@@ -7,7 +7,6 @@ public sealed class StageNodeView : MonoBehaviour
 {
     [SerializeField] private Image nodeIcon;
     [SerializeField] private TMP_Text stageNumberText;
-    [SerializeField] private GameObject rightLine;
 
     [Header("Stage State Sprites")]
     [SerializeField] private Sprite clearedSprite;
@@ -15,10 +14,9 @@ public sealed class StageNodeView : MonoBehaviour
     [SerializeField] private Sprite lockedSprite;
 
     // 스테이지 번호와 진행 상태 설정
-    public void Bind(int stageNumber, bool showRightLine, bool isCurrent, bool isCleared)
+    public void Bind(int stageNumber, bool isCurrent, bool isCleared)
     {
         stageNumberText.text = stageNumber.ToString();
-        rightLine.SetActive(showRightLine);
 
         UpdateState(isCurrent, isCleared);
     }

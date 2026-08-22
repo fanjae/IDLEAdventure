@@ -9,6 +9,14 @@ public class EquipmentPanelController : MonoBehaviour
     [SerializeField] private CanvasGroup equipmentContentGroup;
     [SerializeField] private HeroClassType initialClass = HeroClassType.Support;
 
+    [Header("패널 오픈 연출")]
+    [SerializeField] private RectTransform equipmentContentRect;
+    [SerializeField] private float openMoveDistance = 100f;
+    [SerializeField] private float openDuration = 0.25f;
+
+    private Vector2 equipmentContentOriginPosition;
+    private Tween openTween;
+
     private InventoryController inventoryController;
     private HeroClassType currentClass;
     private Tween classChangeTween;
@@ -25,7 +33,46 @@ public class EquipmentPanelController : MonoBehaviour
             classSelectorView.OnClassSelected += HandleClassSelected;
         }
 
+        if (equipmentContentRect != null)
+        {
+            equipmentContentOriginPosition = equipmentContentRect.anchoredPosition;
+        }
+
         Initialize(initialClass);
+    }
+
+    // 장비 패널 오픈 연출
+    public void PlayOpenAnimation()
+    {
+        if (equipmentContentRect == null || equipmentContentGroup == null)
+        {
+            return;
+        }
+
+        // 이전 오픈 연출이 남아있으면 중단
+        openTween?.Kill();
+
+        Vector2 startPosition = equipmentContentOriginPosition + Vector2.down * openMoveDistance;
+
+        // 아래 위치와 투명 상태에서 시작
+        equipmentContentRect.anchoredPosition = startPosition;
+        equipmentContentGroup.alpha = 0f;
+        equipmentContentGroup.interactable = false;
+        equipmentContentGroup.blocksRaycasts = false;
+
+        Sequence sequence = DOTween.Sequence();
+
+        // 아래에서 위로 이동하면서 동시에 페이드인
+        sequence.Join(equipmentContentRect.DOAnchorPos(equipmentContentOriginPosition, openDuration).SetEase(Ease.OutCubic));
+        sequence.Join(equipmentContentGroup.DOFade(1f, openDuration));
+
+        sequence.OnComplete(() =>
+        {
+            equipmentContentGroup.interactable = true;
+            equipmentContentGroup.blocksRaycasts = true;
+        });
+
+        openTween = sequence;
     }
 
     // 장비 패널에서 사용할 현재 클래스 설정
@@ -88,6 +135,7 @@ public class EquipmentPanelController : MonoBehaviour
     private void OnDestroy()
     {
         classChangeTween?.Kill();
+        openTween?.Kill();
 
         if (panelView != null)
         {
