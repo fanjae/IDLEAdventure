@@ -72,13 +72,21 @@ public class Bootstrapper
         AchievementDatabaseSO achievementDatabase = Resources.Load<AchievementDatabaseSO>("GameData/AchievementDatabase");
         if (achievementDatabase == null)
         {
-            Debug.LogError("AchievementDatabaseSO를 불러오지 못했습니다.");
-            return;
+            Debug.LogError("AchievementDatabaseSO를 불러오지 못했습니다. 업적 기능 비활성화함.");
         }
-
-        // 저장된 업적 통계를 복원하고 가챠 성공 이벤트를 연결함
-        AchievementManager achievementManager = AchievementManager.Instance;
-        achievementManager.Initialize(saveManager.CurrentData, achievementDatabase, gachaManager.Controller);
+        else
+        {
+            try
+            {
+                // 업적 초기화 실패도 업적 기능만 비활성화하고 이후 초기화 계속함
+                AchievementManager achievementManager = AchievementManager.Instance;
+                achievementManager.Initialize(saveManager.CurrentData, achievementDatabase, gachaManager.Controller);
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"업적 초기화 실패. 업적 기능 비활성화함. {exception.Message}");
+            }
+        }
 
         // 저장된 공명 상태 복원
         resonanceManager.Controller.LoadSaveData(saveManager.CurrentData);

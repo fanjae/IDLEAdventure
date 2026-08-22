@@ -47,12 +47,6 @@ public sealed class SaveManager : Singleton<SaveManager>
             gachaManager.WriteSaveData(CurrentData);
         }
 
-        // 현재 생성되어 있는 업적 진행도를 저장 데이터에 반영함
-        if (AchievementManager.TryGetExistingInstance(out AchievementManager achievementManager) && achievementManager.IsInitialized)
-        {
-            achievementManager.WriteSaveData(CurrentData);
-        }
-
         // 저장 시점을 UTC Unix Time 기준으로 갱신
         CurrentData.SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         fileService.Save(CurrentData);

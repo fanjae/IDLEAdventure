@@ -63,16 +63,12 @@ public sealed class AchievementManager : Singleton<AchievementManager>
 
         database = achievementDatabase;
         controller = new AchievementController();
-        bool wasChanged = controller.LoadSaveData(saveData, GetLegacyTotalGachaPulls(saveData));
-        wasChanged |= controller.RecordFirstLogin();
+        controller.LoadSaveData(saveData, GetLegacyTotalGachaPulls(saveData));
+        controller.RecordFirstLogin();
 
         subscribedGachaController = gachaController;
         subscribedGachaController.OnDrawCompleted += HandleGachaDrawCompleted;
 
-        if (wasChanged)
-        {
-            SaveManager.Instance?.Save();
-        }
     }
 
     // 스테이지 클리어 지점이 호출할 최고 진행도 기록 진입점임
@@ -81,34 +77,34 @@ public sealed class AchievementManager : Singleton<AchievementManager>
         SetMetricMaximum(AchievementMetric.MaxClearedStage, stageNumber);
     }
 
-    // 누적형 업적 지표에 양수 값을 더하고 저장함
+    // 누적형 업적 지표에 양수 값을 더함
     public void AddMetricValue(AchievementMetric metric, int amount)
     {
-        if (IsInitialized && controller.AddMetricValue(metric, amount))
+        if (IsInitialized)
         {
-            SaveManager.Instance?.Save();
+            controller.AddMetricValue(metric, amount);
         }
     }
 
-    // 현재 수치형 업적 지표를 지정값으로 갱신하고 저장함
+    // 현재 수치형 업적 지표를 지정값으로 갱신함
     public void SetMetricValue(AchievementMetric metric, int value)
     {
-        if (IsInitialized && controller.SetMetricValue(metric, value))
+        if (IsInitialized)
         {
-            SaveManager.Instance?.Save();
+            controller.SetMetricValue(metric, value);
         }
     }
 
-    // 최고 기록형 업적 지표를 더 높은 값일 때만 갱신하고 저장함
+    // 최고 기록형 업적 지표를 더 높은 값일 때만 갱신함
     public void SetMetricMaximum(AchievementMetric metric, int value)
     {
-        if (IsInitialized && controller.SetMetricMaximum(metric, value))
+        if (IsInitialized)
         {
-            SaveManager.Instance?.Save();
+            controller.SetMetricMaximum(metric, value);
         }
     }
 
-// 완료된 업적의 설정된 재화 보상을 한 번 지급하고 수령 상태를 저장함
+// 완료된 업적의 설정된 재화 보상을 한 번 지급하고 수령 상태를 처리함
     public bool TryClaim(AchievementDefinitionSO definition, out CurrencyType rewardCurrency, out int rewardAmount)
     {
         rewardCurrency = CurrencyType.None;
@@ -136,7 +132,6 @@ public sealed class AchievementManager : Singleton<AchievementManager>
         }
 
         currencyManager.AddCurrency(rewardCurrency, rewardAmount);
-        SaveManager.Instance?.Save();
         return true;
     }
 
@@ -185,11 +180,6 @@ public sealed class AchievementManager : Singleton<AchievementManager>
             currencyManager.AddCurrency(definition.RewardCurrency, definition.RewardAmount);
             rewards.Add(new AchievementClaimReward(definition, definition.RewardCurrency, definition.RewardAmount));
             claimedCount++;
-        }
-
-        if (claimedCount > 0)
-        {
-            SaveManager.Instance?.Save();
         }
 
         return claimedCount;
