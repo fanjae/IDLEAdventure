@@ -69,6 +69,17 @@ public class Bootstrapper
         gachaManager.Initialize(gachaDatabase, heroDatabase);
         gachaManager.LoadSaveData(saveManager.CurrentData);
 
+        AchievementDatabaseSO achievementDatabase = Resources.Load<AchievementDatabaseSO>("GameData/AchievementDatabase");
+        if (achievementDatabase == null)
+        {
+            Debug.LogError("AchievementDatabaseSO를 불러오지 못했습니다.");
+            return;
+        }
+
+        // 저장된 업적 통계를 복원하고 가챠 성공 이벤트를 연결함
+        AchievementManager achievementManager = AchievementManager.Instance;
+        achievementManager.Initialize(saveManager.CurrentData, achievementDatabase, gachaManager.Controller);
+
         // 저장된 공명 상태 복원
         resonanceManager.Controller.LoadSaveData(saveManager.CurrentData);
 
