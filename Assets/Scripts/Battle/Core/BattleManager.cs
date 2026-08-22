@@ -193,4 +193,21 @@ public class BattleManager : MonoBehaviour
 
         return lowestHpAlly;
     }
+    public List<BattleUnit> GetAliveAllies(BattleUnit requester)
+    {
+        List<BattleUnit> result = new List<BattleUnit>();
+        if (requester == null || requester.IsDead) return result;
+
+        List<BattleUnit> allies = requester.Team == UnitTeam.Hero ? heroUnits : enemyUnits;
+        for (int i = 0; i < allies.Count; i++)
+        {
+            BattleUnit ally = allies[i];
+            if (ally == null) continue;
+            if (!ally.gameObject.activeInHierarchy) continue;
+            if (ally.IsDead) continue;
+
+            result.Add(ally);
+        }
+        return result;
+    }
 }

@@ -29,10 +29,22 @@ public sealed class SaveManager : Singleton<SaveManager>
             heroManager.Controller.WriteSaveData(CurrentData);
         }
 
+        // 현재 생성되어 있는 공명 상태를 저장 데이터에 반영
+        if (ResonanceManager.TryGetExistingInstance(out ResonanceManager resonanceManager) && resonanceManager.IsInitialized)
+        {
+            resonanceManager.Controller.WriteSaveData(CurrentData);
+        }
+
         // 현재 생성되어 있는 재화 상태를 저장 데이터에 반영
         if (CurrencyManager.TryGetExistingInstance(out CurrencyManager currencyManager))
         {
             currencyManager.WriteSaveData(CurrentData);
+        }
+
+        // 현재 생성되어 있는 가챠 천장 진행도를 저장 데이터에 반영함
+        if (GachaManager.TryGetExistingInstance(out GachaManager gachaManager) && gachaManager.IsInitialized)
+        {
+            gachaManager.WriteSaveData(CurrentData);
         }
 
         // 저장 시점을 UTC Unix Time 기준으로 갱신

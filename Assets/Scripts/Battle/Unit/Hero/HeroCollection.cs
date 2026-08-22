@@ -107,5 +107,14 @@ public sealed class HeroCollection
         return saveData;
     }
 
-    
+    // UnitID에 해당하는 보유 영웅 제거
+    public bool TryRemove(string heroId)
+    {
+        if (string.IsNullOrEmpty(heroId))
+        {
+            return false;
+        }
+
+        return heroes.Remove(heroId);
+    }
 }

@@ -22446,6 +22446,7 @@ GameObject:
   - component: {fileID: 7632320296121289706}
   - component: {fileID: 8453822778064992784}
   - component: {fileID: 8242877392833974253}
+  - component: {fileID: -7105900188080818593}
   m_Layer: 0
   m_Name: Hero_Healer
   m_TagString: Untagged
@@ -22462,7 +22463,7 @@ Transform:
   m_GameObject: {fileID: 7308511790779391104}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.36, y: 0, z: -6.71}
+  m_LocalPosition: {x: -1.32, y: 0, z: -9.36}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -22598,8 +22599,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkill
   skillData: {fileID: 11400000, guid: 784da3c3dd02ad54fb42720842dc2d2c, type: 2}
+  secondarySkillData: {fileID: 11400000, guid: 47f8736cab432d14aa818c9c69628cd7, type: 2}
   projectileSpawnPoint: {fileID: 0}
   skillVfxPoint: {fileID: 418818434605588715}
+--- !u!114 &-7105900188080818593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7308511790779391104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f480a671209d5654f9828380151f2327, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitBuff
 --- !u!1 &7562316618504284157
 GameObject:
   m_ObjectHideFlags: 0

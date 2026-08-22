@@ -340,10 +340,7 @@ public class BattleUnit : MonoBehaviour
         
         attack.ApplyAttackDamage();
     }
-    public void AttackEndEvent()
-    {
-        attack?.CompleteAttack();
-    }
+    
     //스킬 이벤트 연결
     public void SkillActivateEvent()
     {
@@ -408,6 +405,11 @@ public class BattleUnit : MonoBehaviour
         if (unitAnimator == null) return false;
 
         return unitAnimator.TryPlayAttack();
+    }
+    //BT나 UnitAttack이 UnitAnimator를 직접 찾지 않게 하기 위해서 만든 전달용 함수
+    public bool IsAttackAnimationActive()
+    {
+        return unitAnimator != null && unitAnimator.IsAttackAnimationActive();
     }
     public bool TryPlaySkillAnimation()
     {

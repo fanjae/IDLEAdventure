@@ -37,5 +37,8 @@ public enum SkillEffectType
     Heal,
     Barrier,
     ProjectileDamage,
-    Buff
+    Buff,
+    AreaDamage,
+    Whirlwind,
+    Laser
 }

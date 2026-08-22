@@ -25,8 +25,7 @@ public class BossBehaviorTree : MonoBehaviour
     private void CreateTree()
     {
         root = new BTSelector(
-            //사망 상태
-            new BTSequence(new BTCondition(() => unit.IsDead), ChangeStateNode(UnitState.Dead)),
+            
             //스킬 사용 중이면 Skill State 유지
             new BTSequence(new BTCondition(() => unit.IsUsingSkill), ChangeStateNode(UnitState.Skill)),
             //기본 공격 중이면 Attack State 유지

@@ -103,4 +103,20 @@ public class UnitAnimator : MonoBehaviour
 
         return state.IsTag("Skill");
     }
+
+    //공격 애니메이션이 현재 상태, 전환 대상으로 존재하는지 확인하는 용
+    public bool IsAttackAnimationActive()
+    {
+        if (animator == null) return false;
+
+        AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+        if (currentState.IsTag("Attack")) return true;
+        if (animator.IsInTransition(0))
+        {
+            AnimatorStateInfo nextState = animator.GetNextAnimatorStateInfo(0);
+            if (nextState.IsTag("Attack")) return true;
+        }
+        return false;
+    }
+
 }

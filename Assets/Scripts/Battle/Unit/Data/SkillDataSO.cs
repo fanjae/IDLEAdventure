@@ -35,9 +35,25 @@ public class SkillDataSO : ScriptableObject
     [SerializeField, Min(0.1f)] private float healVfxDuration = 1.5f;
 
     [Header("공격력 버프 스킬")]
-    [SerializeField] private GameObject buffVfxPrefab;
+    [SerializeField] private GameObject buffCastVfxPrefab;//시전자 발밑
+    [SerializeField] private GameObject buffVfxPrefab;    //버프 적용 대상
     [SerializeField, Min(1)] private int attackBuff = 25;
     [SerializeField, Min(0.1f)] private float buffDuration = 6.0f;
+    [SerializeField, Min(0.1f)] private float buffCastVfxDuration = 1.5f;
+
+    [Header("광역 피해 스킬")]
+    [SerializeField] private AreaSkillDamage areaDamagePrefab;
+    [SerializeField, Min(0.1f)] private float areaRadius = 2.5f;
+
+    [Header("휠윈드 스킬")]
+    [SerializeField] private GameObject whirlwindPrefab;
+    [SerializeField, Min(0.1f)] private float whirlwindDuration = 3.0f;
+    [SerializeField, Min(0.05f)] private float whirlwindHitInterval = 0.2f;
+
+    [Header("레이저 스킬")]
+    [SerializeField] private GameObject laserPrefab;
+    [SerializeField, Min(0.1f)] private float laserDuration = 3.0f;
+    [SerializeField, Min(0.05f)] private float laserHitInterval = 0.2f;
 
     public string SkillName => skillName;
 
@@ -61,8 +77,20 @@ public class SkillDataSO : ScriptableObject
     public GameObject HealTargetVfxPrefab => healTargetVfxPrefab;
     public float HealVfxDuration => healVfxDuration;
 
+    public GameObject BuffCastVFxPrefab => buffCastVfxPrefab;
     public GameObject BuffVfxPrefab => buffVfxPrefab;
     public int AttackBuff => attackBuff;
     public float BuffDuration => buffDuration;
+    public float BuffCastVfxDuration => buffCastVfxDuration;
 
+    public AreaSkillDamage AreaDamagePrefab => areaDamagePrefab;
+    public float AreaRadius => areaRadius;
+
+    public GameObject WhirlwindPrefab => whirlwindPrefab;
+    public float WhirlwindDuration => whirlwindDuration;
+    public float WhirlwindHitInterval => whirlwindHitInterval;
+
+    public GameObject LaserPrefab => laserPrefab;
+    public float LaserDuration => laserDuration;
+    public float LaserHitInterval => laserHitInterval;
 }

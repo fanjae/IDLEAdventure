@@ -9,6 +9,10 @@ public sealed class FormationManager : MonoBehaviour
     [SerializeField] private SlotDragController slotDragController;
     [SerializeField] private SlotHighlightController slotHighlightController;
 
+    // 0820 추가
+    [Header("배치 UI")]
+    [SerializeField] private FormationHeroListController heroListController;
+
     [Header("소환된 영웅 부모")]
     [SerializeField] private Transform heroRoot;
 
@@ -18,6 +22,7 @@ public sealed class FormationManager : MonoBehaviour
     [SerializeField] private Vector3 spawnRotation = Vector3.zero;
 
     private readonly Dictionary<HeroData, GameObject> placedHeroesByData = new();
+    private bool isRestoringFormation;
 
     private void Awake()
     {
@@ -32,26 +37,42 @@ public sealed class FormationManager : MonoBehaviour
         }
     }
 
+    // 08020 수정 (heroListController를 연결하도록 교체)
     private void Start()
     {
-        if (BattleUIController.Instance == null)
+        if (heroListController == null)
         {
-            throw new Exception("FormationManager: BattleUIController가 없음");
+            throw new Exception("FormationManager의 Hero List Controller가 연결 안됨");
         }
 
-        BattleUIController.Instance.OnFormationHeroSelected += HandleFormationHeroSelected;
+        heroListController.OnHeroSelected += HandleFormationHeroSelected;
+
+        // 영웅 슬롯 위치 변경 이벤트 연결
+        if (slotDragController != null)
+        {
+            slotDragController.OnPlacementChanged += HandlePlacementChanged;
+        }
 
         if (BattleManager.Instance != null)
         {
             BattleManager.Instance.OnBattleStarted += HandleBattleStarted;
         }
+
+        // 저장된 영웅 배치 복원
+        RestoreFormation();
     }
 
+    // 08020 수정 (heroListController를 연결하도록 교체)
     private void OnDestroy()
     {
-        if (BattleUIController.Instance != null)
+        if (heroListController != null)
         {
-            BattleUIController.Instance.OnFormationHeroSelected -= HandleFormationHeroSelected;
+            heroListController.OnHeroSelected -= HandleFormationHeroSelected;
+        }
+
+        if (slotDragController != null)
+        {
+            slotDragController.OnPlacementChanged -= HandlePlacementChanged;
         }
 
         if (BattleManager.Instance != null)
@@ -132,6 +153,12 @@ public sealed class FormationManager : MonoBehaviour
 
         slotHighlightController?.Refresh();
 
+        // 배치 복원 중이 아닌 경우 현재 상태 저장
+        if (!isRestoringFormation)
+        {
+            WriteFormationData();
+        }
+
         Debug.Log($"영웅 배치: Hero={heroData.UnitName}, Slot={slotNumber}");
     }
 
@@ -152,6 +179,9 @@ public sealed class FormationManager : MonoBehaviour
 
         slotHighlightController?.Refresh();
 
+        // 현재 영웅 배치 상태 저장
+        WriteFormationData();
+
         Destroy(hero);
 
         Debug.Log($"영웅 배치 해제: Hero={heroData.UnitName}, Slot={slotNumber}");
@@ -170,6 +200,10 @@ public sealed class FormationManager : MonoBehaviour
             Debug.LogError("BattleManager가 없음");
             return;
         }
+
+        // 전투 시작 전 현재 영웅 배치 저장
+        WriteFormationData();
+        SaveManager.Instance.Save();
 
         BattleManager.Instance.StartBattle();
     }
@@ -195,6 +229,9 @@ public sealed class FormationManager : MonoBehaviour
 
         slotHighlightController?.Refresh();
 
+        // 비워진 영웅 배치 상태 저장
+        WriteFormationData();
+
         Debug.Log("모든 영웅 배치를 해제");
     }
 
@@ -210,5 +247,125 @@ public sealed class FormationManager : MonoBehaviour
         slotHighlightController?.HideSlots();
 
         Debug.Log("전투 시작: 진행 중인 영웅 드래그를 취소");
+    }
+
+    // 현재 영웅 배치 상태를 저장 데이터에 반영 (0821 추가)
+    private void WriteFormationData()
+    {
+        if (SaveManager.Instance == null || SaveManager.Instance.CurrentData == null)
+        {
+            return;
+        }
+
+        FormationSaveData formation = new();
+
+        foreach (KeyValuePair<HeroData, GameObject> pair in placedHeroesByData)
+        {
+            HeroData heroData = pair.Key;
+            GameObject hero = pair.Value;
+
+            if (heroData == null || hero == null)
+            {
+                continue;
+            }
+
+            int slotNumber = slotBoard.FindObj(hero);
+
+            if (slotNumber == -1)
+            {
+                continue;
+            }
+
+            formation.Slots.Add(new FormationSlotSaveData
+            {
+                SlotNumber = slotNumber,
+                HeroId = heroData.UnitID
+            });
+        }
+
+        SaveManager.Instance.CurrentData.Formation = formation;
+    }
+
+    // 저장된 영웅 배치 복원 (0821 추가)
+    private void RestoreFormation()
+    {
+        if (SaveManager.Instance == null || SaveManager.Instance.CurrentData == null)
+        {
+            return;
+        }
+
+        FormationSaveData formation = SaveManager.Instance.CurrentData.Formation;
+
+        if (formation == null || formation.Slots == null)
+        {
+            return;
+        }
+
+        isRestoringFormation = true;
+
+        try
+        {
+            foreach (FormationSlotSaveData slotData in formation.Slots)
+            {
+                if (slotData == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrEmpty(slotData.HeroId))
+                {
+                    continue;
+                }
+
+                if (!slotBoard.IsSlot(slotData.SlotNumber))
+                {
+                    continue;
+                }
+
+                if (!slotBoard.IsEmpty(slotData.SlotNumber))
+                {
+                    continue;
+                }
+
+                if (!HeroManager.Instance.Controller.TryGetHero(slotData.HeroId, out OwnedHeroData ownedHero))
+                {
+                    continue;
+                }
+
+                HeroData heroData = ownedHero.HeroData;
+
+                if (heroData == null)
+                {
+                    continue;
+                }
+
+                if (heroData.BattlePrefab == null)
+                {
+                    continue;
+                }
+
+                if (placedHeroesByData.ContainsKey(heroData))
+                {
+                    continue;
+                }
+
+                if (placedHeroesByData.Count >= maxHeroCount)
+                {
+                    break;
+                }
+
+                PlaceHero(heroData, heroData.BattlePrefab, slotData.SlotNumber);
+            }
+        }
+        finally
+        {
+            isRestoringFormation = false;
+        }
+    }
+
+    // 영웅 슬롯 위치 변경 시 현재 배치 상태 저장 (0821 추가)
+    private void HandlePlacementChanged()
+    {
+        WriteFormationData();
     }
 }
