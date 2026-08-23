@@ -1101,7 +1101,7 @@ GameObject:
   m_Component:
   - component: {fileID: 418818434605588715}
   m_Layer: 0
-  m_Name: SkillVfxPoint_Heal
+  m_Name: SkillVfxPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22446,6 +22446,7 @@ GameObject:
   - component: {fileID: 7632320296121289706}
   - component: {fileID: 8453822778064992784}
   - component: {fileID: 8242877392833974253}
+  - component: {fileID: 9221351644450993682}
   - component: {fileID: -7105900188080818593}
   m_Layer: 0
   m_Name: Hero_Healer
@@ -22599,9 +22600,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkill
   skillData: {fileID: 11400000, guid: 784da3c3dd02ad54fb42720842dc2d2c, type: 2}
-  secondarySkillData: {fileID: 11400000, guid: 47f8736cab432d14aa818c9c69628cd7, type: 2}
   projectileSpawnPoint: {fileID: 0}
   skillVfxPoint: {fileID: 418818434605588715}
+--- !u!114 &9221351644450993682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7308511790779391104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c0de45dd789d0b479fd780295c080a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitPassiveAttackBuff
+  activateDelay: 15
+  attackBuff: 20
+  buffDuration: 20
+  castVfxPrefab: {fileID: 385743127462260663, guid: 6b159c0a5acc358439e1a994a0871578, type: 3}
+  targetVfxPrefab: {fileID: 5126489433114200694, guid: 858bb4a68b7ef4649843bd8b7aa37dd3, type: 3}
+  castVfxDuration: 1.5
+  castVfxPoint: {fileID: 418818434605588715}
 --- !u!114 &-7105900188080818593
 MonoBehaviour:
   m_ObjectHideFlags: 0
