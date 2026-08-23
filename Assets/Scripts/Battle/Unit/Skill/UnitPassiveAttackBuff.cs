@@ -20,24 +20,29 @@ public class UnitPassiveAttackBuff : MonoBehaviour
     private BattleUnit unit;
     private Coroutine passiveRoutine;
 
+    private Coroutine subscribeRoutine;
+
     private void Awake()
     {
         unit = GetComponent<BattleUnit>();
     }
-    private void Start()
+    private void OnEnable()
     {
-        if (BattleManager.Instance == null) return;
-
-        BattleManager.Instance.OnBattleStarted += HandleBattleStarted;
-        BattleManager.Instance.OnBattleEnded += HandleBattleEnded;
+        subscribeRoutine = StartCoroutine(SubscribeRoutine());
     }
     private void OnDisable()
     {
+        if (subscribeRoutine != null)
+        {
+            StopCoroutine(subscribeRoutine);
+            subscribeRoutine = null;
+        }
         if (BattleManager.Instance != null)
         {
             BattleManager.Instance.OnBattleStarted -= HandleBattleStarted;
             BattleManager.Instance.OnBattleEnded -= HandleBattleEnded;
         }
+        StopPassiveRoutine();
     }
 
     private void HandleBattleStarted()
@@ -92,5 +97,18 @@ public class UnitPassiveAttackBuff : MonoBehaviour
 
         StopCoroutine(passiveRoutine);
         passiveRoutine = null;
+    }
+    private IEnumerator SubscribeRoutine()
+    {
+        while (BattleManager.Instance == null) yield return null;
+
+        //중복 구독 방지
+        BattleManager.Instance.OnBattleStarted -= HandleBattleStarted;
+        BattleManager.Instance.OnBattleEnded -= HandleBattleEnded;
+
+        BattleManager.Instance.OnBattleStarted += HandleBattleStarted;
+        BattleManager.Instance.OnBattleEnded += HandleBattleEnded;
+
+        subscribeRoutine = null;
     }
 }
