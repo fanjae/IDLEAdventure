@@ -59,7 +59,7 @@ public sealed class InventoryItemSlotView : MonoBehaviour
         classIcon.gameObject.SetActive(targetClassIcon != null);
 
         levelText.gameObject.SetActive(true);
-        levelText.text = $"{ownedEquipment.EnhancementLevel}Level";
+        levelText.text = $"{ownedEquipment.EnhancementLevel}레벨";
 
         // 현재 장비 구조는 장비 한 개마다 별도의 InstanceId를 가지므로 슬롯 하나의 수량은 1
         countText.text = "1";
