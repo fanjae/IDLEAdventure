@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 public class DpsManager : MonoBehaviour
@@ -7,7 +8,7 @@ public class DpsManager : MonoBehaviour
 
     private const float DpsWindow = 5.0f;
 
-    private class DamageRecord
+    private struct DamageRecord
     {
         public float time;
         public int damage;
@@ -18,8 +19,13 @@ public class DpsManager : MonoBehaviour
             this.damage = damage;
         }
     }
+    private class DpsData
+    {
+        public readonly Queue<DamageRecord> records = new Queue<DamageRecord>();
+        public int recentDamage;
+    }
 
-    private readonly Dictionary<BattleUnit, List<DamageRecord>> damageRecords = new Dictionary<BattleUnit, List<DamageRecord>>();
+    private readonly Dictionary<BattleUnit, DpsData> dpsDatas = new Dictionary<BattleUnit, DpsData>();
     private float battleStartTime;
 
     private void Awake()
@@ -49,7 +55,7 @@ public class DpsManager : MonoBehaviour
 
     private void HandleBattleStarted()
     {
-        damageRecords.Clear();
+        dpsDatas.Clear();
         battleStartTime = Time.time;
     }
     public void AddDamage(BattleUnit attacker, int damage)
@@ -57,32 +63,35 @@ public class DpsManager : MonoBehaviour
         if (attacker == null || damage <= 0) return;
         //플레이어 영웅의 피해만 기록
         if (attacker.Team != UnitTeam.Hero) return;
-        if (!damageRecords.TryGetValue(attacker, out List<DamageRecord> records))
+        if (!dpsDatas.TryGetValue(attacker, out DpsData data))
         {
-            records = new List<DamageRecord>();
-            damageRecords.Add(attacker, records);
+            data = new DpsData();
+            dpsDatas.Add(attacker, data);
         }
-        records.Add(new DamageRecord(Time.time, damage));
+        RemoveOldRecords(data);
+        data.records.Enqueue(new DamageRecord(Time.time, damage));
+        data.recentDamage += damage;
     }
     public float GetDps(BattleUnit unit)
     {
         if (unit == null) return 0.0f;
-        if (!damageRecords.TryGetValue(unit, out List<DamageRecord> records)) return 0.0f;
+        if (!dpsDatas.TryGetValue(unit, out DpsData data)) return 0.0f;
 
-        float minTime = Time.time - DpsWindow;
-        int totalDamage = 0;
-        for (int i = records.Count - 1; i >= 0; i--)
-        {
-            if (records[i].time < minTime)
-            {
-                records.RemoveAt(i);
-                continue;
-            }
-            totalDamage += records[i].damage;
-        }
+        RemoveOldRecords(data);
+
         float battleTime = Time.time - battleStartTime;
         float calculateTime = Mathf.Min(DpsWindow, battleTime);
         if (calculateTime <= 0.0f) return 0.0f;
-        return totalDamage / calculateTime;
+        return data.recentDamage / calculateTime;
+    }
+    private void RemoveOldRecords(DpsData data)
+    {
+        float minTime = Time.time - DpsWindow;
+        while (data.records.Count > 0 && data.records.Peek().time < minTime)
+        {
+            DamageRecord oldRecord = data.records.Dequeue();
+            data.recentDamage -= oldRecord.damage;
+        }
+        if (data.recentDamage < 0) data.recentDamage = 0;
     }
 }

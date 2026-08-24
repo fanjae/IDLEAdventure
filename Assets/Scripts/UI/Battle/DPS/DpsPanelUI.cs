@@ -7,6 +7,10 @@ public class DpsPanelUI : MonoBehaviour
     [SerializeField] private Transform content;
     [SerializeField] private DpsRowUI rowPrefab;
 
+    [SerializeField, Min(0.1f)] private float refreshInterval = 0.25f;
+
+    private float nextRefreshTime;
+
     private readonly List<DpsRowUI> rows = new List<DpsRowUI>();
 
     private bool isOpen = true;
@@ -27,12 +31,21 @@ public class DpsPanelUI : MonoBehaviour
     }
     private void Update()
     {
+        if (!isOpen) return;
+        if (Time.unscaledTime < nextRefreshTime) return;
+
+        nextRefreshTime = Time.unscaledTime + refreshInterval;
+        RefreshRows();
+    }
+
+    private void RefreshRows()
+    {
         for (int i = 0; i < rows.Count; i++)
         {
+            if (rows[i] == null) continue;
             rows[i].Refresh();
         }
     }
-
     private void HandleBattleStarted()
     {
         if (BattleManager.Instance == null) return;
@@ -65,5 +78,6 @@ public class DpsPanelUI : MonoBehaviour
     {
         isOpen = !isOpen;
         if (panel != null) panel.SetActive(isOpen);
+        if (isOpen) nextRefreshTime = 0.0f;
     }
 }
