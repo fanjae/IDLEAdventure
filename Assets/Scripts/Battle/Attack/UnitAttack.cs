@@ -131,7 +131,7 @@ public class UnitAttack : MonoBehaviour
             FireProjectile(target, finalDamage);
             return;
         }
-        int appliedDamage = target.TakeDamage(finalDamage);
+        int appliedDamage = target.TakeDamage(finalDamage, unit);
         Debug.Log($"{unit.name} -> {target.name} / 피해량 : {appliedDamage}");
     }
     //공격 종료 시 공격 상태 및 대상 정보 정리
@@ -160,7 +160,7 @@ public class UnitAttack : MonoBehaviour
                                    projectileSpawnPoint.rotation : transform.rotation;
         RangedProjectile projectile = Instantiate(projectilePrefab, spawnPosition, spawnRotation);
 
-        projectile.Initialize(target, damage);
+        projectile.Initialize(unit, target, damage);
     }
     //외부 능력치 변경 시 실제 기본 공격력 갱신
     public void SetAttackPower(int newAttackPower)
