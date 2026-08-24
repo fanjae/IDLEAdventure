@@ -3,5 +3,13 @@ public enum AchievementMetric
 {
     FirstLogin,
     TotalGachaPulls,
-    MaxClearedStage
+    MaxClearedStage,
+    MaxResonanceLevel,
+    MaxOwnedHeroCount,
+    TotalPickupDraws,
+    PickupHeroAcquisitions,
+    DuplicateHeroGoldConversions,
+    TotalBattleVictories,
+    FullPartyBattleVictories,
+    IdleRewardClaims
 }

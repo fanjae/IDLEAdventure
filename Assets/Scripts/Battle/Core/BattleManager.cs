@@ -12,6 +12,7 @@ public class BattleManager : MonoBehaviour
 
     private readonly List<BattleUnit> heroUnits = new();
     private readonly List<BattleUnit> enemyUnits = new();
+    private int battleStartHeroCount;
 
     public event Action OnBattleStarted;
     public event Action<UnitTeam> OnBattleEnded;
@@ -77,6 +78,7 @@ public class BattleManager : MonoBehaviour
         }
 
         IsBattleRunning = true;
+        battleStartHeroCount = CountActiveUnits(heroUnits);
         OnBattleStarted?.Invoke();
     }
 
@@ -142,6 +144,13 @@ public class BattleManager : MonoBehaviour
 
         Debug.Log($"전투 종료 / 승리 진영: {winner}");
 
+        if (winner == UnitTeam.Hero &&
+            AchievementManager.TryGetExistingInstance(out AchievementManager achievementManager) &&
+            achievementManager.IsInitialized)
+        {
+            achievementManager.RecordBattleVictory(battleStartHeroCount >= 5);
+        }
+
         OnBattleEnded?.Invoke(winner);
     }
 
@@ -155,6 +164,23 @@ public class BattleManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    // 전투 시작 시점에 실제 참가한 영웅 수를 계산함
+    private static int CountActiveUnits(List<BattleUnit> units)
+    {
+        int count = 0;
+
+        for (int i = 0; i < units.Count; i++)
+        {
+            BattleUnit unit = units[i];
+            if (unit != null && unit.gameObject.activeInHierarchy)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private void RemoveInvalidUnits()
