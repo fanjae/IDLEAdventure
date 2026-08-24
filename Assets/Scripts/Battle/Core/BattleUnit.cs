@@ -388,12 +388,6 @@ public class BattleUnit : MonoBehaviour
         //실제로 받은 데미지 반환(감소한 체력량)
         return appliedDamage;
     }
-    public int TakeDamage(int damage, BattleUnit attacker)
-    {
-        int appliedDamage = TakeDamage(damage);
-        if (appliedDamage > 0 && attacker != null) DpsManager.Instance?.AddDamage(attacker, appliedDamage);
-        return appliedDamage;
-    }
     public int Heal(int amount)
     {
         //실제로 적용된 회복량 반환

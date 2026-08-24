@@ -61,7 +61,7 @@ public class SkillProjectile : MonoBehaviour
         if (!hitTargets.Add(target)) return;//동일한 적에게는 딱 한 번만 피해를 입힘
 
         int finalDamage = DamageCalculator.Calculate(attackPower, target.Defense);
-        int appliedDamage = target.TakeDamage(finalDamage, owner);
+        int appliedDamage = target.TakeDamage(finalDamage);
 
         Debug.Log($"[관통 스킬] {owner.name} -> {target.name} / 피해량 : {appliedDamage} / 적중 수 : {hitTargets.Count}");
     }

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RangedProjectile : MonoBehaviour
 {
@@ -17,14 +17,12 @@ public class RangedProjectile : MonoBehaviour
     [SerializeField] private float targetHeight = 0.0f;
 
     private BattleUnit target;
-    private BattleUnit owner;
     private int damage;
     private float remainingLifeTime; // 투사체의 남은 생존시간
     private bool isFinished;
 
-    public void Initialize(BattleUnit owner, BattleUnit target, int damage)
+    public void Initialize(BattleUnit target, int damage)
     {
-        this.owner = owner;
         this.target = target;
         this.damage = Mathf.Max(0, damage);
 
@@ -86,7 +84,7 @@ public class RangedProjectile : MonoBehaviour
     private void HitTarget()
     {
         //이동 중에 타겟이 먼저 사망했는지, 명중 직전에 재확인
-        if (target != null && !target.IsDead) target.TakeDamage(damage, owner);
+        if (target != null && !target.IsDead) target.TakeDamage(damage);
         Finish();
     }
     private void Finish()

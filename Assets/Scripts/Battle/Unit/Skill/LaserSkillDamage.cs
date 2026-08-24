@@ -63,7 +63,7 @@ public class LaserSkillDamage : MonoBehaviour
         int skillAttack = Mathf.RoundToInt(owner.AttackPower * damageRatio);
         int finalDamage = DamageCalculator.Calculate(skillAttack, target.Defense);
 
-        target.TakeDamage(finalDamage, owner);
+        target.TakeDamage(finalDamage);
     }
     private void OnTriggerExit(Collider other)
     {
