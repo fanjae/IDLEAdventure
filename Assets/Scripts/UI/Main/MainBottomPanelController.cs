@@ -13,6 +13,9 @@ public sealed class MainBottomPanelController : MonoBehaviour
         All
     }
 
+    [Header("공명 패널")]
+    [SerializeField] private GameObject resonanceHeroContentPanel;
+
     [Header("장비 패널")]
     [SerializeField] private GameObject equipmentRoot;
     [SerializeField] private EquipmentPanelController equipmentPanelController;
@@ -88,6 +91,15 @@ public sealed class MainBottomPanelController : MonoBehaviour
     private void HandleHeroButtonClicked()
     {
         SetSelectedMenu(BottomMenuType.Hero);
+
+        if (resonanceHeroContentPanel == null)
+        {
+            return;
+        }
+
+        // 공명 영웅 목록 패널 활성화 후 기존 하단 메뉴 숨김
+        resonanceHeroContentPanel.SetActive(true);
+        gameObject.SetActive(false);
     }
 
     // 장비 메뉴 선택
