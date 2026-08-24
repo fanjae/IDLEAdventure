@@ -118,6 +118,12 @@ public class IdleReward : MonoBehaviour
                 saveManager.Save();
 
                 OnGetIdleReward?.Invoke();
+
+                if (AchievementManager.TryGetExistingInstance(out AchievementManager achievementManager) &&
+                    achievementManager.IsInitialized)
+                {
+                    achievementManager.RecordIdleRewardClaim();
+                }
             }
         }
     }
