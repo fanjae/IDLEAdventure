@@ -274,7 +274,7 @@ public class UnitSkill : MonoBehaviour
         int skillAttack = Mathf.RoundToInt(unit.AttackPower * data.DamageRatio);
         int finalDamage = DamageCalculator.Calculate(skillAttack, target.Defense);
 
-        int appliedDamage = target.TakeDamage(finalDamage);
+        int appliedDamage = target.TakeDamage(finalDamage, unit);
         //기능 확인 용
         Debug.Log($"{unit.name} 스킬 사용 / {target.name} 피해 : {appliedDamage}");
     }

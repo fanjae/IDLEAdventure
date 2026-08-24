@@ -27,7 +27,7 @@ public class AreaSkillDamage : MonoBehaviour
             if (!hitUnits.Add(target)) continue;
 
             int finalDamage = DamageCalculator.Calculate(skillAttack, target.Defense);
-            int appliedDamage = target.TakeDamage(finalDamage);
+            int appliedDamage = target.TakeDamage(finalDamage, owner);
             //확인용
             Debug.Log($"[광역 스킬] {owner.name} -> {target.name} / 피해량 : {appliedDamage}");
         }
