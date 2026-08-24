@@ -15,6 +15,20 @@ public class SubQuestButton : QuestButton
             gameObject.SetActive(false);
         }
     }
+    private void OnEnable()
+    {
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.OnSubQuestChanged += QuestClear;
+        }
+    }
+    private void OnDisable()
+    {
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.OnSubQuestChanged -= QuestClear;
+        }
+    }
 
     // 해당하는 슬롯 퀘스트 이름 갱신 함수.
     public void RefreshQuestUI(int id)
@@ -44,12 +58,19 @@ public class SubQuestButton : QuestButton
         QuestMove(subQeustId);
     }
 
-    // 퀘스트 클리어 시 호출될 함수.
-    // 현재는 퀘스트 정보 해제 및 UI 제거만.
-    protected override void QuestClear()
+    private void QuestClear()
     {
-        subQeustId = 0;
+        if (subQeustId == 0 || QuestManager.Instance == null) return;
 
-        gameObject.SetActive(false);
+        // 수락된 서브 퀘스트 리스트에 ID가 있는지 확인
+        if (QuestManager.Instance.AcceptedSubQuestIds.Contains(subQeustId))
+        {
+            RefreshQuestUI(subQeustId);
+        }
+        else
+        {
+            subQeustId = 0;
+            gameObject.SetActive(false);
+        }
     }
 }

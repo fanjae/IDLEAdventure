@@ -45,12 +45,16 @@ public class VirtualPad : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoi
             // 무조건 최대 속도를 주고싶으면 그냥 무조건 정규화 해버리면 됨.
             inputDirection = (inputDirection.magnitude > 1.0f) ? inputDirection.normalized : inputDirection;
 
+            // 패드가 범위를 벗어나지 않게 계산.
+            float moveRadiusX = (padBackground.sizeDelta.x / 2) - (padStick.sizeDelta.x / 2);
+            float moveRadiusY = (padBackground.sizeDelta.y / 2) - (padStick.sizeDelta.y / 2);
+
             // 스틱 UI 이동
             // 스틱의 x, y 위치 값을 패드 배경 비율에 맞춰 이동
             // 패드의 끝을 1로 계산해뒀기에 실제 스틱의 이동은 그 절반으로.
             padStick.anchoredPosition = new Vector2(
-                inputDirection.x * (padBackground.sizeDelta.x / 2),
-                inputDirection.y * (padBackground.sizeDelta.y / 2));
+                inputDirection.x * moveRadiusX,
+                inputDirection.y * moveRadiusY);
         }
     }
     // IPointerUpHandler 인터페이스 필수 구현 함수
