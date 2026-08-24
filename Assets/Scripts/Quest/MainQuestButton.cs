@@ -8,11 +8,22 @@ public class MainQuestButton : QuestButton
 {
     private void OnEnable()
     {
-        RefreshQeustName();
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.OnMainQuestChanged += RefreshQuestName;
+        }
+        RefreshQuestName();
+    }
+    private void OnDisable()
+    {
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.OnMainQuestChanged -= RefreshQuestName;
+        }
     }
 
     // 메인 퀘스트 이름 갱신 함수.
-    public void RefreshQeustName()
+    public void RefreshQuestName()
     {
         if (QuestManager.Instance == null) return;
         if (questNameText == null) return;
@@ -39,12 +50,5 @@ public class MainQuestButton : QuestButton
         int mainQuestId = QuestManager.Instance.CurrentMainQuestId;
 
         QuestMove(mainQuestId);
-    }
-
-    // 퀘스트 클리어 시 호출될 함수.
-    // 현재는 UI 갱신만.
-    protected override void QuestClear()
-    {
-        RefreshQeustName();
     }
 }

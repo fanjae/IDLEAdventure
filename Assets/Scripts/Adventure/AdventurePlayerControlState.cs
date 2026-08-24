@@ -8,7 +8,12 @@ public class AdventurePlayerControlState : AdventurePlayerState
     public override void OnEnter()
     {
         base.OnEnter();
-        
+
+        if (PathManager.Instance != null)
+        {
+            PathManager.Instance.HideLine();
+        }
+
         if (stateMachine.Agent != null)
         {
             stateMachine.Agent.enabled = false;

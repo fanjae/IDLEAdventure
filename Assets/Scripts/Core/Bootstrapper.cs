@@ -94,8 +94,10 @@ public class Bootstrapper
         // 방치 시간 적용은 아직 되지 않았기에 추가
         TestSaveManager testSaveManager = TestSaveManager.Instance;
 
-        // 퀘스트 매니저 추가
+        // 퀘스트 관련 매니저 추가
         QuestManager questManager = QuestManager.Instance;
+        //DialogueManager dialogueManager = DialogueManager.Instance;
+        PathManager pathManager = PathManager.Instance;
 
         Debug.Log("초기 호출 완료.");
     }

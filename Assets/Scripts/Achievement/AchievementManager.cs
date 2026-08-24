@@ -65,8 +65,23 @@ public sealed class AchievementManager : Singleton<AchievementManager>
 
         database = achievementDatabase;
         controller = new AchievementController();
-        controller.LoadSaveData(saveData, GetLegacyTotalGachaPulls(saveData));
-        controller.RecordFirstLogin();
+
+        // [0823 추가]
+        // 저장된 업적 진행도와 보상 수령 상태를 복원
+        // 기존 가챠 저장 데이터가 존재하는 경우 업적 누적 횟수로 변환하는 작업도 함께 처리
+        bool saveDataChanged = controller.LoadSaveData(saveData, GetLegacyTotalGachaPulls(saveData));
+
+        // 최초 로그인 업적은 게임 실행 시 한 번 달성 상태로 변경
+        // 이미 달성되어 있는 경우 false를 반환하기 때문에 기존 값은 변경되지 않음
+        saveDataChanged |= controller.RecordFirstLogin();
+
+        // 구 버전 데이터 마이그레이션이나 최초 로그인 기록으로 데이터가 변경된 경우
+        // 현재 GameSaveData에도 변경된 업적 상태를 바로 반영
+        if (saveDataChanged)
+        {
+            controller.WriteSaveData(saveData);
+        }
+        // [0823 추가]
 
         subscribedGachaController = gachaController;
         subscribedGachaController.OnDrawCompleted += HandleGachaDrawCompleted;
@@ -182,7 +197,18 @@ public sealed class AchievementManager : Singleton<AchievementManager>
             return false;
         }
 
+        // [0823 추가]
+        // 업적에 설정된 재화 보상을 실제 보유 재화에 반영
         currencyManager.AddCurrency(rewardCurrency, rewardAmount);
+
+        // 보상 수령 상태와 지급된 재화를 하나의 저장 시점에서 함께 저장
+        // 수령 직후 저장하여 게임 종료 후 같은 업적 보상을 다시 받을 수 없도록 처리
+        if (SaveManager.TryGetExistingInstance(out SaveManager saveManager) && saveManager.CurrentData != null)
+        {
+            saveManager.Save();
+        }
+        // [0823 추가]
+
         return true;
     }
 
@@ -231,6 +257,14 @@ public sealed class AchievementManager : Singleton<AchievementManager>
             currencyManager.AddCurrency(definition.RewardCurrency, definition.RewardAmount);
             rewards.Add(new AchievementClaimReward(definition, definition.RewardCurrency, definition.RewardAmount));
             claimedCount++;
+        }
+
+        // [0823 추가]
+        // 한 개 이상의 업적 보상을 실제로 수령한 경우에만 저장
+        // 반복문 내부에서 저장하지 않고 모든 보상 지급이 끝난 뒤 한 번만 저장
+        if (claimedCount > 0 && SaveManager.TryGetExistingInstance(out SaveManager saveManager) && saveManager.CurrentData != null)
+        {
+            saveManager.Save();
         }
 
         return claimedCount;

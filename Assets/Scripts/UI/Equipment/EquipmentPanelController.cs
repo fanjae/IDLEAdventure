@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 // 장비 패널의 상태 갱신과 입력 연결 처리
 public class EquipmentPanelController : MonoBehaviour
@@ -8,6 +9,11 @@ public class EquipmentPanelController : MonoBehaviour
     [SerializeField] private EquipmentClassSelectorView classSelectorView;
     [SerializeField] private CanvasGroup equipmentContentGroup;
     [SerializeField] private HeroClassType initialClass = HeroClassType.Support;
+
+    [Header("패널 이동")]
+    [SerializeField] private Button backButton;
+    [SerializeField] private GameObject equipmentRoot;
+    [SerializeField] private MainBottomPanelController mainBottomPanelController;
 
     [Header("패널 오픈 연출")]
     [SerializeField] private RectTransform equipmentContentRect;
@@ -20,7 +26,13 @@ public class EquipmentPanelController : MonoBehaviour
     private InventoryController inventoryController;
     private HeroClassType currentClass;
     private Tween classChangeTween;
-
+    private void Awake()
+    {
+        if (equipmentContentRect != null)
+        {
+            equipmentContentOriginPosition = equipmentContentRect.anchoredPosition;
+        }
+    }
     private void Start()
     {
         if (panelView != null)
@@ -33,9 +45,9 @@ public class EquipmentPanelController : MonoBehaviour
             classSelectorView.OnClassSelected += HandleClassSelected;
         }
 
-        if (equipmentContentRect != null)
+        if (backButton != null)
         {
-            equipmentContentOriginPosition = equipmentContentRect.anchoredPosition;
+            backButton.onClick.AddListener(HandleBackButtonClicked);
         }
 
         Initialize(initialClass);
@@ -147,6 +159,11 @@ public class EquipmentPanelController : MonoBehaviour
             classSelectorView.OnClassSelected -= HandleClassSelected;
         }
 
+        if (backButton != null)
+        {
+            backButton.onClick.RemoveListener(HandleBackButtonClicked);
+        }
+
         if (inventoryController == null)
         {
             return;
@@ -215,5 +232,39 @@ public class EquipmentPanelController : MonoBehaviour
                         equipmentContentGroup.blocksRaycasts = true;
                     });
             });
+    }
+
+    // 장비 패널 종료 후 메인 하단 메뉴로 복귀
+    private void HandleBackButtonClicked()
+    {
+        // 실행 중인 장비 UI 연출 종료
+        openTween?.Kill();
+        classChangeTween?.Kill();
+
+        // 다음 오픈을 위해 장비 UI 상태 복원
+        if (equipmentContentRect != null)
+        {
+            equipmentContentRect.anchoredPosition = equipmentContentOriginPosition;
+        }
+
+        if (equipmentContentGroup != null)
+        {
+            equipmentContentGroup.alpha = 1f;
+            equipmentContentGroup.interactable = true;
+            equipmentContentGroup.blocksRaycasts = true;
+        }
+
+        // 하단 메뉴 선택 상태 초기화 후 다시 표시
+        if (mainBottomPanelController != null)
+        {
+            mainBottomPanelController.ResetSelectedMenu();
+            mainBottomPanelController.gameObject.SetActive(true);
+        }
+
+        // 장비 UI 전체 종료
+        if (equipmentRoot != null)
+        {
+            equipmentRoot.SetActive(false);
+        }
     }
 }

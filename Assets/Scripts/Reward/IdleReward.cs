@@ -27,25 +27,43 @@ public class IdleReward : MonoBehaviour
 
     private void Start()
     {
-        // 연결한 CSV파일 파싱 데이터 저장.
+        // 연결한 CSV 파일을 파싱하여 스테이지별 방치 보상 데이터 저장
         stageRewards = RewardCSVParser.Parse(rewardCSVData);
 
-        // 게임 시작 시 시간 설정
-        long savedTime = TestSaveManager.Instance.CurrentSaveData.LastGetIdleRewardTime;
-        if (savedTime == 0)
+        // 보상 데이터가 정상적으로 생성되지 않은 경우 이후 보상 처리를 진행하지 않음
+        if (stageRewards == null)
         {
-            TestSaveManager.Instance.CurrentSaveData.SetLastIdleRewardTime(DateTime.UtcNow.ToBinary());
-            TestSaveManager.Instance.SaveGame();
+            Debug.LogError("[IdleReward] 방치 보상 데이터를 불러오지 못했습니다.");
+            return;
+        }
+
+        GameSaveData saveData = SaveManager.Instance.CurrentData;
+
+        // 저장된 방치 보상 상태를 현재 런타임 데이터로 복원
+        LoadSaveData(saveData);
+
+        // 최초 실행 시 현재 시간을 방치 보상 기준 시간으로 설정
+        if (saveData.IdleReward.LastClaimedAtUnixTime <= 0)
+        {
+            saveData.IdleReward.LastClaimedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            SaveManager.Instance.Save();
         }
     }
 
-    // 보상 기준 시간 반환 함수.
+    // 마지막 방치 보상 수령 시간을 반환
     public DateTime GetLastRewardTime()
     {
-        // 세이브 매니저에서 저장 되어있는 기준 시간 받아오기.
-        long savedTime = TestSaveManager.Instance.CurrentSaveData.LastGetIdleRewardTime;
-        // 저장 데이터가 존재한다면, 해당 값을 DateTime으로 형변환, 없다면 0 반환.
-        return savedTime == 0 ? DateTime.UtcNow : DateTime.FromBinary(savedTime);
+        // 정식 저장 데이터에서 마지막 방치 보상 수령 시간 확인
+        long savedTime = SaveManager.Instance.CurrentData.IdleReward.LastClaimedAtUnixTime;
+
+        // 아직 저장된 시간이 없는 경우 현재 시간을 반환하여 최초 실행 보상이 발생하지 않도록 처리
+        if (savedTime <= 0)
+        {
+            return DateTime.UtcNow;
+        }
+
+        // 저장된 UTC Unix Time을 방치 시간 계산에 사용할 DateTime으로 변환
+        return DateTimeOffset.FromUnixTimeSeconds(savedTime).UtcDateTime;
     }
     // 버튼 클릭 시 보상 획득 함수.
     public void OnClickIdleRewardButton()
@@ -74,6 +92,7 @@ public class IdleReward : MonoBehaviour
                 {
                     // 순회 중인 데이터 id 확인.
                     string id = reward.Key;
+
                     // 순회 중인 데이터 보상량 확인.
                     int amount = reward.Value.FinalReward;
 
@@ -87,10 +106,17 @@ public class IdleReward : MonoBehaviour
                     }
                 }
                 // 현재 시간을 기준 시간으로 저장.
-                DateTime currentTime = DateTime.UtcNow;
-                TestSaveManager.Instance.CurrentSaveData.SetLastIdleRewardTime(currentTime.ToBinary());
-                TestSaveManager.Instance.SaveGame();
-                
+                SaveManager saveManager = SaveManager.Instance;
+
+                // 현재 시간을 새로운 방치 보상 기준 시간으로 저장
+                saveManager.CurrentData.IdleReward.LastClaimedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+                // 현재 남아있는 소수점 보상 상태를 저장 데이터에 반영
+                WriteSaveData(saveManager.CurrentData);
+
+                // 방치 보상 기준 시간, 잔여 보상과 함께 실제 지급된 재화 상태까지 저장
+                saveManager.Save();
+
                 OnGetIdleReward?.Invoke();
 
                 if (AchievementManager.TryGetExistingInstance(out AchievementManager achievementManager) &&
@@ -99,6 +125,56 @@ public class IdleReward : MonoBehaviour
                     achievementManager.RecordIdleRewardClaim();
                 }
             }
+        }
+    }
+
+    // 저장된 방치 보상 상태를 복원
+    private void LoadSaveData(GameSaveData saveData)
+    {
+        if (saveData == null)
+        {
+            throw new ArgumentNullException(nameof(saveData));
+        }
+
+        saveData.IdleReward ??= new IdleRewardSaveData();
+
+        leftRewards.Clear();
+
+        if (saveData.IdleReward.Remainders == null)
+        {
+            return;
+        }
+
+        foreach (IdleRewardRemainderSaveData remainder in saveData.IdleReward.Remainders)
+        {
+            if (remainder == null || string.IsNullOrWhiteSpace(remainder.RewardId))
+            {
+                continue;
+            }
+
+            leftRewards[remainder.RewardId] = Math.Max(0m, remainder.Amount);
+        }
+    }
+
+    // 현재 방치 보상 상태를 저장 데이터에 반영
+    private void WriteSaveData(GameSaveData saveData)
+    {
+        if (saveData == null)
+        {
+            throw new ArgumentNullException(nameof(saveData));
+        }
+
+        saveData.IdleReward ??= new IdleRewardSaveData();
+
+        saveData.IdleReward.Remainders.Clear();
+
+        foreach (KeyValuePair<string, decimal> pair in leftRewards)
+        {
+            saveData.IdleReward.Remainders.Add(new IdleRewardRemainderSaveData
+            {
+                RewardId = pair.Key,
+                Amount = pair.Value
+            });
         }
     }
 }

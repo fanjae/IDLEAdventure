@@ -100,9 +100,10 @@ public sealed class MainBottomPanelController : MonoBehaviour
             return;
         }
 
-        // 장비 UI 활성화 후 오픈 연출 실행
+        // 장비 UI 활성화 후 기존 하단 메뉴 숨김
         equipmentRoot.SetActive(true);
         equipmentPanelController?.PlayOpenAnimation();
+        gameObject.SetActive(false);
     }
 
     // 소집 메뉴 선택
@@ -144,6 +145,12 @@ public sealed class MainBottomPanelController : MonoBehaviour
         {
             targetImage.sprite = targetSprite;
         }
+    }
+
+    // 하단 메뉴 선택 상태 초기화
+    public void ResetSelectedMenu()
+    {
+        SetSelectedMenu(BottomMenuType.None);
     }
 
 }
