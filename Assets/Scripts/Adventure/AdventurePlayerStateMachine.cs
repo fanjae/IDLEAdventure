@@ -54,6 +54,13 @@ public class AdventurePlayerStateMachine : MonoBehaviour
         ChangeState(playerControlState);
     }
 
+    private void Start()
+    {
+        if (PathManager.Instance != null)
+        {
+            PathManager.Instance.Initialize(this.transform);
+        }
+    }
     private void Update()
     {
         if (currentState != null)
