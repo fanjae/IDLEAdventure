@@ -13,6 +13,8 @@ public class BattleManager : MonoBehaviour
     private readonly List<BattleUnit> heroUnits = new();
     private readonly List<BattleUnit> enemyUnits = new();
 
+    public IReadOnlyList<BattleUnit> HeroUnits => heroUnits;
+
     public event Action OnBattleStarted;
     public event Action<UnitTeam> OnBattleEnded;
 
