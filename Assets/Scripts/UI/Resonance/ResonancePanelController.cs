@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,20 +8,45 @@ using UnityEngine.UI;
 // 공명 패널의 보유 영웅 목록 UI 관리
 public sealed class ResonancePanelController : MonoBehaviour
 {
+    [SerializeField] private Button backButton;
+    [SerializeField] private GameObject resonanceHeroContentPanel;
+    [SerializeField] private MainBottomPanelController mainBottomPanelController;
+
+    [Header("패널 연출")]
+    [SerializeField] private CanvasGroup resonanceCanvasGroup;
+    [SerializeField] private RectTransform resonancePanelTransform;
+    [SerializeField] private float moveDistance = 100f;
+    [SerializeField] private float openDuration = 0.2f;
+    [SerializeField] private float closeDuration = 0.2f;
+
     [SerializeField] private Transform heroContent;
     [SerializeField] private ResonanceHeroCardView heroCardPrefab;
     [SerializeField] private HeroClassIconCatalog classIconCatalog;
     [SerializeField] private ResonanceSlotView[] resonanceSlots;
     [SerializeField] private TMP_Text resonanceLevelText;
-    [SerializeField] private Button backButton;
-    [SerializeField] private GameObject resonanceHeroContentPanel;
 
     private readonly List<ResonanceHeroCardView> heroCardViews = new();
 
     private HeroController heroController;
     private ResonanceController resonanceController;
+    private Tween panelTween;
+    private Vector2 resonancePanelOriginPosition;
 
     public event Action<string> OnHeroDetailRequested;
+
+    private void Awake()
+    {
+        if (resonancePanelTransform != null)
+        {
+            resonancePanelOriginPosition = resonancePanelTransform.anchoredPosition;
+        }
+    }
+
+    // 실행 중인 패널 연출 종료
+    private void OnDestroy()
+    {
+        panelTween?.Kill();
+    }
 
     // 현재 공명 상태를 기준으로 UI 갱신
     private void Refresh()
@@ -239,9 +265,74 @@ public sealed class ResonancePanelController : MonoBehaviour
 
     private void HandleBackButtonClicked()
     {
-        if (resonanceHeroContentPanel != null)
+        if (resonanceHeroContentPanel == null || resonanceCanvasGroup == null || resonancePanelTransform == null)
+        {
+            return;
+        }
+
+        panelTween?.Kill();
+
+        resonanceCanvasGroup.interactable = false;
+        resonanceCanvasGroup.blocksRaycasts = false;
+
+        Vector2 closePosition = resonancePanelOriginPosition + Vector2.down * moveDistance;
+
+        Sequence sequence = DOTween.Sequence();
+
+        // 아래로 이동하면서 투명하게 처리
+        sequence.Join(resonancePanelTransform.DOAnchorPos(closePosition, closeDuration).SetEase(Ease.InCubic));
+        sequence.Join(resonanceCanvasGroup.DOFade(0f, closeDuration));
+
+        sequence.OnComplete(() =>
         {
             resonanceHeroContentPanel.SetActive(false);
+
+            // 다음 오픈을 위해 기본 상태 복원
+            resonancePanelTransform.anchoredPosition = resonancePanelOriginPosition;
+            resonanceCanvasGroup.alpha = 1f;
+            resonanceCanvasGroup.interactable = true;
+            resonanceCanvasGroup.blocksRaycasts = true;
+
+            if (mainBottomPanelController != null)
+            {
+                mainBottomPanelController.ResetSelectedMenu();
+                mainBottomPanelController.gameObject.SetActive(true);
+            }
+        });
+
+        panelTween = sequence;
+    }
+
+    // 공명 패널 오픈 연출
+    public void PlayOpenAnimation()
+    {
+        if (resonanceCanvasGroup == null || resonancePanelTransform == null)
+        {
+            return;
         }
+
+        panelTween?.Kill();
+
+        Vector2 startPosition = resonancePanelOriginPosition + Vector2.down * moveDistance;
+
+        // 아래 위치와 투명 상태에서 시작
+        resonancePanelTransform.anchoredPosition = startPosition;
+        resonanceCanvasGroup.alpha = 0f;
+        resonanceCanvasGroup.interactable = false;
+        resonanceCanvasGroup.blocksRaycasts = false;
+
+        Sequence sequence = DOTween.Sequence();
+
+        // 아래에서 위로 이동하면서 동시에 표시
+        sequence.Join(resonancePanelTransform.DOAnchorPos(resonancePanelOriginPosition, openDuration).SetEase(Ease.OutCubic));
+        sequence.Join(resonanceCanvasGroup.DOFade(1f, openDuration));
+
+        sequence.OnComplete(() =>
+        {
+            resonanceCanvasGroup.interactable = true;
+            resonanceCanvasGroup.blocksRaycasts = true;
+        });
+
+        panelTween = sequence;
     }
 }
