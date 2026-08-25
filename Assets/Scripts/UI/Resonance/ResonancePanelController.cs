@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 // 공명 패널의 보유 영웅 목록 UI 관리
 public sealed class ResonancePanelController : MonoBehaviour
@@ -10,11 +12,15 @@ public sealed class ResonancePanelController : MonoBehaviour
     [SerializeField] private HeroClassIconCatalog classIconCatalog;
     [SerializeField] private ResonanceSlotView[] resonanceSlots;
     [SerializeField] private TMP_Text resonanceLevelText;
+    [SerializeField] private Button backButton;
+    [SerializeField] private GameObject resonanceHeroContentPanel;
 
     private readonly List<ResonanceHeroCardView> heroCardViews = new();
 
     private HeroController heroController;
     private ResonanceController resonanceController;
+
+    public event Action<string> OnHeroDetailRequested;
 
     // 현재 공명 상태를 기준으로 UI 갱신
     private void Refresh()
@@ -28,10 +34,20 @@ public sealed class ResonancePanelController : MonoBehaviour
     {
         InitializeControllers();
         Refresh();
+
+        if (backButton != null)
+        {
+            backButton.onClick.AddListener(HandleBackButtonClicked);
+        }
     }
 
     private void OnDisable()
     {
+        if (backButton != null)
+        {
+            backButton.onClick.RemoveListener(HandleBackButtonClicked);
+        }
+
         Unsubscribe();
     }
 
@@ -82,7 +98,7 @@ public sealed class ResonancePanelController : MonoBehaviour
             }
 
             ResonanceHeroCardView cardView = GetHeroCardView(visibleCount);
-            cardView.Bind(hero, classIconCatalog, HandleHeroCardClicked);
+            cardView.Bind(hero, classIconCatalog, HandleHeroCardClicked, HandleHeroCardRightClicked);
             cardView.gameObject.SetActive(true);
 
             visibleCount++;
@@ -208,5 +224,24 @@ public sealed class ResonancePanelController : MonoBehaviour
         }
 
         resonanceLevelText.text = $"공명 레벨 : {resonanceLevel}";
+    }
+
+    // 보유 영웅 카드 우클릭 시 상세 패널 표시 요청
+    private void HandleHeroCardRightClicked(string heroId)
+    {
+        if (string.IsNullOrEmpty(heroId))
+        {
+            return;
+        }
+
+        OnHeroDetailRequested?.Invoke(heroId);
+    }
+
+    private void HandleBackButtonClicked()
+    {
+        if (resonanceHeroContentPanel != null)
+        {
+            resonanceHeroContentPanel.SetActive(false);
+        }
     }
 }

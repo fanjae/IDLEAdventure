@@ -1,10 +1,11 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 // 공명 UI에서 영웅 한 명의 정보를 표시
-public sealed class ResonanceHeroCardView : MonoBehaviour
+public sealed class ResonanceHeroCardView : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private Button button;
     [SerializeField] private Image heroPortrait;
@@ -14,6 +15,7 @@ public sealed class ResonanceHeroCardView : MonoBehaviour
 
     private string heroId;
     private Action<string> onClicked;
+    private Action<string> onRightClicked;
 
     private void Awake()
     {
@@ -37,7 +39,7 @@ public sealed class ResonanceHeroCardView : MonoBehaviour
 
 
     // 보유 영웅 정보를 카드에 표시
-    public void Bind(OwnedHeroData hero, HeroClassIconCatalog classIconCatalog, Action<string> onClicked = null)
+    public void Bind(OwnedHeroData hero,HeroClassIconCatalog classIconCatalog,Action<string> onClicked = null,Action<string> onRightClicked = null)
     {
         if (hero == null || hero.HeroData == null)
         {
@@ -46,6 +48,7 @@ public sealed class ResonanceHeroCardView : MonoBehaviour
 
         heroId = hero.HeroId;
         this.onClicked = onClicked;
+        this.onRightClicked = onRightClicked;
 
         if (heroPortrait != null)
         {
@@ -75,5 +78,21 @@ public sealed class ResonanceHeroCardView : MonoBehaviour
         {
             button.onClick.RemoveListener(HandleClicked);
         }
+    }
+
+    // 영웅 카드 우클릭 처리
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Right)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(heroId))
+        {
+            return;
+        }
+
+        onRightClicked?.Invoke(heroId);
     }
 }
