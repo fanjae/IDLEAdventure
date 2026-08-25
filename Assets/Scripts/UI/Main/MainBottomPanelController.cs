@@ -102,6 +102,18 @@ public sealed class MainBottomPanelController : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    // 모험단 메뉴 닫기
+    public void CloseResonanceHeroPanel()
+    {
+        if (resonanceHeroContentPanel != null)
+        {
+            resonanceHeroContentPanel.SetActive(false);
+        }
+
+        gameObject.SetActive(true);
+        SetSelectedMenu(BottomMenuType.None);
+    }
+
     // 장비 메뉴 선택
     private void HandleEquipmentButtonClicked()
     {
