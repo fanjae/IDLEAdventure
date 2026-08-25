@@ -4,7 +4,7 @@ using UnityEngine;
 
 public sealed class HeroDetailViewSpawner : MonoBehaviour
 {
-    [SerializeField] private Transform viewRoot;
+    [SerializeField] private Transform previewSpawnPoint;
     [SerializeField] private List<HeroViewEntry> heroViews = new();
 
     private GameObject currentView;
@@ -26,15 +26,14 @@ public sealed class HeroDetailViewSpawner : MonoBehaviour
             return;
         }
 
-        if (viewRoot == null)
+        if (previewSpawnPoint == null)
         {
-            Debug.LogWarning("[HeroDetailViewSpawner] ViewRoot가 지정되지 않았습니다.");
+            Debug.LogWarning("[HeroDetailViewSpawner] Preview Spawn Point가 지정되지 않았습니다.");
             return;
         }
 
-        currentView = Instantiate(prefab, viewRoot);
+        currentView = Instantiate(prefab, previewSpawnPoint);
 
-        DisableBattleComponents(currentView);
         ResetTransform(currentView.transform);
         PlayIdle(currentView);
     }
@@ -67,35 +66,6 @@ public sealed class HeroDetailViewSpawner : MonoBehaviour
 
         return null;
     }
-
-    private void DisableBattleComponents(GameObject view)
-    {
-        BattleUnit battleUnit = view.GetComponent<BattleUnit>();
-        UnitMovement movement = view.GetComponent<UnitMovement>();
-        UnitAttack attack = view.GetComponent<UnitAttack>();
-        UnitSkill skill = view.GetComponent<UnitSkill>();
-
-        if (battleUnit != null)
-        {
-            battleUnit.enabled = false;
-        }
-
-        if (movement != null)
-        {
-            movement.enabled = false;
-        }
-
-        if (attack != null)
-        {
-            attack.enabled = false;
-        }
-
-        if (skill != null)
-        {
-            skill.enabled = false;
-        }
-    }
-
     private void ResetTransform(Transform viewTransform)
     {
         viewTransform.localPosition = Vector3.zero;
