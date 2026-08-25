@@ -15,6 +15,7 @@ public sealed class MainBottomPanelController : MonoBehaviour
 
     [Header("공명 패널")]
     [SerializeField] private GameObject resonanceHeroContentPanel;
+    [SerializeField] private ResonancePanelController resonancePanelController;
 
     [Header("장비 패널")]
     [SerializeField] private GameObject equipmentRoot;
@@ -99,6 +100,7 @@ public sealed class MainBottomPanelController : MonoBehaviour
 
         // 공명 영웅 목록 패널 활성화 후 기존 하단 메뉴 숨김
         resonanceHeroContentPanel.SetActive(true);
+        resonancePanelController?.PlayOpenAnimation();
         gameObject.SetActive(false);
     }
 
