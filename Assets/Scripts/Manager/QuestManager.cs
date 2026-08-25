@@ -53,7 +53,7 @@ public class QuestManager : Singleton<QuestManager>
     private void InitializeQuests()
     {
         // 경로 저장
-        string[] questPaths = { "GameData/Quests/Main", "GameData/Quests/Sub" };
+        string[] questPaths = { "GameData/Quests/QuestDatas/Main", "GameData/Quests/QuestDatas/Sub" };
         // 각 경로의 SO 데이터들을 저장
         foreach (string path in questPaths)
         {
