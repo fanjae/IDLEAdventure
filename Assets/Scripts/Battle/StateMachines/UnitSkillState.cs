@@ -26,10 +26,11 @@ public class UnitSkillState : IUnitState
         //보스 스킬 종료 후, 다음 행동 결정 BT가 함. 
         if (unit.UsesExternalDecision)
         {
-            //Animator상태 때문에 시작 실패할 수도 있으므로 재시도
-            if (unit.CanUseSkill()) unit.UseSkill();
+            //BT가 선택해둔 스킬의 애니메이션 시작이 실패했을 때만 재시도
+            if (unit.HasSelectedSkill && unit.CanUseSkill()) unit.UseSkill();
             return;
         }
+        //아래부터는 일반 유닛 FSM 판단
         if (!unit.HasValidTarget())
         {
             unit.ClearTarget();
