@@ -96,8 +96,6 @@ public class Bootstrapper
 
         // 퀘스트 관련 매니저 추가
         QuestManager questManager = QuestManager.Instance;
-        //DialogueManager dialogueManager = DialogueManager.Instance;
-        PathManager pathManager = PathManager.Instance;
 
         Debug.Log("초기 호출 완료.");
     }
