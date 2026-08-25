@@ -359,9 +359,39 @@ public class BattleUnit : MonoBehaviour
     {
         return skill != null && skill.CanUseSkill();
     }
+    //보스 BT에서 특정 스킬의 사용 가능 여부 확인
+    public bool CanUseSkill(SkillDataSO data)
+    {
+        return skill != null && skill.CanUseSkill(data);
+    }
     public bool UseSkill()
     {
         return skill != null && skill.UseSkill();
+    }
+    //보스 BT에서 다음에 사용할 스킬 지정
+    public void SelectSkill(SkillDataSO data)
+    {
+        skill?.SelectSkill(data);
+    }
+    public void SetExternalSkillAnimation(bool useExternal)
+    {
+        skill?.SetExternalSkillAnimation(useExternal);
+    }
+    //보스 BT가 선택해둔 스킬이 있는지 확인
+    public bool HasSelectedSkill
+    {
+        get
+        {
+            return skill != null && skill.HasSelectedSkill;
+        }
+    }
+    //현재 실제로 실행 중인 스킬 데이터
+    public SkillDataSO ActiveSkillData
+    {
+        get
+        {
+            return skill != null ? skill.ActiveSkillData : null;
+        }
     }
     public void UpdateSkill()
     {
