@@ -21,7 +21,10 @@ public class QuestData : ScriptableObject
     // 퀴스트 대사
     [Header("Dialogue Data")]
     [SerializeField] private QuestDialogueData dialogueData;
-    
+
+    [Header("Reward Data")]
+    [SerializeField] private QuestRewardData rewardData;
+
     // 프로퍼티
     public int QuestId => questId;
     public string QuestName => questName;
@@ -32,4 +35,5 @@ public class QuestData : ScriptableObject
     public GameObject NPCPrefab => npcPrefab;
 
     public QuestDialogueData DialogueData => dialogueData;
+    public QuestRewardData RewardData => rewardData;
 }
