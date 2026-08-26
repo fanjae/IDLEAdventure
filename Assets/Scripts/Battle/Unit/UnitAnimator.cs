@@ -4,6 +4,10 @@ public class UnitAnimator : MonoBehaviour
 {
     [Header("애니메이터")]
     [SerializeField] private Animator animator;
+    [Header("피격 애니메이션")]
+    [SerializeField, Min(0.0f)] private float damagedInterval = 0.9f;
+
+    private float nextDamagedTime;
 
     private readonly int moveHash = Animator.StringToHash("Move");
     private readonly int attackHash = Animator.StringToHash("Attack");
@@ -60,16 +64,26 @@ public class UnitAnimator : MonoBehaviour
     public void PlayDamaged()
     {
         if (animator == null) return;
+        //연속 피격 모션 방지
+        if (Time.time < nextDamagedTime) return;
 
         //피격 연출 중복 재생을 막기 위함
         AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+        //공격/스킬/사망은 피격으로 절대 끊지 않음
+        if (currentState.IsTag("Attack")) return;
+        if (currentState.IsTag("Skill")) return;
+        if (currentState.IsTag("Dead")) return;
         if (currentState.IsTag("Damaged")) return;
+
         if (animator.IsInTransition(0))
         {
             AnimatorStateInfo nextState = animator.GetNextAnimatorStateInfo(0);
+            if (nextState.IsTag("Attack")) return;
+            if (nextState.IsTag("Skill")) return;
+            if (nextState.IsTag("Dead")) return;
             if (nextState.IsTag("Damaged")) return;
         }
-
+        nextDamagedTime = Time.time + damagedInterval;
 
         animator.ResetTrigger(damagedHash);
         animator.SetTrigger(damagedHash);
