@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,14 +9,9 @@ public sealed class ResonancePanelController : MonoBehaviour
 {
     [SerializeField] private Button backButton;
     [SerializeField] private GameObject resonanceHeroContentPanel;
-    [SerializeField] private MainBottomPanelController mainBottomPanelController;
 
     [Header("패널 연출")]
-    [SerializeField] private CanvasGroup resonanceCanvasGroup;
-    [SerializeField] private RectTransform resonancePanelTransform;
-    [SerializeField] private float moveDistance = 100f;
-    [SerializeField] private float openDuration = 0.2f;
-    [SerializeField] private float closeDuration = 0.2f;
+    [SerializeField] private UIPanelTransition panelTransition;
 
     [SerializeField] private Transform heroContent;
     [SerializeField] private ResonanceHeroCardView heroCardPrefab;
@@ -29,32 +23,9 @@ public sealed class ResonancePanelController : MonoBehaviour
 
     private HeroController heroController;
     private ResonanceController resonanceController;
-    private Tween panelTween;
-    private Vector2 resonancePanelOriginPosition;
 
     public event Action<string> OnHeroDetailRequested;
-
-    private void Awake()
-    {
-        if (resonancePanelTransform != null)
-        {
-            resonancePanelOriginPosition = resonancePanelTransform.anchoredPosition;
-        }
-    }
-
-    // 실행 중인 패널 연출 종료
-    private void OnDestroy()
-    {
-        panelTween?.Kill();
-    }
-
-    // 현재 공명 상태를 기준으로 UI 갱신
-    private void Refresh()
-    {
-        RefreshResonanceSlots();
-        RefreshHeroList();
-        RefreshResonanceLevel();
-    }
+    public event Action OnClosed;
 
     private void OnEnable()
     {
@@ -75,6 +46,14 @@ public sealed class ResonancePanelController : MonoBehaviour
         }
 
         Unsubscribe();
+    }
+
+    // 현재 공명 상태를 기준으로 UI 갱신
+    private void Refresh()
+    {
+        RefreshResonanceSlots();
+        RefreshHeroList();
+        RefreshResonanceLevel();
     }
 
     // 공명 UI에서 사용할 컨트롤러 연결
@@ -100,8 +79,6 @@ public sealed class ResonancePanelController : MonoBehaviour
 
         heroController.OnHeroCollectionChanged += Refresh;
         heroController.OnHeroLevelChanged += HandleHeroLevelChanged;
-
-        // 공명 슬롯 변경 시 UI 갱신
         resonanceController.OnResonanceSlotChanged += Refresh;
     }
 
@@ -167,7 +144,6 @@ public sealed class ResonancePanelController : MonoBehaviour
 
         if (resonanceController != null)
         {
-            // 공명 슬롯 변경 이벤트 구독 해제
             resonanceController.OnResonanceSlotChanged -= Refresh;
         }
 
@@ -263,76 +239,33 @@ public sealed class ResonancePanelController : MonoBehaviour
         OnHeroDetailRequested?.Invoke(heroId);
     }
 
+    // 공명 패널 닫기
     private void HandleBackButtonClicked()
     {
-        if (resonanceHeroContentPanel == null || resonanceCanvasGroup == null || resonancePanelTransform == null)
+        if (resonanceHeroContentPanel == null)
         {
             return;
         }
 
-        panelTween?.Kill();
-
-        resonanceCanvasGroup.interactable = false;
-        resonanceCanvasGroup.blocksRaycasts = false;
-
-        Vector2 closePosition = resonancePanelOriginPosition + Vector2.down * moveDistance;
-
-        Sequence sequence = DOTween.Sequence();
-
-        // 아래로 이동하면서 투명하게 처리
-        sequence.Join(resonancePanelTransform.DOAnchorPos(closePosition, closeDuration).SetEase(Ease.InCubic));
-        sequence.Join(resonanceCanvasGroup.DOFade(0f, closeDuration));
-
-        sequence.OnComplete(() =>
+        if (panelTransition == null)
         {
-            resonanceHeroContentPanel.SetActive(false);
+            ClosePanel();
+            return;
+        }
 
-            // 다음 오픈을 위해 기본 상태 복원
-            resonancePanelTransform.anchoredPosition = resonancePanelOriginPosition;
-            resonanceCanvasGroup.alpha = 1f;
-            resonanceCanvasGroup.interactable = true;
-            resonanceCanvasGroup.blocksRaycasts = true;
+        panelTransition.PlayClose(ClosePanel);
+    }
 
-            if (mainBottomPanelController != null)
-            {
-                mainBottomPanelController.ResetSelectedMenu();
-                mainBottomPanelController.gameObject.SetActive(true);
-            }
-        });
-
-        panelTween = sequence;
+    // 공명 패널 종료 처리
+    private void ClosePanel()
+    {
+        resonanceHeroContentPanel.SetActive(false);
+        OnClosed?.Invoke();
     }
 
     // 공명 패널 오픈 연출
     public void PlayOpenAnimation()
     {
-        if (resonanceCanvasGroup == null || resonancePanelTransform == null)
-        {
-            return;
-        }
-
-        panelTween?.Kill();
-
-        Vector2 startPosition = resonancePanelOriginPosition + Vector2.down * moveDistance;
-
-        // 아래 위치와 투명 상태에서 시작
-        resonancePanelTransform.anchoredPosition = startPosition;
-        resonanceCanvasGroup.alpha = 0f;
-        resonanceCanvasGroup.interactable = false;
-        resonanceCanvasGroup.blocksRaycasts = false;
-
-        Sequence sequence = DOTween.Sequence();
-
-        // 아래에서 위로 이동하면서 동시에 표시
-        sequence.Join(resonancePanelTransform.DOAnchorPos(resonancePanelOriginPosition, openDuration).SetEase(Ease.OutCubic));
-        sequence.Join(resonanceCanvasGroup.DOFade(1f, openDuration));
-
-        sequence.OnComplete(() =>
-        {
-            resonanceCanvasGroup.interactable = true;
-            resonanceCanvasGroup.blocksRaycasts = true;
-        });
-
-        panelTween = sequence;
+        panelTransition?.PlayOpen();
     }
 }

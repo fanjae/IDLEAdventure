@@ -881,6 +881,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7287832291206676263}
   - component: {fileID: 6050186671268003940}
+  - component: {fileID: 6087524632439265066}
   m_Layer: 5
   m_Name: EquipmentContent
   m_TagString: Untagged
@@ -923,6 +924,24 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &6087524632439265066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1497291436548755209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 979130b6285302f4e968220fe362287f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPanelTransition
+  canvasGroup: {fileID: 6050186671268003940}
+  panelTransform: {fileID: 6160354395123741780}
+  openOffset: {x: 0, y: -100}
+  closeOffset: {x: 0, y: -100}
+  openDuration: 0.2
+  closeDuration: 0.2
 --- !u!1 &1521914187025931118
 GameObject:
   m_ObjectHideFlags: 0
@@ -3053,10 +3072,7 @@ MonoBehaviour:
   initialClass: 4
   backButton: {fileID: 8245504525570712371}
   equipmentRoot: {fileID: 5253601706835160469}
-  mainBottomPanelController: {fileID: 0}
-  equipmentContentRect: {fileID: 7287832291206676263}
-  openMoveDistance: 100
-  openDuration: 0.25
+  panelTransition: {fileID: 6087524632439265066}
 --- !u!1 &5894996888110518364
 GameObject:
   m_ObjectHideFlags: 0
