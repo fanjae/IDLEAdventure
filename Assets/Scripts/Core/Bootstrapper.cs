@@ -69,13 +69,32 @@ public class Bootstrapper
         gachaManager.Initialize(gachaDatabase, heroDatabase);
         gachaManager.LoadSaveData(saveManager.CurrentData);
 
+        AchievementDatabaseSO achievementDatabase = Resources.Load<AchievementDatabaseSO>("GameData/AchievementDatabase");
+        if (achievementDatabase == null)
+        {
+            Debug.LogError("AchievementDatabaseSO를 불러오지 못했습니다. 업적 기능 비활성화함.");
+        }
+        else
+        {
+            try
+            {
+                // 업적 초기화 실패도 업적 기능만 비활성화하고 이후 초기화 계속함
+                AchievementManager achievementManager = AchievementManager.Instance;
+                achievementManager.Initialize(saveManager.CurrentData, achievementDatabase, gachaManager.Controller);
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"업적 초기화 실패. 업적 기능 비활성화함. {exception.Message}");
+            }
+        }
+
         // 저장된 공명 상태 복원
         resonanceManager.Controller.LoadSaveData(saveManager.CurrentData);
 
         // 방치 시간 적용은 아직 되지 않았기에 추가
         TestSaveManager testSaveManager = TestSaveManager.Instance;
 
-        // 퀘스트 매니저 추가
+        // 퀘스트 관련 매니저 추가
         QuestManager questManager = QuestManager.Instance;
 
         Debug.Log("초기 호출 완료.");

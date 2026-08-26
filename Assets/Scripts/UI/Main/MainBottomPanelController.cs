@@ -13,6 +13,10 @@ public sealed class MainBottomPanelController : MonoBehaviour
         All
     }
 
+    [Header("공명 패널")]
+    [SerializeField] private GameObject resonanceHeroContentPanel;
+    [SerializeField] private ResonancePanelController resonancePanelController;
+
     [Header("장비 패널")]
     [SerializeField] private GameObject equipmentRoot;
     [SerializeField] private EquipmentPanelController equipmentPanelController;
@@ -88,6 +92,28 @@ public sealed class MainBottomPanelController : MonoBehaviour
     private void HandleHeroButtonClicked()
     {
         SetSelectedMenu(BottomMenuType.Hero);
+
+        if (resonanceHeroContentPanel == null)
+        {
+            return;
+        }
+
+        // 공명 영웅 목록 패널 활성화 후 기존 하단 메뉴 숨김
+        resonanceHeroContentPanel.SetActive(true);
+        resonancePanelController?.PlayOpenAnimation();
+        gameObject.SetActive(false);
+    }
+
+    // 모험단 메뉴 닫기
+    public void CloseResonanceHeroPanel()
+    {
+        if (resonanceHeroContentPanel != null)
+        {
+            resonanceHeroContentPanel.SetActive(false);
+        }
+
+        gameObject.SetActive(true);
+        SetSelectedMenu(BottomMenuType.None);
     }
 
     // 장비 메뉴 선택
@@ -100,9 +126,10 @@ public sealed class MainBottomPanelController : MonoBehaviour
             return;
         }
 
-        // 장비 UI 활성화 후 오픈 연출 실행
+        // 장비 UI 활성화 후 기존 하단 메뉴 숨김
         equipmentRoot.SetActive(true);
         equipmentPanelController?.PlayOpenAnimation();
+        gameObject.SetActive(false);
     }
 
     // 소집 메뉴 선택
@@ -144,6 +171,12 @@ public sealed class MainBottomPanelController : MonoBehaviour
         {
             targetImage.sprite = targetSprite;
         }
+    }
+
+    // 하단 메뉴 선택 상태 초기화
+    public void ResetSelectedMenu()
+    {
+        SetSelectedMenu(BottomMenuType.None);
     }
 
 }

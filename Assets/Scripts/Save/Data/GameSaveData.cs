@@ -25,4 +25,10 @@ public sealed class GameSaveData
 
     // 배너별 천장 진행도 저장 데이터
     public GachaSaveData Gacha { get; set; } = new();
+
+    // 업적 공통 통계와 수령 상태
+    public AchievementSaveData Achievements { get; set; } = new();
+
+    // 방치 보상 계산에 사용하는 마지막 수령 시간과 잔여 보상 상태
+    public IdleRewardSaveData IdleReward { get; set; } = new();
 }

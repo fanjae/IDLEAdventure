@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,8 +6,8 @@ using UnityEngine;
 public sealed class VfxPreviewTool : EditorWindow
 {
     private const string DefaultCharacterPath = "Assets/Prefabs/Player/Hero_Tanker.prefab";
-    private const string VfxSearchRoot = "Assets/Images/IdleAdventureAssets/VFX";
-    private const string VfxCopyRoot = "Assets/Prefabs/VFX";
+    private const string DefaultVfxSearchRoot = "Assets/Images/IdleAdventureAssets/VFX";
+    private const string DefaultVfxCopyRoot = "Assets/Prefabs/VFX";
     private const float MinCameraDistance = 1f;
     private const float MaxCameraDistance = 30f;
 
@@ -31,6 +31,8 @@ public sealed class VfxPreviewTool : EditorWindow
     private bool loopPlayback = true;
     private int selectedFilterIndex;
     private string searchKeyword = string.Empty;
+    private string vfxSearchRoot = DefaultVfxSearchRoot;
+    private string vfxCopyRoot = DefaultVfxCopyRoot;
 
     // VFX 프리뷰 창 열기
     [MenuItem("Tools/VFX/VFX Preview")]
@@ -97,6 +99,8 @@ public sealed class VfxPreviewTool : EditorWindow
         EditorGUILayout.BeginHorizontal();
 
         EditorGUILayout.BeginVertical(GUILayout.Width(position.width * 0.5f));
+        DrawVfxPathSettings();
+        EditorGUILayout.Space(6f);
         DrawVfxList();
         EditorGUILayout.EndVertical();
 
@@ -211,6 +215,61 @@ public sealed class VfxPreviewTool : EditorWindow
             }
 
             EditorGUILayout.EndHorizontal();
+        }
+    }
+
+    // VFX 검색 및 복사 경로 설정 표시
+    private void DrawVfxPathSettings()
+    {
+        EditorGUILayout.LabelField("VFX 경로 설정", EditorStyles.boldLabel);
+
+        EditorGUILayout.BeginHorizontal();
+        string newSearchRoot = EditorGUILayout.DelayedTextField("검색 경로", vfxSearchRoot);
+
+        if (GUILayout.Button("폴더 선택", GUILayout.Width(80f)))
+        {
+            string selectedPath = SelectProjectFolder(vfxSearchRoot);
+
+            if (!string.IsNullOrEmpty(selectedPath))
+            {
+                newSearchRoot = selectedPath;
+            }
+        }
+
+        EditorGUILayout.EndHorizontal();
+
+        if (newSearchRoot != vfxSearchRoot)
+        {
+            vfxSearchRoot = NormalizeAssetPath(newSearchRoot);
+            selectedFilterIndex = 0;
+            RefreshVfxFilters();
+            RefreshVfxList();
+        }
+
+        EditorGUILayout.BeginHorizontal();
+        string newCopyRoot = EditorGUILayout.DelayedTextField("복사 경로", vfxCopyRoot);
+
+        if (GUILayout.Button("폴더 선택", GUILayout.Width(80f)))
+        {
+            string selectedPath = SelectProjectFolder(vfxCopyRoot);
+
+            if (!string.IsNullOrEmpty(selectedPath))
+            {
+                newCopyRoot = selectedPath;
+            }
+        }
+
+        EditorGUILayout.EndHorizontal();
+        vfxCopyRoot = NormalizeAssetPath(newCopyRoot);
+
+        if (!AssetDatabase.IsValidFolder(vfxSearchRoot))
+        {
+            EditorGUILayout.HelpBox("검색 경로는 프로젝트 Assets 폴더 내부의 유효한 폴더를 지정해야 합니다.", MessageType.Warning);
+        }
+
+        if (string.IsNullOrEmpty(vfxCopyRoot) || !vfxCopyRoot.StartsWith("Assets", System.StringComparison.Ordinal))
+        {
+            EditorGUILayout.HelpBox("복사 경로는 프로젝트 Assets 폴더 내부 경로를 지정해야 합니다.", MessageType.Warning);
         }
     }
 
@@ -502,7 +561,7 @@ public sealed class VfxPreviewTool : EditorWindow
 
         EnsureCopyFolderExists();
 
-        string destinationPath = AssetDatabase.GenerateUniqueAssetPath($"{VfxCopyRoot}/{vfxPrefab.name}.prefab");
+        string destinationPath = AssetDatabase.GenerateUniqueAssetPath($"{vfxCopyRoot}/{vfxPrefab.name}.prefab");
 
         if (!AssetDatabase.CopyAsset(sourcePath, destinationPath))
         {
@@ -519,17 +578,63 @@ public sealed class VfxPreviewTool : EditorWindow
     }
 
     // VFX 복사 폴더가 없으면 생성
-    private static void EnsureCopyFolderExists()
+    private void EnsureCopyFolderExists()
     {
-        if (!AssetDatabase.IsValidFolder("Assets/Prefabs"))
+        if (string.IsNullOrEmpty(vfxCopyRoot) || !vfxCopyRoot.StartsWith("Assets", System.StringComparison.Ordinal))
         {
-            AssetDatabase.CreateFolder("Assets", "Prefabs");
+            return;
         }
 
-        if (!AssetDatabase.IsValidFolder(VfxCopyRoot))
+        string[] folders = vfxCopyRoot.Split('/');
+        string currentPath = folders[0];
+
+        for (int i = 1; i < folders.Length; i++)
         {
-            AssetDatabase.CreateFolder("Assets/Prefabs", "VFX");
+            string nextPath = $"{currentPath}/{folders[i]}";
+
+            if (!AssetDatabase.IsValidFolder(nextPath))
+            {
+                AssetDatabase.CreateFolder(currentPath, folders[i]);
+            }
+
+            currentPath = nextPath;
         }
+    }
+
+    // 프로젝트 Assets 내부 폴더를 선택하고 AssetDatabase 경로로 변환
+    private static string SelectProjectFolder(string currentAssetPath)
+    {
+        string projectRoot = System.IO.Directory.GetParent(Application.dataPath)?.FullName ?? string.Empty;
+        string currentAbsolutePath = projectRoot;
+
+        if (!string.IsNullOrEmpty(currentAssetPath) && currentAssetPath.StartsWith("Assets", System.StringComparison.Ordinal))
+        {
+            currentAbsolutePath = System.IO.Path.Combine(projectRoot, currentAssetPath).Replace('/', System.IO.Path.DirectorySeparatorChar);
+        }
+
+        string selectedAbsolutePath = EditorUtility.OpenFolderPanel("VFX 폴더 선택", currentAbsolutePath, string.Empty);
+
+        if (string.IsNullOrEmpty(selectedAbsolutePath))
+        {
+            return string.Empty;
+        }
+
+        selectedAbsolutePath = selectedAbsolutePath.Replace('\\', '/');
+        projectRoot = projectRoot.Replace('\\', '/');
+
+        if (!selectedAbsolutePath.StartsWith(projectRoot + "/Assets", System.StringComparison.OrdinalIgnoreCase))
+        {
+            EditorUtility.DisplayDialog("VFX 경로 설정", "프로젝트의 Assets 폴더 내부 경로만 선택할 수 있습니다.", "확인");
+            return string.Empty;
+        }
+
+        return NormalizeAssetPath(selectedAbsolutePath[projectRoot.Length..]);
+    }
+
+    // AssetDatabase에서 사용할 수 있도록 경로 형식 정리
+    private static string NormalizeAssetPath(string path)
+    {
+        return string.IsNullOrWhiteSpace(path) ? string.Empty : path.Trim().Replace('\\', '/').TrimEnd('/');
     }
 
     // VFX 검색 루트의 직속 하위 폴더를 필터 목록으로 갱신
@@ -539,15 +644,15 @@ public sealed class VfxPreviewTool : EditorWindow
         vfxFilterPaths.Clear();
 
         vfxFilterNames.Add("전체");
-        vfxFilterPaths.Add(VfxSearchRoot);
+        vfxFilterPaths.Add(vfxSearchRoot);
 
-        if (!AssetDatabase.IsValidFolder(VfxSearchRoot))
+        if (!AssetDatabase.IsValidFolder(vfxSearchRoot))
         {
             selectedFilterIndex = 0;
             return;
         }
 
-        string[] subFolders = AssetDatabase.GetSubFolders(VfxSearchRoot);
+        string[] subFolders = AssetDatabase.GetSubFolders(vfxSearchRoot);
 
         foreach (string folderPath in subFolders)
         {
@@ -697,3 +802,4 @@ public sealed class VfxPreviewTool : EditorWindow
         previewUtility = null;
     }
 }
+

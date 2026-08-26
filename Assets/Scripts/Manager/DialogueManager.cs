@@ -8,10 +8,8 @@ using UnityEngine;
 /// 싱글톤 상속은 받지 않았지만, 기본적으로 싱글톤 형태를 취한다. <br/>
 /// 단, 탐험 씬에만 존재한다.
 /// </summary>
-public class DialogueManager : MonoBehaviour
+public class DialogueManager : LocalSingleton<DialogueManager>
 {
-    public static DialogueManager Instance;
-
     [Header("UI Component")]
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TMP_Text speakerNameText;
@@ -21,16 +19,9 @@ public class DialogueManager : MonoBehaviour
     private Queue<DialogueData> dialogueQueue = new Queue<DialogueData>();
     private Action onColpleteDialogue;
 
-    private void Awake()
+    protected override void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
 
         if (dialoguePanel != null)
         {

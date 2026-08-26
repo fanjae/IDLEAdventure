@@ -15,19 +15,25 @@ public class QuestData : ScriptableObject
     [SerializeField] private QuestType questType;
     // 퀘스트 목표 위치
     [Header("Target Data")]
-    [SerializeField] private Vector3 target;
-    [SerializeField] private GameObject targetPrefab;
+    [SerializeField] private Vector3 arrivePosition;
+    [SerializeField] private Vector3 spawnPosition;
+    [SerializeField] private GameObject npcPrefab;
     // 퀴스트 대사
     [Header("Dialogue Data")]
     [SerializeField] private QuestDialogueData dialogueData;
-    
+
+    [Header("Reward Data")]
+    [SerializeField] private QuestRewardData rewardData;
+
     // 프로퍼티
     public int QuestId => questId;
     public string QuestName => questName;
     public QuestType QuestType => questType;
 
-    public Vector3 Target => target;
-    public GameObject TargetPrefab => targetPrefab;
+    public Vector3 ArrivePosition => arrivePosition;
+    public Vector3 SpawnPosition => spawnPosition;
+    public GameObject NPCPrefab => npcPrefab;
 
     public QuestDialogueData DialogueData => dialogueData;
+    public QuestRewardData RewardData => rewardData;
 }

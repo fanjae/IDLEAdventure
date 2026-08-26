@@ -26,9 +26,14 @@ public class QuestManager : Singleton<QuestManager>
     [SerializeField] private List<int> acceptedSubQuestIds = new List<int>();
     [SerializeField] private List<int> clearSubQuestIds = new List<int>();
 
+    [Header("SpawnedNPC")]
+    [SerializeField] private NPCTest currentQuestNPC;
+
     private const int maxSubQuestCount = 2;
 
+    public event Action OnMainQuestChanged;
     public event Action OnSubQuestChanged;
+    public event Action<int, bool> OnNPCInteracted;
 
     // 프로퍼티
     public int CurrentMainQuestId => currentMainQuestId;
@@ -48,7 +53,7 @@ public class QuestManager : Singleton<QuestManager>
     private void InitializeQuests()
     {
         // 경로 저장
-        string[] questPaths = { "GameData/Quests/Main", "GameData/Quests/Sub" };
+        string[] questPaths = { "GameData/Quests/QuestDatas/Main", "GameData/Quests/QuestDatas/Sub" };
         // 각 경로의 SO 데이터들을 저장
         foreach (string path in questPaths)
         {
@@ -116,7 +121,7 @@ public class QuestManager : Singleton<QuestManager>
         InitializeSubQuestLists();
         Debug.Log("퀘스트 초기화 완료.");
     }
-    //
+    // 서브 퀘스트 목록 초기화 함수.
     private void InitializeSubQuestLists()
     {
         acceptableSubQuestIds.Clear();
@@ -200,6 +205,7 @@ public class QuestManager : Singleton<QuestManager>
                 Debug.Log("완료 시도하는 퀘스트와 ID가 다릅니다.");
                 return;
             }
+            OnMainQuestChanged?.Invoke();
         }
 
         else if (quest.QuestType == QuestType.Sub)
@@ -249,5 +255,23 @@ public class QuestManager : Singleton<QuestManager>
             TestSaveManager.Instance.CurrentSaveData.SetQuestData(currentMainQuestId, acceptedSubQuestIds);
             TestSaveManager.Instance.SaveGame();
         }
+    }
+    // 테스트용 퀘스트 NPC와 상호작용 여부 체크 함수
+    public void NPCInteractable(int id, bool isInteractable)
+    {
+        OnNPCInteracted?.Invoke(id, isInteractable);
+    }
+    // 테스트용 NPC 객체 저장 함수.
+    public void SetQuestNPC(NPCTest npc)
+    {
+        currentQuestNPC = npc;
+    }
+    // 테스트용 NPC 제거 함수
+    public void DestroyNPC()
+    {
+        if (currentQuestNPC == null) return;
+
+        currentQuestNPC.selfDestroy();
+        currentQuestNPC = null;
     }
 }
