@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3c036309cde4a49b9a324ed3a1c1d3f, type: 3}
+  m_Name: Tier2HeroPackage
+  m_EditorClassIdentifier: Assembly-CSharp::ShopProductSO
+  productId: tier2_hero_package
+  displayName: "2\uC131 \uC601\uC6C5 \uD328\uD0A4\uC9C0"
+  description: "2\uD2F0\uC5B4 \uD790\uB7EC \uC601\uC6C5 \uD655\uC815 \uD68D\uB4DD
+    + \uACE8\uB4DC 10000"
+  category: 1
+  isVisible: 1
+  displayOrder: 1
+  priceType: 0
+  priceCurrency: 3
+  priceAmount: 500
+  purchaseLimitType: 1
+  dailyPurchaseLimit: 1
+  rewards:
+  - rewardType: 1
+    currencyType: -1
+    amount: 1
+    heroData: {fileID: 11400000, guid: 495bf02069f3c144e9111ff0dbece533, type: 2}
+  - rewardType: 1
+    currencyType: 0
+    amount: 10000
+    heroData: {fileID: 11400000, guid: 495bf02069f3c144e9111ff0dbece533, type: 2}
+  badgeType: 0
+  badgeImage: {fileID: 21300000, guid: 6bd3d270288d04447bc91b5bec792edf, type: 3}
+  icon: {fileID: 21300000, guid: 156102686d6f07a4d98b033e25794da5, type: 3}
+  artwork: {fileID: 21300000, guid: 156102686d6f07a4d98b033e25794da5, type: 3}

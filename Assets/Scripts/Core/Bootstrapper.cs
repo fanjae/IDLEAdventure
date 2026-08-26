@@ -69,6 +69,25 @@ public class Bootstrapper
         gachaManager.Initialize(gachaDatabase, heroDatabase);
         gachaManager.LoadSaveData(saveManager.CurrentData);
 
+        // 상점 데이터가 없으면 기능 확인용 기본 상품을 사용함
+        ShopDatabaseSO shopDatabase = Resources.Load<ShopDatabaseSO>("GameData/ShopDatabase");
+        if (shopDatabase == null)
+        {
+            Debug.LogWarning("ShopDatabase 없음. 개발용 기본 상품 사용함.");
+            shopDatabase = ShopDatabaseSO.CreateDevelopmentDatabase(heroDatabase);
+        }
+
+        try
+        {
+            ShopManager shopManager = ShopManager.Instance;
+            shopManager.Initialize(shopDatabase);
+            shopManager.LoadSaveData(saveManager.CurrentData);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError($"상점 초기화 실패. 상점 기능 비활성화함. {exception.Message}");
+        }
+
         AchievementDatabaseSO achievementDatabase = Resources.Load<AchievementDatabaseSO>("GameData/AchievementDatabase");
         if (achievementDatabase == null)
         {
