@@ -1367,6 +1367,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 944d5e8cf077b1446be53f9b80484cca, type: 2}
     - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
+      propertyPath: heroPanelTransition
+      value: 
+      objectReference: {fileID: 8121345903935097847}
+    - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
       propertyPath: resonancePanelController
       value: 
       objectReference: {fileID: 7602921852443581409}
@@ -1602,6 +1606,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &8121345903935097847 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5487349710442056824, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
+  m_PrefabInstance: {fileID: 4364597645895649167}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 930848323708950839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 979130b6285302f4e968220fe362287f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPanelTransition
 --- !u!114 &9208500225815482318 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4852910372082665537, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
