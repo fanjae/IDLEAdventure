@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,27 +14,16 @@ public class EquipmentPanelController : MonoBehaviour
     [Header("패널 이동")]
     [SerializeField] private Button backButton;
     [SerializeField] private GameObject equipmentRoot;
-    [SerializeField] private MainBottomPanelController mainBottomPanelController;
 
     [Header("패널 연출")]
-    [SerializeField] private RectTransform equipmentContentRect;
-    [SerializeField] private float moveDistance = 100f;
-    [SerializeField] private float openDuration = 0.25f;
-    [SerializeField] private float closeDuration = 0.2f;
-
-    private Vector2 equipmentContentOriginPosition;
-    private Tween panelTween;
+    [SerializeField] private UIPanelTransition panelTransition;
 
     private InventoryController inventoryController;
     private HeroClassType currentClass;
     private Tween classChangeTween;
-    private void Awake()
-    {
-        if (equipmentContentRect != null)
-        {
-            equipmentContentOriginPosition = equipmentContentRect.anchoredPosition;
-        }
-    }
+
+    public event Action OnClosed;
+
     private void Start()
     {
         if (panelView != null)
@@ -54,47 +44,44 @@ public class EquipmentPanelController : MonoBehaviour
         Initialize(initialClass);
     }
 
-    // 장비 패널 오픈 연출
-    public void PlayOpenAnimation()
+    private void OnDestroy()
     {
-        if (equipmentContentRect == null || equipmentContentGroup == null)
+        classChangeTween?.Kill();
+
+        if (panelView != null)
+        {
+            panelView.OnAutoEquipClicked -= HandleAutoEquipClicked;
+        }
+
+        if (classSelectorView != null)
+        {
+            classSelectorView.OnClassSelected -= HandleClassSelected;
+        }
+
+        if (backButton != null)
+        {
+            backButton.onClick.RemoveListener(HandleBackButtonClicked);
+        }
+
+        if (inventoryController == null)
         {
             return;
         }
 
-        // 이전 오픈 연출이 남아있으면 중단
-        panelTween?.Kill();
+        inventoryController.OnInventoryChanged -= Refresh;
+        inventoryController.OnEquipmentChanged -= Refresh;
+    }
 
-        Vector2 startPosition = equipmentContentOriginPosition + Vector2.down * moveDistance;
-
-        // 아래 위치와 투명 상태에서 시작
-        equipmentContentRect.anchoredPosition = startPosition;
-        equipmentContentGroup.alpha = 0f;
-        equipmentContentGroup.interactable = false;
-        equipmentContentGroup.blocksRaycasts = false;
-
-        Sequence sequence = DOTween.Sequence();
-
-        // 아래에서 위로 이동하면서 동시에 페이드인
-        sequence.Join(equipmentContentRect.DOAnchorPos(equipmentContentOriginPosition, openDuration).SetEase(Ease.OutCubic));
-        sequence.Join(equipmentContentGroup.DOFade(1f, openDuration));
-
-        sequence.OnComplete(() =>
-        {
-            // 다음 오픈을 위해 장비 UI 상태 복원
-            equipmentContentRect.anchoredPosition = equipmentContentOriginPosition;
-            equipmentContentGroup.alpha = 1f;
-            equipmentContentGroup.interactable = true;
-            equipmentContentGroup.blocksRaycasts = true;
-        });
-
-        panelTween = sequence;
+    // 장비 패널 오픈 연출
+    public void PlayOpenAnimation()
+    {
+        panelTransition?.PlayOpen();
     }
 
     // 장비 패널에서 사용할 현재 클래스 설정
     public void Initialize(HeroClassType heroClass)
     {
-        if (!InventoryManager.Instance.IsInitialized)
+        if (InventoryManager.Instance == null || !InventoryManager.Instance.IsInitialized)
         {
             return;
         }
@@ -126,6 +113,7 @@ public class EquipmentPanelController : MonoBehaviour
         {
             panelView.SetClassTitle(heroClass);
         }
+
         Refresh();
     }
 
@@ -146,35 +134,6 @@ public class EquipmentPanelController : MonoBehaviour
         RefreshEquipmentSlot(EquipmentSlotType.Head);
         RefreshEquipmentSlot(EquipmentSlotType.Body);
         RefreshEquipmentSlot(EquipmentSlotType.Legs);
-    }
-
-    private void OnDestroy()
-    {
-        classChangeTween?.Kill();
-        panelTween?.Kill();
-
-        if (panelView != null)
-        {
-            panelView.OnAutoEquipClicked -= HandleAutoEquipClicked;
-        }
-
-        if (classSelectorView != null)
-        {
-            classSelectorView.OnClassSelected -= HandleClassSelected;
-        }
-
-        if (backButton != null)
-        {
-            backButton.onClick.RemoveListener(HandleBackButtonClicked);
-        }
-
-        if (inventoryController == null)
-        {
-            return;
-        }
-
-        inventoryController.OnInventoryChanged -= Refresh;
-        inventoryController.OnEquipmentChanged -= Refresh;
     }
 
     // 일괄 장착 버튼 클릭 처리
@@ -208,7 +167,7 @@ public class EquipmentPanelController : MonoBehaviour
             return;
         }
 
-        // Fade 대상 없으면 바로 클래스를 변경
+        // Fade 대상이 없으면 바로 클래스를 변경
         if (equipmentContentGroup == null)
         {
             SetClass(heroClass);
@@ -238,47 +197,29 @@ public class EquipmentPanelController : MonoBehaviour
             });
     }
 
-    // 장비 패널 종료 후 메인 하단 메뉴로 복귀
+    // 장비 패널 닫기
     private void HandleBackButtonClicked()
     {
-        if (equipmentContentRect == null || equipmentContentGroup == null || equipmentRoot == null)
+        if (equipmentRoot == null)
         {
             return;
         }
 
-        // 실행 중인 장비 UI 연출 종료
-        panelTween?.Kill();
         classChangeTween?.Kill();
 
-        equipmentContentGroup.interactable = false;
-        equipmentContentGroup.blocksRaycasts = false;
-
-        Vector2 closePosition = equipmentContentOriginPosition + Vector2.down * moveDistance;
-
-        Sequence sequence = DOTween.Sequence();
-
-        // 아래로 이동하면서 동시에 페이드아웃
-        sequence.Join(equipmentContentRect.DOAnchorPos(closePosition, closeDuration).SetEase(Ease.InCubic));
-        sequence.Join(equipmentContentGroup.DOFade(0f, closeDuration));
-
-        sequence.OnComplete(() =>
+        if (panelTransition == null)
         {
-            equipmentRoot.SetActive(false);
+            ClosePanel();
+            return;
+        }
 
-            // 다음 오픈을 위해 장비 UI 상태 복원
-            equipmentContentRect.anchoredPosition = equipmentContentOriginPosition;
-            equipmentContentGroup.alpha = 1f;
-            equipmentContentGroup.interactable = true;
-            equipmentContentGroup.blocksRaycasts = true;
+        panelTransition.PlayClose(ClosePanel);
+    }
 
-            // 하단 메뉴 선택 상태 초기화 후 다시 표시
-            if (mainBottomPanelController != null)
-            {
-                mainBottomPanelController.ResetSelectedMenu();
-                mainBottomPanelController.gameObject.SetActive(true);
-            }
-        });
-
-        panelTween = sequence;
+    // 장비 패널 종료 처리
+    private void ClosePanel()
+    {
+        equipmentRoot.SetActive(false);
+        OnClosed?.Invoke();
     }
 }
