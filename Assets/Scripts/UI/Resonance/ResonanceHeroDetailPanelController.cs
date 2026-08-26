@@ -6,6 +6,9 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
 {
     private const string EquipmentStatColor = "#FFD54F";
 
+    [Header("패널 연출")]
+    [SerializeField] private UIPanelTransition heroPanelTransition;
+
     [SerializeField] private ResonancePanelController resonancePanelController;
     [SerializeField] private HeroDetailViewSpawner heroViewSpawner;
 
@@ -106,6 +109,7 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
         if (heroPanel != null)
         {
             heroPanel.SetActive(true);
+            heroPanelTransition?.PlayOpen();
         }
 
         if (heroViewSpawner != null)
@@ -124,15 +128,13 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
         // 선택된 영웅 정보 초기화
         selectedHeroId = null;
 
-        if (heroPanel != null)
+        if (heroPanelTransition == null)
         {
-            heroPanel.SetActive(false);
+            CloseHeroPanel();
+            return;
         }
 
-        if (resonanceHeroContentPanel != null)
-        {
-            resonanceHeroContentPanel.SetActive(true);
-        }
+        heroPanelTransition.PlayClose(CloseHeroPanel);
     }
 
     // 선택된 영웅 정보 갱신
@@ -257,5 +259,20 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
         }
 
         RefreshHeroInfo(hero);
+    }
+
+    // 영웅 상세 패널 종료 처리
+    private void CloseHeroPanel()
+    {
+        if (heroPanel != null)
+        {
+            heroPanel.SetActive(false);
+        }
+
+        if (resonanceHeroContentPanel != null)
+        {
+            resonanceHeroContentPanel.SetActive(true);
+            resonancePanelController?.PlayOpenAnimation();
+        }
     }
 }
