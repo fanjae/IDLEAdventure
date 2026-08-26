@@ -21,8 +21,15 @@ public sealed class FormationHeroListController : MonoBehaviour
 
     private void OnDestroy()
     {
-        ClearCards();
         Unsubscribe();
+
+        foreach (FormationHeroCardView cardView in cardViews)
+        {
+            if (cardView != null)
+            {
+                cardView.OnSelected -= HandleHeroSelected;
+            }
+        }
     }
 
     // 보유 영웅 데이터를 기준으로 목록 초기화
@@ -56,15 +63,48 @@ public sealed class FormationHeroListController : MonoBehaviour
     // 현재 보유 영웅 목록을 기준으로 카드 갱신
     private void Refresh()
     {
-        ClearCards();
+        if (heroController == null)
+        {
+            return;
+        }
+
+        int visibleCount = 0;
 
         foreach (OwnedHeroData hero in heroController.Heroes)
         {
-            FormationHeroCardView cardView = Instantiate(heroCardPrefab, content);
+            FormationHeroCardView cardView = GetCardView(visibleCount);
             cardView.Bind(hero, classIconCatalog);
-            cardView.OnSelected += HandleHeroSelected;
+            cardView.gameObject.SetActive(true);
 
+            visibleCount++;
+        }
+
+        HideUnusedCards(visibleCount);
+    }
+
+    // 필요한 수만큼 영웅 카드 생성
+    private FormationHeroCardView GetCardView(int index)
+    {
+        while (cardViews.Count <= index)
+        {
+            FormationHeroCardView cardView = Instantiate(heroCardPrefab, content);
+            cardView.OnSelected += HandleHeroSelected;
+            cardView.gameObject.SetActive(false);
             cardViews.Add(cardView);
+        }
+
+        return cardViews[index];
+    }
+
+    // 현재 사용하지 않는 영웅 카드 숨김
+    private void HideUnusedCards(int visibleCount)
+    {
+        for (int index = visibleCount; index < cardViews.Count; index++)
+        {
+            if (cardViews[index] != null)
+            {
+                cardViews[index].gameObject.SetActive(false);
+            }
         }
     }
 
@@ -83,23 +123,6 @@ public sealed class FormationHeroListController : MonoBehaviour
     private void HandleHeroLevelChanged(OwnedHeroData _)
     {
         Refresh();
-    }
-
-    // 생성된 영웅 카드 제거
-    private void ClearCards()
-    {
-        foreach (FormationHeroCardView cardView in cardViews)
-        {
-            if (cardView == null)
-            {
-                continue;
-            }
-
-            cardView.OnSelected -= HandleHeroSelected;
-            Destroy(cardView.gameObject);
-        }
-
-        cardViews.Clear();
     }
 
     // 영웅 데이터 이벤트 구독 해제
