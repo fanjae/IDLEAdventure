@@ -7,7 +7,7 @@ public sealed class ResonanceSlotView : MonoBehaviour
     [SerializeField] private ResonanceHeroCardView heroCardView;
 
     // 공명 슬롯에 등록된 영웅 정보 표시
-    public void Bind(OwnedHeroData hero, HeroClassIconCatalog classIconCatalog, Action<string> onClicked)
+    public void Bind(OwnedHeroData hero, HeroClassIconCatalog classIconCatalog, Action<string> onClicked, Action<string> onRightClicked = null)
     {
         if (heroCardView == null)
         {
@@ -21,7 +21,7 @@ public sealed class ResonanceSlotView : MonoBehaviour
         }
 
         heroCardView.gameObject.SetActive(true);
-        heroCardView.Bind(hero, classIconCatalog, onClicked);
+        heroCardView.Bind(hero, classIconCatalog, onClicked, onRightClicked);
     }
 
     // 공명 슬롯을 빈 상태로 표시

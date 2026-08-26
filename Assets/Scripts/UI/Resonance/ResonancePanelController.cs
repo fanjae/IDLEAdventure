@@ -184,7 +184,7 @@ public sealed class ResonancePanelController : MonoBehaviour
                 continue;
             }
 
-            slotView.Bind(hero, classIconCatalog, HandleResonanceSlotClicked);
+            slotView.Bind(hero, classIconCatalog, HandleResonanceSlotClicked, HandleHeroCardRightClicked);
         }
     }
 
