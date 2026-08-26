@@ -21,6 +21,10 @@ public sealed class MainBottomPanelController : MonoBehaviour
     [SerializeField] private GameObject equipmentRoot;
     [SerializeField] private EquipmentPanelController equipmentPanelController;
 
+    [Header("소집 패널")]
+    [SerializeField] private GameObject gachaRoot;
+    [SerializeField] private UIPanelTransition gachaPanelTransition;
+
     [Header("자동 스테이지")]
     [SerializeField] private Button autoStageButton;
     [SerializeField] private AutoStagePanelController autoStagePanelController;
@@ -145,6 +149,41 @@ public sealed class MainBottomPanelController : MonoBehaviour
     private void HandleGachaButtonClicked()
     {
         SetSelectedMenu(BottomMenuType.Gacha);
+
+        if (gachaRoot == null)
+        {
+            return;
+        }
+
+        // 소집 UI 활성화 후 오픈 연출 재생
+        gachaRoot.SetActive(true);
+        gachaPanelTransition?.PlayOpen();
+        gameObject.SetActive(false);
+    }
+
+    // 소집 패널 닫기
+    public void CloseGacha()
+    {
+        if (gachaRoot == null)
+        {
+            return;
+        }
+
+        if (gachaPanelTransition == null)
+        {
+            CloseGachaPanel();
+            return;
+        }
+
+        gachaPanelTransition.PlayClose(CloseGachaPanel);
+    }
+
+    // 소집 패널 종료 처리
+    private void CloseGachaPanel()
+    {
+        gachaRoot.SetActive(false);
+        SetSelectedMenu(BottomMenuType.None);
+        gameObject.SetActive(true);
     }
 
     // 전체 메뉴 선택
