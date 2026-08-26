@@ -882,6 +882,8 @@ GameObject:
   - component: {fileID: 3385988772016058656}
   - component: {fileID: 5243890369762756520}
   - component: {fileID: 8628242885007225869}
+  - component: {fileID: 378928316717965870}
+  - component: {fileID: 5487349710442056824}
   m_Layer: 5
   m_Name: HeroPanel
   m_TagString: Untagged
@@ -991,6 +993,36 @@ MonoBehaviour:
     localPosition: {x: 0, y: -1, z: 0}
     localEulerAngles: {x: 0, y: 180, z: 0}
     localScale: {x: 2, y: 2, z: 2}
+--- !u!225 &378928316717965870
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3492862505966722744}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &5487349710442056824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3492862505966722744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 979130b6285302f4e968220fe362287f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPanelTransition
+  canvasGroup: {fileID: 378928316717965870}
+  panelTransform: {fileID: 6432283989085697407}
+  openOffset: {x: 0, y: -100}
+  closeOffset: {x: 0, y: -100}
+  openDuration: 0.2
+  closeDuration: 0.2
 --- !u!1 &3745106083882016463
 GameObject:
   m_ObjectHideFlags: 0
