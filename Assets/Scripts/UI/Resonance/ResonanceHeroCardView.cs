@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 // 공명 UI에서 영웅 한 명의 정보를 표시
 public sealed class ResonanceHeroCardView : MonoBehaviour, IPointerClickHandler
-{
+{ 
     [SerializeField] private Button button;
     [SerializeField] private Image heroPortrait;
     [SerializeField] private Image classIcon;
@@ -36,10 +36,8 @@ public sealed class ResonanceHeroCardView : MonoBehaviour, IPointerClickHandler
         onClicked?.Invoke(heroId);
     }
 
-
-
     // 보유 영웅 정보를 카드에 표시
-    public void Bind(OwnedHeroData hero,HeroClassIconCatalog classIconCatalog,Action<string> onClicked = null,Action<string> onRightClicked = null)
+    public void Bind(OwnedHeroData hero, HeroClassIconCatalog classIconCatalog, Action<string> onClicked = null, Action<string> onRightClicked = null)
     {
         if (hero == null || hero.HeroData == null)
         {
@@ -70,13 +68,6 @@ public sealed class ResonanceHeroCardView : MonoBehaviour, IPointerClickHandler
         if (levelText != null)
         {
             levelText.text = "레벨";
-        }
-    }
-    private void OnDestroy()
-    {
-        if (button != null)
-        {
-            button.onClick.RemoveListener(HandleClicked);
         }
     }
 
