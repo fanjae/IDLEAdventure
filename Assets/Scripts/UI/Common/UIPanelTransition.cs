@@ -32,7 +32,7 @@ public sealed class UIPanelTransition : MonoBehaviour
     }
 
     // 패널 오픈 연출
-    public void PlayOpen()
+    public void PlayOpen(Action onComplete = null)
     {
         if (canvasGroup == null || panelTransform == null)
         {
@@ -48,7 +48,12 @@ public sealed class UIPanelTransition : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
         sequence.Join(panelTransform.DOAnchorPos(originPosition, openDuration).SetEase(Ease.OutCubic));
         sequence.Join(canvasGroup.DOFade(1f, openDuration));
-        sequence.OnComplete(() => SetInteractable(true));
+
+        sequence.OnComplete(() =>
+        {
+            SetInteractable(true);
+            onComplete?.Invoke();
+        });
 
         currentTween = sequence;
     }
