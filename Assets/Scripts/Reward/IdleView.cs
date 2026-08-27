@@ -68,7 +68,7 @@ public class IdleView : MonoBehaviour
             // 방치 중인 시간 float형을 시간 길이인 TimeSpan형으로 형변환.
             TimeSpan idleTimeSpan = TimeSpan.FromSeconds(currentIdleTime);
             // 시간 형태에 맞는 형태로 text 출력.
-            idleTimeText.text = string.Format("{0:d2}:{1:D2}", idleTimeSpan.Minutes, idleTimeSpan.Seconds);
+            idleTimeText.text = $"{(int)idleTimeSpan.TotalHours:D2}:{idleTimeSpan.Minutes:D2}:{idleTimeSpan.Seconds:D2}";
 
             // 방치 시간이 최대로 찼다면 중지.
             if (currentIdleTime >= maxIdleTime) break;

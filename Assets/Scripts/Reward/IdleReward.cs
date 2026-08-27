@@ -12,7 +12,7 @@ public class IdleReward : MonoBehaviour
     [Header("Idle Reward Setting")]
     [SerializeField] private TextAsset rewardCSVData;       // 방치 보상 데이터 테이블.
     [SerializeField] private float maxIdleTime = 100.0f;    // 최대 방치 시간. (단위: 초)
-    [SerializeField] private int testClearStageNum;         // 현재는 스테이지 관리 매니저가 없기에 임의 스테이지 번호.
+    //[SerializeField] private int testClearStageNum;         // 현재는 스테이지 관리 매니저가 없기에 임의 스테이지 번호.
 
     // 스테이지 번호 별 보상 테이블 저장 딕셔너리.
     private Dictionary<int, StageRewardData> stageRewards = new Dictionary<int, StageRewardData>();
@@ -69,7 +69,7 @@ public class IdleReward : MonoBehaviour
     public void OnClickIdleRewardButton()
     {
         // 최대 스테이지 번호도 받아와서 예외처리 추가 해주는 게 좋아보임.
-        if (testClearStageNum <= 0) return;
+        if (StageRuntimeData.SelectedStageId <= 0) return;
 
         // 보상 기준 시간.
         DateTime lastTime = GetLastRewardTime();
@@ -78,7 +78,7 @@ public class IdleReward : MonoBehaviour
         float currentIdleTime = IdleCalculator.GetRewardTime(lastTime, maxIdleTime);
 
         // 스테이지별 보상 데이터 딕셔너리에서 특정 스테이지 번호가 있는지 확인 및 해당 스테이지의 보상 데이터 반환
-        if (stageRewards.TryGetValue(testClearStageNum, out StageRewardData stageData))
+        if (stageRewards.TryGetValue(StageRuntimeData.SelectedStageId, out StageRewardData stageData))
         {
             // 보상 id 별 계산
             Dictionary<string, RewardResult> rewards =
@@ -176,5 +176,33 @@ public class IdleReward : MonoBehaviour
                 Amount = pair.Value
             });
         }
+    }
+
+    public Dictionary<string, int> GetExpectedRewards()
+    {
+        Dictionary<string, int> expectedRewards = new Dictionary<string, int>();
+
+        if (StageRuntimeData.SelectedStageId <= 0) return expectedRewards;
+
+        // 기준 시간과 방치 시간 계산
+        DateTime lastTime = GetLastRewardTime();
+        float currentIdleTime = IdleCalculator.GetRewardTime(lastTime, maxIdleTime);
+
+        // 현재 스테이지의 보상 데이터가 있다면 계산
+        if (stageRewards.TryGetValue(StageRuntimeData.SelectedStageId, out StageRewardData stageData))
+        {
+            Dictionary<string, RewardResult> rewards =
+                IdleCalculator.CalculateRewards(currentIdleTime, maxIdleTime, stageData, leftRewards);
+
+            foreach (var reward in rewards)
+            {
+                if (reward.Value.FinalReward > 0)
+                {
+                    expectedRewards[reward.Key] = reward.Value.FinalReward;
+                }
+            }
+        }
+
+        return expectedRewards;
     }
 }
