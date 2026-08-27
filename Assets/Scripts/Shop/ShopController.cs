@@ -7,6 +7,8 @@ public sealed class ShopController
 {
     private readonly ShopDatabaseSO database;
     private readonly Func<DateTime> utcNowProvider;
+    private readonly Func<int> currentStageIdProvider;
+    private readonly Func<int, bool> hasDefeatedStageProvider;
     private readonly HashSet<string> purchasedOnceProductIds = new(StringComparer.Ordinal);
     private readonly Dictionary<string, int> dailyPurchaseCounts = new(StringComparer.Ordinal);
     private readonly HashSet<int> claimedAttendanceRewardIndices = new();
@@ -22,12 +24,42 @@ public sealed class ShopController
     public IReadOnlyList<ShopRewardEntry> AttendanceRewards => database.AttendanceRewardDatabase.Rewards;
 
     // 데이터베이스와 테스트 가능한 UTC 시각 공급자를 연결함
-    public ShopController(ShopDatabaseSO database, Func<DateTime> utcNowProvider = null)
+    public ShopController(
+        ShopDatabaseSO database,
+        Func<DateTime> utcNowProvider = null,
+        Func<int> currentStageIdProvider = null,
+        Func<int, bool> hasDefeatedStageProvider = null)
     {
         this.database = database ?? throw new ArgumentNullException(nameof(database));
         this.utcNowProvider = utcNowProvider ?? (() => DateTime.UtcNow);
+        this.currentStageIdProvider = currentStageIdProvider ?? (() => new StageProgressController().CurrentStageId);
+        this.hasDefeatedStageProvider = hasDefeatedStageProvider ?? (stageId => new StageProgressController().HasDefeatedStage(stageId));
         EnsureDailyState();
         EnsureAttendanceState();
+    }
+
+    // 기본 노출 설정과 스테이지 클리어·패배 조건을 모두 만족한 상품만 표시함
+    public bool IsProductVisible(ShopProductSO product) =>
+        product != null && product.IsVisible && product.IsUnlockedAtCurrentProgress(currentStageIdProvider(), hasDefeatedStageProvider);
+
+    // 아직 구매하지 않은 표시 가능한 1회 한정 패키지를 표시 순서대로 반환함
+    public IReadOnlyList<ShopProductSO> GetUnpurchasedPackages()
+    {
+        EnsureDailyState();
+
+        return database.Products
+            .Where(item => item != null && item.Category == ShopProductCategory.Package &&
+                           item.PurchaseLimitType == ShopPurchaseLimitType.Once &&
+                           IsProductVisible(item) && !purchasedOnceProductIds.Contains(item.ProductId))
+            .OrderBy(item => item.DisplayOrder)
+            .ToList();
+    }
+
+    // 아직 구매하지 않은 표시 가능한 1회 한정 패키지 중 먼저 안내할 상품을 반환함
+    public bool TryGetFirstUnpurchasedPackage(out ShopProductSO product)
+    {
+        product = GetUnpurchasedPackages().FirstOrDefault();
+        return product != null;
     }
 
     // 상품의 현재 구매 가능 상태와 남은 일일 구매 횟수를 조회함
@@ -43,6 +75,11 @@ public sealed class ShopController
         if (!product.IsVisible)
         {
             return new ShopProductAvailability(product, false, ShopFailure.ProductHidden, 0);
+        }
+
+        if (!product.IsUnlockedAtCurrentProgress(currentStageIdProvider(), hasDefeatedStageProvider))
+        {
+            return new ShopProductAvailability(product, false, ShopFailure.StageRequirementNotMet, 0);
         }
 
         if (product.PurchaseLimitType == ShopPurchaseLimitType.Once && purchasedOnceProductIds.Contains(product.ProductId))
@@ -412,6 +449,7 @@ public enum ShopFailure
     None,
     ProductNotFound,
     ProductHidden,
+    StageRequirementNotMet,
     AlreadyPurchased,
     DailyPurchaseLimitReached,
     NotEnoughCurrency,

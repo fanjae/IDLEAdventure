@@ -6,10 +6,12 @@ using UnityEngine;
 public sealed class GachaDatabaseSO : ScriptableObject
 {
     [SerializeField] private List<GachaBannerDataSO> banners = new();
+    [SerializeField] private GachaHeroTierDatabaseSO heroTierDatabase;
 
     private Dictionary<string, GachaBannerDataSO> bannerMap;
 
     public IReadOnlyList<GachaBannerDataSO> Banners => banners;
+    public GachaHeroTierDatabaseSO HeroTierDatabase => heroTierDatabase;
 
     // 배너 ID로 소환 데이터를 조회함
     public bool TryGetBanner(string bannerId, out GachaBannerDataSO banner)
@@ -36,6 +38,7 @@ public sealed class GachaDatabaseSO : ScriptableObject
         GachaDatabaseSO database = CreateInstance<GachaDatabaseSO>();
         database.name = "RuntimeDevelopmentGachaDatabase";
         database.banners = new List<GachaBannerDataSO> { GachaBannerDataSO.CreateDevelopmentBanner(heroDatabase) };
+        database.heroTierDatabase = GachaHeroTierDatabaseSO.CreateDevelopmentDatabase(heroDatabase);
         return database;
     }
 

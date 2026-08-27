@@ -53,6 +53,16 @@ public class MainUIController : MonoBehaviour
         CloseAllPopups();
     }
 
+    // 메인 씬 최초 진입 시 미구매 1회 한정 패키지가 있으면 상점을 열어 구매 팝업을 표시함
+    private void Start()
+    {
+        if (ShopManager.TryGetExistingInstance(out ShopManager shopManager) && shopManager.IsInitialized &&
+            shopManager.Controller.TryGetFirstUnpurchasedPackage(out _))
+        {
+            OpenShop();
+        }
+    }
+
     private void OnDestroy()
     {
         if (Instance == this)

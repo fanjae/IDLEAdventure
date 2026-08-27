@@ -44,9 +44,19 @@ public sealed class ShopPanelPresenter : MonoBehaviour
 
     private readonly List<ShopFeaturedProductView> generatedBanners = new();
     private readonly List<ShopAttendanceRewardView> generatedAttendanceCards = new();
+    private readonly Queue<string> unpurchasedPackageNoticeQueue = new();
     private ShopController subscribedController;
     private ShopTab selectedTab = ShopTab.Exchange;
     private string pendingProductId;
+    [SerializeField] private GameObject unpurchasedPackageNoticePopup;
+    private Image unpurchasedPackageNoticeIcon;
+    private TMP_Text unpurchasedPackageNoticeNameText;
+    private TMP_Text unpurchasedPackageNoticeDescriptionText;
+    private TMP_Text unpurchasedPackageNoticePriceText;
+    private Button unpurchasedPackageNoticePurchaseButton;
+    private Button unpurchasedPackageNoticeLaterButton;
+    private string pendingPackageNoticeProductId;
+    private bool showNextPackageNoticeAfterPurchaseConfirm;
 
     // 프리팹에 연결한 버튼 이벤트를 등록함
     private void Awake()
@@ -58,6 +68,7 @@ public sealed class ShopPanelPresenter : MonoBehaviour
         purchaseConfirmButton.onClick.AddListener(ConfirmPurchase);
         purchaseCancelButton.onClick.AddListener(ClosePurchaseConfirm);
         purchaseConfirmPopup.SetActive(false);
+        ConfigureUnpurchasedPackageNoticePopup();
     }
 
     // 페이지가 켜지면 상점 상태 변경을 구독함
@@ -65,6 +76,7 @@ public sealed class ShopPanelPresenter : MonoBehaviour
     {
         Subscribe();
         Refresh();
+        ShowUnpurchasedPackagePopup();
     }
 
     // 페이지가 꺼지면 이벤트 구독을 해제함
@@ -101,6 +113,93 @@ public sealed class ShopPanelPresenter : MonoBehaviour
     {
         selectedTab = ShopTab.Attendance;
         Refresh();
+    }
+
+    // 상점에 들어왔을 때 아직 구매하지 않은 1회 한정 패키지를 안내 패널로 순서대로 표시함
+    private void ShowUnpurchasedPackagePopup()
+    {
+        if (unpurchasedPackageNoticePopup == null || unpurchasedPackageNoticePopup.activeSelf ||
+            !ShopManager.TryGetExistingInstance(out ShopManager shopManager) || !shopManager.IsInitialized)
+        {
+            return;
+        }
+
+        unpurchasedPackageNoticeQueue.Clear();
+        foreach (ShopProductSO product in shopManager.Controller.GetUnpurchasedPackages())
+            unpurchasedPackageNoticeQueue.Enqueue(product.ProductId);
+
+        ShowNextUnpurchasedPackageNotice();
+    }
+
+    // 안내 대기열의 다음 미구매 패키지 정보를 별도 패널에 표시함
+    private void ShowNextUnpurchasedPackageNotice()
+    {
+        pendingPackageNoticeProductId = null;
+
+        if (unpurchasedPackageNoticePopup == null ||
+            !ShopManager.TryGetExistingInstance(out ShopManager shopManager) || !shopManager.IsInitialized)
+        {
+            return;
+        }
+
+        while (unpurchasedPackageNoticeQueue.Count > 0)
+        {
+            string productId = unpurchasedPackageNoticeQueue.Dequeue();
+            ShopProductAvailability availability = shopManager.Controller.GetAvailability(productId);
+            ShopProductSO product = availability.Product;
+            if (product == null || !availability.CanPurchase)
+                continue;
+
+            pendingPackageNoticeProductId = productId;
+            unpurchasedPackageNoticeIcon.sprite = product.Icon != null ? product.Icon : product.Artwork != null ? product.Artwork : GetCurrencyIcon(product.PriceCurrency);
+            unpurchasedPackageNoticeNameText.text = product.DisplayName;
+            unpurchasedPackageNoticeDescriptionText.text = product.Description;
+            unpurchasedPackageNoticePriceText.text = ShopProductCardView.GetPriceText(product);
+            unpurchasedPackageNoticePopup.SetActive(true);
+            return;
+        }
+
+        unpurchasedPackageNoticePopup.SetActive(false);
+    }
+
+    // 안내 패널의 구매 이동 버튼은 실제 구매 전 기존 구매 확인창을 한 번 더 표시함
+    private void OpenPackageNoticePurchaseConfirm()
+    {
+        string productId = pendingPackageNoticeProductId;
+        CloseUnpurchasedPackageNotice();
+
+        if (string.IsNullOrEmpty(productId))
+        {
+            ShowNextUnpurchasedPackageNotice();
+            return;
+        }
+
+        selectedTab = ShopTab.Package;
+        Refresh();
+        OpenPurchaseConfirm(productId);
+
+        if (purchaseConfirmPopup.activeSelf)
+        {
+            showNextPackageNoticeAfterPurchaseConfirm = true;
+            return;
+        }
+
+        ShowNextUnpurchasedPackageNotice();
+    }
+
+    // 나중에 보기로 넘긴 패키지는 이번 상점 진입의 안내 대기열에서만 건너뜀
+    private void SkipUnpurchasedPackageNotice()
+    {
+        CloseUnpurchasedPackageNotice();
+        ShowNextUnpurchasedPackageNotice();
+    }
+
+    // 별도 안내 패널을 닫고 현재 선택 정보를 비움
+    private void CloseUnpurchasedPackageNotice()
+    {
+        pendingPackageNoticeProductId = null;
+        if (unpurchasedPackageNoticePopup != null)
+            unpurchasedPackageNoticePopup.SetActive(false);
     }
 
     // 현재 탭과 저장된 상점 상태를 실제 UI에 반영함
@@ -141,13 +240,17 @@ public sealed class ShopPanelPresenter : MonoBehaviour
             return;
         }
 
-        List<ShopProductSO> products = controller.Products.Where(item => item != null && item.IsVisible && item.Category == category).OrderBy(item => item.DisplayOrder).ToList();
+        List<ShopProductSO> products = controller.Products
+            .Where(item => item != null && item.Category == category && controller.IsProductVisible(item))
+            .OrderBy(item => item.DisplayOrder)
+            .ToList();
         featuredBanner.gameObject.SetActive(products.Count > 0);
         for (int index = 0; index < products.Count; index++)
         {
             ShopFeaturedProductView banner = index == 0 ? featuredBanner : Instantiate(featuredBanner, content);
             banner.gameObject.SetActive(true);
-            banner.Bind(products[index], OpenPurchaseConfirm);
+            ShopProductSO product = products[index];
+            banner.Bind(product, controller.GetAvailability(product.ProductId), OpenPurchaseConfirm);
 
             if (index > 0)
                 generatedBanners.Add(banner);
@@ -261,6 +364,77 @@ public sealed class ShopPanelPresenter : MonoBehaviour
     {
         pendingProductId = null;
         purchaseConfirmPopup.SetActive(false);
+
+        if (!showNextPackageNoticeAfterPurchaseConfirm)
+            return;
+
+        showNextPackageNoticeAfterPurchaseConfirm = false;
+        ShowNextUnpurchasedPackageNotice();
+    }
+
+    // 프리팹에 배치한 정보 전용 안내 패널의 버튼과 표시 참조를 구성함
+    private void ConfigureUnpurchasedPackageNoticePopup()
+    {
+        if (unpurchasedPackageNoticePopup == null)
+            return;
+
+        unpurchasedPackageNoticePopup.SetActive(false);
+
+        Transform noticeTransform = unpurchasedPackageNoticePopup.transform;
+        unpurchasedPackageNoticeIcon = FindDescendant(noticeTransform, "ProductIcon")?.GetComponent<Image>();
+        unpurchasedPackageNoticeNameText = FindDescendant(noticeTransform, "ProductName")?.GetComponent<TMP_Text>();
+        unpurchasedPackageNoticeDescriptionText = FindDescendant(noticeTransform, "ProductDescription")?.GetComponent<TMP_Text>();
+        unpurchasedPackageNoticePriceText = FindDescendant(noticeTransform, "Price")?.GetComponent<TMP_Text>();
+        unpurchasedPackageNoticePurchaseButton = FindDescendant(noticeTransform, "ConfirmButton")?.GetComponent<Button>();
+        unpurchasedPackageNoticeLaterButton = FindDescendant(noticeTransform, "CancelButton")?.GetComponent<Button>();
+
+        TMP_Text headerText = FindDescendant(noticeTransform, "Header")?.GetComponent<TMP_Text>();
+        if (headerText != null)
+            headerText.text = "미구매 패키지";
+
+        ConfigureNoticeButton(unpurchasedPackageNoticePurchaseButton, "구매하러 가기", OpenPackageNoticePurchaseConfirm);
+        ConfigureNoticeButton(unpurchasedPackageNoticeLaterButton, "나중에", SkipUnpurchasedPackageNotice);
+
+        if (unpurchasedPackageNoticeIcon == null || unpurchasedPackageNoticeNameText == null ||
+            unpurchasedPackageNoticeDescriptionText == null || unpurchasedPackageNoticePriceText == null ||
+            unpurchasedPackageNoticePurchaseButton == null || unpurchasedPackageNoticeLaterButton == null)
+        {
+            Debug.LogWarning("미구매 패키지 안내 패널 구성 요소를 찾을 수 없습니다.", this);
+        }
+    }
+
+    // 안내 패널 버튼의 문구와 클릭 동작을 지정함
+    private static void ConfigureNoticeButton(Button button, string label, UnityEngine.Events.UnityAction action)
+    {
+        if (button == null)
+            return;
+
+        TMP_Text labelText = button.GetComponentInChildren<TMP_Text>(true);
+        if (labelText != null)
+            labelText.text = label;
+
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(action);
+    }
+
+    // 이름으로 자식 UI를 찾아 별도 안내 패널의 복제본 참조를 얻음
+    private static Transform FindDescendant(Transform parent, string childName)
+    {
+        if (parent == null)
+            return null;
+
+        for (int index = 0; index < parent.childCount; index++)
+        {
+            Transform child = parent.GetChild(index);
+            if (child.name == childName)
+                return child;
+
+            Transform found = FindDescendant(child, childName);
+            if (found != null)
+                return found;
+        }
+
+        return null;
     }
 
     // 선택한 날짜의 열린 출석 선물 수령을 요청함
@@ -326,6 +500,7 @@ public sealed class ShopPanelPresenter : MonoBehaviour
         ShopFailure.NotEnoughCurrency => "재화가 부족함",
         ShopFailure.AlreadyPurchased => "이미 구매한 상품임",
         ShopFailure.DailyPurchaseLimitReached => "오늘 구매 횟수를 모두 사용함",
+        ShopFailure.StageRequirementNotMet => "아직 등장 조건을 달성하지 못함",
         ShopFailure.AttendanceAlreadyClaimed => "오늘 출석 선물을 이미 받음",
         ShopFailure.AttendanceNotAvailableYet => "아직 수령할 수 없는 날짜임",
         ShopFailure.RewardHeroAlreadyOwned => "이미 보유한 영웅이라 구매할 수 없음",

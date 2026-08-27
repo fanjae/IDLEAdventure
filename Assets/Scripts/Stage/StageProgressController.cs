@@ -38,6 +38,28 @@ public sealed class StageProgressController
         progress.CurrentStageId = nextStageId;
     }
 
+    // 패배한 스테이지를 중복 없이 기록해 조건부 패키지 노출에 사용함
+    public void RecordStageDefeat(int stageId)
+    {
+        if (stageId < 1)
+            return;
+
+        StageProgressSaveData progress = GetProgressData();
+        progress.DefeatedStageIds ??= new System.Collections.Generic.List<int>();
+        if (!progress.DefeatedStageIds.Contains(stageId))
+            progress.DefeatedStageIds.Add(stageId);
+    }
+
+    // 지정 스테이지에 한 번이라도 패배했는지 반환함
+    public bool HasDefeatedStage(int stageId)
+    {
+        if (stageId < 1)
+            return false;
+
+        StageProgressSaveData progress = GetProgressData();
+        return progress.DefeatedStageIds != null && progress.DefeatedStageIds.Contains(stageId);
+    }
+
     // 현재 저장된 스테이지 진행도 반환
     private StageProgressSaveData GetProgressData()
     {
