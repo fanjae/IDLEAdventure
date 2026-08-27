@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -8,6 +9,9 @@ using UnityEngine.UI;
 public sealed class ShopPanelPresenter : MonoBehaviour
 {
     private enum ShopTab { Exchange, Package, Attendance }
+
+    [Header("패널 연출")]
+    [SerializeField] private UIPanelTransition panelTransition;
 
     [Header("탭 버튼")]
     [SerializeField] private Button closeButton;
@@ -58,6 +62,8 @@ public sealed class ShopPanelPresenter : MonoBehaviour
     private string pendingPackageNoticeProductId;
     private bool showNextPackageNoticeAfterPurchaseConfirm;
 
+    public event Action OnClosed;
+
     // 프리팹에 연결한 버튼 이벤트를 등록함
     private void Awake()
     {
@@ -85,6 +91,24 @@ public sealed class ShopPanelPresenter : MonoBehaviour
     // 뒤로가기 기록을 사용해 상점 페이지를 닫음
     public void Close()
     {
+        if (panelTransition == null)
+        {
+            ClosePanel();
+            return;
+        }
+
+        panelTransition.PlayClose(ClosePanel);
+    }
+
+    // 상점 패널 종료 처리
+    private void ClosePanel()
+    {
+        if (OnClosed != null)
+        {
+            OnClosed.Invoke();
+            return;
+        }
+
         if (MainUIController.Instance != null)
         {
             MainUIController.Instance.GoBack();
@@ -512,5 +536,11 @@ public sealed class ShopPanelPresenter : MonoBehaviour
     {
         if (statusText != null)
             statusText.text = message;
+    }
+
+    // 상점 패널 오픈 연출
+    public void PlayOpenAnimation()
+    {
+        panelTransition?.PlayOpen();
     }
 }

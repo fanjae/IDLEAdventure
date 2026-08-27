@@ -17,6 +17,8 @@ public sealed class AllPanelController : MonoBehaviour
 
     [Header("상점")]
     [SerializeField] private Button shopButton;
+    [SerializeField] private GameObject shopPanelRoot;
+    [SerializeField] private ShopPanelPresenter shopPanelPresenter;
 
     [Header("퀘스트")]
     [SerializeField] private Button questButton;
@@ -37,6 +39,8 @@ public sealed class AllPanelController : MonoBehaviour
     {
         if (backButton != null) backButton.onClick.AddListener(HandleBackButtonClicked);
         if (inventoryButton != null) inventoryButton.onClick.AddListener(HandleInventoryButtonClicked);
+        if (shopButton != null) shopButton.onClick.AddListener(HandleShopButtonClicked);
+        if (shopPanelPresenter != null) shopPanelPresenter.OnClosed += HandleShopPanelClosed;
         if (achievementButton != null) achievementButton.onClick.AddListener(HandleAchievementButtonClicked);
         if (achievementPanelPresenter != null) achievementPanelPresenter.OnClosed += HandleAchievementPanelClosed;
     }
@@ -45,6 +49,8 @@ public sealed class AllPanelController : MonoBehaviour
     {
         if (backButton != null) backButton.onClick.RemoveListener(HandleBackButtonClicked);
         if (inventoryButton != null) inventoryButton.onClick.RemoveListener(HandleInventoryButtonClicked);
+        if (shopButton != null) shopButton.onClick.RemoveListener(HandleShopButtonClicked);
+        if (shopPanelPresenter != null) shopPanelPresenter.OnClosed -= HandleShopPanelClosed;
         if (achievementButton != null) achievementButton.onClick.RemoveListener(HandleAchievementButtonClicked);
         if (achievementPanelPresenter != null) achievementPanelPresenter.OnClosed -= HandleAchievementPanelClosed;
     }
@@ -68,6 +74,33 @@ public sealed class AllPanelController : MonoBehaviour
         inventoryPanelRoot.SetActive(true);
 
         inventoryPanelController?.PlayOpenAnimation();
+    }
+
+    // 상점 버튼 클릭 처리
+    private void HandleShopButtonClicked()
+    {
+        if (allMenuRoot == null || shopPanelPresenter == null)
+        {
+            return;
+        }
+
+        // 전체 메뉴 화면을 숨기고 상점 패널 표시
+        allMenuRoot.SetActive(false);
+        shopPanelPresenter.gameObject.SetActive(true);
+
+        shopPanelPresenter.PlayOpenAnimation();
+    }
+
+    // 상점 패널 종료 후 전체 메뉴 화면 복원
+    private void HandleShopPanelClosed()
+    {
+        if (allMenuRoot == null || shopPanelPresenter == null)
+        {
+            return;
+        }
+
+        shopPanelPresenter.gameObject.SetActive(false);
+        allMenuRoot.SetActive(true);
     }
 
     // 업적 버튼 클릭 처리
