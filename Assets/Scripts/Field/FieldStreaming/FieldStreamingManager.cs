@@ -56,6 +56,14 @@ public class FieldStreamingManager : MonoBehaviour
     private Coroutine loadQueueCoroutine;
     private Coroutine unloadQueueCoroutine;
 
+
+    //
+    private readonly HashSet<Vector2Int> mapChunks = new HashSet<Vector2Int>();
+    private Vector2Int mapCameraChunk;
+    private bool mapStreaming;
+    //
+
+
     private bool checkReferences;
     private bool initialized;
 
@@ -116,19 +124,19 @@ public class FieldStreamingManager : MonoBehaviour
     {
         if (player == null)
         {
-            Debug.LogError("[FieldStreaming] Player가 없습니다.");
+            Debug.LogError("[FieldStreaming] Player가 없음");
             return false;
         }
 
         if (streamingTrigger == null)
         {
-            Debug.LogError("[FieldStreaming] StreamingBoundary가 없습니다.");
+            Debug.LogError("[FieldStreaming] StreamingBoundary가 없음");
             return false;
         }
 
         if (chunkSize <= 0f)
         {
-            Debug.LogError("[FieldStreaming] Chunk Size는 0보다 커야 합니다.");
+            Debug.LogError("[FieldStreaming] Chunk Size는 0보다 커야 함");
             return false;
         }
 
@@ -264,7 +272,7 @@ public class FieldStreamingManager : MonoBehaviour
 
         if (!Application.CanStreamedLevelBeLoaded(runtime.SceneName))
         {
-            if (showLog) Debug.LogWarning($"[FieldStreaming] Scene을 찾을 수 없습니다 : {runtime.SceneName}");
+            if (showLog) Debug.LogWarning($"[FieldStreaming] Scene을 찾을 수 없음 : {runtime.SceneName}");
             return;
         }
 
@@ -289,8 +297,9 @@ public class FieldStreamingManager : MonoBehaviour
 
             if (!sceneRuntimeTable.TryGetValue(chunk, out FieldSceneRuntime runtime)) continue;
             if (runtime.State != FieldSceneState.QueuedLoad) continue;
-
-            if (!targetChunks.Contains(chunk))
+            
+            //if (!targetChunks.Contains(chunk))            
+            if (!KeepChunk(chunk))
             {
                 runtime.State = FieldSceneState.Unloaded;
                 continue;
@@ -324,7 +333,7 @@ public class FieldStreamingManager : MonoBehaviour
             if (!loadedScene.IsValid() || !loadedScene.isLoaded)
             {
                 runtime.State = FieldSceneState.Unloaded;
-                Debug.LogError($"[FieldStreaming] Load 완료 후 Scene을 찾지 못했습니다 : {runtime.SceneName}");
+                Debug.LogError($"[FieldStreaming] Load 완료 후 Scene을 찾지 못함: {runtime.SceneName}");
                 continue;
             }
 
@@ -332,7 +341,7 @@ public class FieldStreamingManager : MonoBehaviour
 
             if (showLog) Debug.Log($"[FieldStreaming] LOAD COMPLETE : {runtime.SceneName}");
 
-            if (!targetChunks.Contains(chunk) || runtime.UnloadAfterLoad)
+            if (/*!targetChunks.Contains(chunk)*/!KeepChunk(chunk) || runtime.UnloadAfterLoad)
             {
                 runtime.UnloadAfterLoad = false;
                 TryDelayedUnload(chunk);
@@ -347,7 +356,7 @@ public class FieldStreamingManager : MonoBehaviour
     private void TryDelayedUnload(Vector2Int chunk)
     {
         if (!sceneRuntimeTable.TryGetValue(chunk, out FieldSceneRuntime runtime)) return;
-
+        if (KeepChunk(chunk)) return;
         switch (runtime.State)
         {
             case FieldSceneState.Unloaded:
@@ -377,7 +386,8 @@ public class FieldStreamingManager : MonoBehaviour
 
         runtime.UnloadWaitCoroutine = null;
 
-        if (targetChunks.Contains(chunk))
+        //if (targetChunks.Contains(chunk))
+        if (KeepChunk(chunk))
         {
             runtime.State = FieldSceneState.Loaded;
             yield break;
@@ -405,7 +415,8 @@ public class FieldStreamingManager : MonoBehaviour
             if (!sceneRuntimeTable.TryGetValue(chunk, out FieldSceneRuntime runtime)) continue;
             if (runtime.State != FieldSceneState.QueuedUnload) continue;
 
-            if (targetChunks.Contains(chunk))
+            //if (targetChunks.Contains(chunk))
+            if (KeepChunk(chunk))
             {
                 runtime.State = FieldSceneState.Loaded;
                 continue;
@@ -431,7 +442,7 @@ public class FieldStreamingManager : MonoBehaviour
 
             if (showLog) Debug.Log($"[FieldStreaming] UNLOAD COMPLETE : {runtime.SceneName}");
 
-            if (runtime.LoadAfterUnload || targetChunks.Contains(chunk))
+            if (runtime.LoadAfterUnload || /*targetChunks.Contains(chunk)*/KeepChunk(chunk))
             {
                 runtime.LoadAfterUnload = false;
                 TryQueueLoad(chunk);
@@ -470,5 +481,63 @@ public class FieldStreamingManager : MonoBehaviour
     {
         return $"Field_X{chunk.x}_Z{chunk.y}";
     }
+
+    //
+    public void StartMapStreaming(Vector3 cameraPosition)
+    {
+        mapStreaming = true;
+        mapChunks.Clear();
+
+        mapCameraChunk = WorldToChunk(cameraPosition);
+        AddMapChunks(mapCameraChunk);
+    }
+
+    public void UpdateMapStreaming(Vector3 cameraPosition)
+    {
+        if (!mapStreaming) return;
+
+        Vector2Int nextChunk = WorldToChunk(cameraPosition);
+        if (nextChunk == mapCameraChunk) return;
+
+        mapCameraChunk = nextChunk;
+        AddMapChunks(mapCameraChunk);
+    }
+
+    public void EndMapStreaming()
+    {
+        if (!mapStreaming) return;
+
+        mapStreaming = false;
+
+        List<Vector2Int> chunks = new List<Vector2Int>(mapChunks);
+        mapChunks.Clear();
+
+        foreach (Vector2Int chunk in chunks)
+        {
+            if (targetChunks.Contains(chunk)) continue;
+            TryDelayedUnload(chunk);
+        }
+    }
+
+    private void AddMapChunks(Vector2Int centerChunk)
+    {
+        for (int x = -loadRadius; x <= loadRadius; x++)
+        {
+            for (int z = -loadRadius; z <= loadRadius; z++)
+            {
+                Vector2Int chunk = new Vector2Int(centerChunk.x + x, centerChunk.y + z);
+
+                if (!mapChunks.Add(chunk)) continue;
+
+                TryQueueLoad(chunk);
+            }
+        }
+    }
+
+    private bool KeepChunk(Vector2Int chunk)
+    {
+        return targetChunks.Contains(chunk) || mapChunks.Contains(chunk);
+    }
+    //
 
 }

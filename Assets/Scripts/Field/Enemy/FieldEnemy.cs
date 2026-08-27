@@ -12,6 +12,9 @@ public class EnemyFieldAI : MonoBehaviour
         Chase,
         Return
     }
+    //
+    private static readonly int MoveHash = Animator.StringToHash("Move");
+    //
 
     [Header("Wander")]
     [SerializeField] private float wanderRadius = 6f;
@@ -24,8 +27,11 @@ public class EnemyFieldAI : MonoBehaviour
     [SerializeField] private float maxChaseDistance = 15f;
     [SerializeField] private float encounterDistance = 1.2f;
 
-    [Header("Battle")]
-    [SerializeField] private string battleSceneName = "";
+    //
+    private Animator animator;
+    //
+
+
 
     private NavMeshAgent agent;
     private Transform player;
@@ -35,7 +41,11 @@ public class EnemyFieldAI : MonoBehaviour
 
     private void Awake()
     {
+        //
         agent = GetComponent<NavMeshAgent>();
+
+        animator = GetComponent<Animator>();
+        //
     }
 
     private void Start()
@@ -56,13 +66,7 @@ public class EnemyFieldAI : MonoBehaviour
 
     private void Update()
     {
-        if (state == EnemyState.Return)
-        {
-            UpdateReturn();
-            return;
-        }
-
-        if (state != EnemyState.Chase && IsPlayerInRange(detectDistance)) StartChase();
+        if (state != EnemyState.Chase && state != EnemyState.Return && IsPlayerInRange(detectDistance)) StartChase();
 
         switch (state)
         {
@@ -77,6 +81,10 @@ public class EnemyFieldAI : MonoBehaviour
             case EnemyState.Chase:
                 UpdateChase();
                 break;
+
+            case EnemyState.Return:
+                UpdateReturn();
+                break;
         }
     }
 
@@ -85,6 +93,10 @@ public class EnemyFieldAI : MonoBehaviour
         state = EnemyState.Idle;
         agent.ResetPath();
         idleTimer = Random.Range(minIdleTime, maxIdleTime);
+
+        //
+        SetMoving(false);
+        //
     }
 
     private void UpdateIdle()
@@ -104,6 +116,10 @@ public class EnemyFieldAI : MonoBehaviour
             state = EnemyState.Wander;
             agent.stoppingDistance = 0.1f;
             agent.SetDestination(hit.position);
+
+            //
+            SetMoving(true);
+            //
         }
         else
         {
@@ -123,6 +139,10 @@ public class EnemyFieldAI : MonoBehaviour
         state = EnemyState.Chase;
         agent.stoppingDistance = encounterDistance;
         agent.SetDestination(player.position);
+
+        //
+        SetMoving(true);
+        //
     }
 
     private void UpdateChase()
@@ -150,6 +170,10 @@ public class EnemyFieldAI : MonoBehaviour
         state = EnemyState.Return;
         agent.stoppingDistance = 0.1f;
         agent.SetDestination(homePosition);
+
+        //
+        SetMoving(true);
+        //
     }
 
     private void UpdateReturn()
@@ -164,10 +188,22 @@ public class EnemyFieldAI : MonoBehaviour
         return Vector3.Distance(transform.position, player.position) <= distance;
     }
 
+    //
+    private void SetMoving(bool isMoving)
+    {
+        if (animator == null) return;
+
+        animator.SetBool(MoveHash, isMoving);
+    }
+    //
+
     private void StartBattle()
     {
         agent.isStopped = true;
         enabled = false;
+        //
+        SetMoving(false);
+        //
 
         //씬 이동 추가
     }

@@ -10,6 +10,10 @@ public class MapModeController : MonoBehaviour
     [SerializeField] private CanvasGroup mapViewportCanvasGroup;
     [SerializeField] private WorldMapController worldMapController;
 
+    //
+    [SerializeField] private FieldStreamingManager fieldStreamingManager;
+    //
+
     [Header("Map Camera")]
     [SerializeField] private float mapCameraY = 50f;
     [SerializeField] private float transitionDuration = 0.7f;
@@ -19,6 +23,9 @@ public class MapModeController : MonoBehaviour
 
     [Header("3D Blend")]
     [SerializeField] private float worldBlendStartZoom = 1.5f;
+    //
+    [SerializeField] private float map3DStartZoom = 1.7f;
+    //
 
     private Transform cameraParent;
     private Vector3 localPosition;
@@ -28,6 +35,10 @@ public class MapModeController : MonoBehaviour
     private Vector3 horizontalOffset;
 
     private float regionCameraWorldY;
+
+    //
+    private Vector3 mapIdleCameraPosition;
+    //
 
     private bool isMapOpen;
     private bool isTransitioning;
@@ -46,6 +57,10 @@ public class MapModeController : MonoBehaviour
         if (!isMapOpen || isTransitioning) return;
 
         UpdateMapCamera();
+
+        //
+        fieldStreamingManager.UpdateMapStreaming(mainCamera.transform.position);
+        //
     }
 
     public void OpenMap()
@@ -59,7 +74,12 @@ public class MapModeController : MonoBehaviour
     {
         if (!isMapOpen || isTransitioning) return;
 
-        StartCoroutine(ExitMapMode());
+        //
+        bool closeFrom2D = worldMapController.CurrentZoom < map3DStartZoom;
+        StartCoroutine(ExitMapMode(closeFrom2D));
+        //
+
+        //StartCoroutine(ExitMapMode());
     }
 
     private IEnumerator EnterMapMode()
@@ -87,6 +107,10 @@ public class MapModeController : MonoBehaviour
         Vector3 targetPos = new Vector3(focusPos.x, mapCameraY, focusPos.z);
         Quaternion targetRotation = Quaternion.Euler(90f, 0f, 0f);
 
+        //
+        mapIdleCameraPosition = targetPos;
+        //
+
         float elapsed = 0f;
 
         while (elapsed < transitionDuration)
@@ -111,6 +135,10 @@ public class MapModeController : MonoBehaviour
         mapViewportCanvasGroup.alpha = 1f;
         mapViewportCanvasGroup.interactable = true;
         mapViewportCanvasGroup.blocksRaycasts = true;
+
+        //
+        fieldStreamingManager.StartMapStreaming(mainCamera.transform.position);
+        //
 
         isMapOpen = true;
         isTransitioning = false;
@@ -145,9 +173,13 @@ public class MapModeController : MonoBehaviour
     {
         Vector3 focusPos = worldMapController.CurrentFocusWorldPosition;
 
-        float zoom = worldMapController.CurrentZoom;
-        float blend = Mathf.InverseLerp(worldBlendStartZoom, worldMapController.MaxZoom, zoom);
-        blend = Mathf.SmoothStep(0f, 1f, blend);
+        //float zoom = worldMapController.CurrentZoom;
+        //float blend = Mathf.InverseLerp(worldBlendStartZoom, worldMapController.MaxZoom, zoom);
+        //blend = Mathf.SmoothStep(0f, 1f, blend);
+
+        //
+        float blend = GetMapBlend();
+        //
 
         Vector3 topPosition = new Vector3(focusPos.x, mapCameraY, focusPos.z);
 
@@ -164,12 +196,20 @@ public class MapModeController : MonoBehaviour
         mapViewportCanvasGroup.alpha = 1f - blend;
     }
 
-    private IEnumerator ExitMapMode()
+    private IEnumerator ExitMapMode(bool closeFrom2D)
     {
         isTransitioning = true;
 
         mapViewportCanvasGroup.interactable = false;
         mapViewportCanvasGroup.blocksRaycasts = false;
+
+        //
+        if (closeFrom2D)
+        {
+            mainCamera.transform.position = mapIdleCameraPosition;
+            mainCamera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+        }
+        //
 
         Vector3 startPos = mainCamera.transform.position;
         Quaternion startRotation = mainCamera.transform.rotation;
@@ -190,12 +230,20 @@ public class MapModeController : MonoBehaviour
             mainCamera.transform.position = Vector3.Lerp(startPos, targetPos, smoothT);
             mainCamera.transform.rotation = Quaternion.Slerp(startRotation, targetRotation, smoothT);
 
+            //
+            fieldStreamingManager.UpdateMapStreaming(mainCamera.transform.position);
+            //
+
             mapViewportCanvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, smoothT);
 
             yield return null;
         }
 
         RestoreCamera();
+
+        //
+        fieldStreamingManager.EndMapStreaming();
+        //
 
         worldMap.SetActive(false);
         miniMap.SetActive(true);
@@ -241,5 +289,13 @@ public class MapModeController : MonoBehaviour
             mainCamera.transform.rotation = worldRotation;
         }
     }
+
+    //
+    private float GetMapBlend()
+    {
+        float blend = Mathf.InverseLerp(worldBlendStartZoom, worldMapController.MaxZoom, worldMapController.CurrentZoom);
+        return Mathf.SmoothStep(0f, 1f, blend);
+    }
+    //
 
 }
