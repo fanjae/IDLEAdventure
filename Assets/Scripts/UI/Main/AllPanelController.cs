@@ -23,6 +23,7 @@ public sealed class AllPanelController : MonoBehaviour
 
     [Header("업적")]
     [SerializeField] private Button achievementButton;
+    [SerializeField] private AchievementPanelPresenter achievementPanelPresenter;
 
     [Header("설정")]
     [SerializeField] private Button settingButton;
@@ -36,12 +37,16 @@ public sealed class AllPanelController : MonoBehaviour
     {
         if (backButton != null) backButton.onClick.AddListener(HandleBackButtonClicked);
         if (inventoryButton != null) inventoryButton.onClick.AddListener(HandleInventoryButtonClicked);
+        if (achievementButton != null) achievementButton.onClick.AddListener(HandleAchievementButtonClicked);
+        if (achievementPanelPresenter != null) achievementPanelPresenter.OnClosed += HandleAchievementPanelClosed;
     }
 
     private void OnDisable()
     {
         if (backButton != null) backButton.onClick.RemoveListener(HandleBackButtonClicked);
         if (inventoryButton != null) inventoryButton.onClick.RemoveListener(HandleInventoryButtonClicked);
+        if (achievementButton != null) achievementButton.onClick.RemoveListener(HandleAchievementButtonClicked);
+        if (achievementPanelPresenter != null) achievementPanelPresenter.OnClosed -= HandleAchievementPanelClosed;
     }
 
     // 전체 메뉴 패널 오픈 연출
@@ -63,6 +68,30 @@ public sealed class AllPanelController : MonoBehaviour
         inventoryPanelRoot.SetActive(true);
 
         inventoryPanelController?.PlayOpenAnimation();
+    }
+
+    // 업적 버튼 클릭 처리
+    private void HandleAchievementButtonClicked()
+    {
+        if (allMenuRoot == null || achievementPanelPresenter == null)
+        {
+            return;
+        }
+
+        // 전체 메뉴 화면을 숨기고 업적 패널 표시
+        allMenuRoot.SetActive(false);
+        achievementPanelPresenter.Open();
+    }
+
+    // 업적 패널 종료 후 전체 메뉴 화면 복원
+    private void HandleAchievementPanelClosed()
+    {
+        if (allMenuRoot == null)
+        {
+            return;
+        }
+
+        allMenuRoot.SetActive(true);
     }
 
     // 뒤로가기 버튼 클릭 처리

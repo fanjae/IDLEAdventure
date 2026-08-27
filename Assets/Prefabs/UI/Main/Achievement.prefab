@@ -1079,8 +1079,10 @@ GameObject:
   m_Component:
   - component: {fileID: 90164480989807223}
   - component: {fileID: 229612448921917791}
+  - component: {fileID: 8076705270039040824}
   - component: {fileID: 6728030660343724649}
   - component: {fileID: 5679167739408131182}
+  - component: {fileID: 4579308087456409271}
   m_Layer: 0
   m_Name: Achievement
   m_TagString: Untagged
@@ -1118,6 +1120,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3769803427876585208}
   m_CullTransparentMesh: 1
+--- !u!225 &8076705270039040824
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3769803427876585208}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!114 &6728030660343724649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1167,12 +1181,31 @@ MonoBehaviour:
   closeButton: {fileID: 8788762611915111981}
   claimAllButton: {fileID: 7546778683971660696}
   rewardToast: {fileID: 125720940664588796}
+  panelTransition: {fileID: 4579308087456409271}
   partyGrowthButton: {fileID: 5255988274114384089}
   gachaButton: {fileID: 6594976296037369767}
   stageProgressButton: {fileID: 4214792706274205819}
   partyGrowthNotification: {fileID: 6054882402161817052}
   gachaNotification: {fileID: 4991906206370067822}
   stageProgressNotification: {fileID: 6521144392657757303}
+--- !u!114 &4579308087456409271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3769803427876585208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 979130b6285302f4e968220fe362287f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPanelTransition
+  canvasGroup: {fileID: 8076705270039040824}
+  panelTransform: {fileID: 90164480989807223}
+  openOffset: {x: 0, y: -100}
+  closeOffset: {x: 0, y: -100}
+  openDuration: 0.2
+  closeDuration: 0.2
 --- !u!1 &4092598999033041971
 GameObject:
   m_ObjectHideFlags: 0
