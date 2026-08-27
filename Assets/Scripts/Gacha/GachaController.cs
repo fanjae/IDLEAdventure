@@ -8,6 +8,7 @@ public sealed class GachaController
 {
     private readonly GachaDatabaseSO database;
     private readonly HeroDatabaseSO heroDatabase;
+    private readonly GachaHeroTierDatabaseSO heroTierDatabase;
     private readonly Dictionary<string, GachaBannerProgressSaveData> progressByGroup = new(StringComparer.Ordinal);
 
     public event Action<GachaDrawResult> OnDrawCompleted;
@@ -18,6 +19,7 @@ public sealed class GachaController
     {
         this.database = database ?? throw new ArgumentNullException(nameof(database));
         this.heroDatabase = heroDatabase ?? throw new ArgumentNullException(nameof(heroDatabase));
+        heroTierDatabase = database.HeroTierDatabase;
     }
 
     // 배너에서 지정 횟수만큼 소환을 시도함
@@ -76,7 +78,8 @@ public sealed class GachaController
         {
             GachaHeroPoolEntry entry = rolledEntry.Entry;
             bool isDuplicate = heroController.ContainsHero(entry.HeroId) || !heroIdsAcquiredInThisDraw.Add(entry.HeroId);
-            int convertedGold = isDuplicate ? banner.GetDuplicateGold(entry.Rarity) : 0;
+            GachaRarity rarity = GetEntryRarity(entry);
+            int convertedGold = isDuplicate ? banner.GetDuplicateGold(rarity) : 0;
 
             if (isDuplicate)
             {
@@ -87,7 +90,7 @@ public sealed class GachaController
                 heroIdsToGrant.Add(entry.HeroId);
             }
 
-            pullResults.Add(new GachaPullResult(entry.HeroId, entry.Rarity, entry.IsPickup, rolledEntry.IsPity, isDuplicate, convertedGold));
+            pullResults.Add(new GachaPullResult(entry.HeroId, rarity, entry.IsPickup, rolledEntry.IsPity, isDuplicate, convertedGold));
         }
 
         // 다중 소환 전체가 지급 가능한지 먼저 검증해 부분 지급을 막음
@@ -202,15 +205,15 @@ public sealed class GachaController
     }
 
     // 각 티어가 뽑힐 수 있는 영웅을 하나 이상 가지는지 확인함
-    private static bool HasUsablePool(GachaBannerDataSO banner)
+    private bool HasUsablePool(GachaBannerDataSO banner)
     {
-        bool hasTier1Entry = banner.HeroPool.Any(entry => entry != null && entry.Rarity == GachaRarity.Tier1 && !string.IsNullOrWhiteSpace(entry.HeroId));
-        bool hasTier2Entry = banner.HeroPool.Any(entry => entry != null && entry.Rarity == GachaRarity.Tier2 && !string.IsNullOrWhiteSpace(entry.HeroId));
+        bool hasTier1Entry = banner.HeroPool.Any(entry => IsEntryOfRarity(entry, GachaRarity.Tier1));
+        bool hasTier2Entry = banner.HeroPool.Any(entry => IsEntryOfRarity(entry, GachaRarity.Tier2));
         return hasTier1Entry && hasTier2Entry && banner.Tier1Weight > 0 && banner.Tier2Weight > 0;
     }
 
     // 실제 상태를 바꾸지 않고 이번 결과와 다음 천장 수치를 미리 계산함
-    private static List<GachaRolledEntry> RollEntries(GachaBannerDataSO banner, int drawCount, int currentPityCount, out int nextPityCount)
+    private List<GachaRolledEntry> RollEntries(GachaBannerDataSO banner, int drawCount, int currentPityCount, out int nextPityCount)
     {
         List<GachaRolledEntry> results = new(drawCount);
         int pityCount = Mathf.Max(0, currentPityCount);
@@ -220,7 +223,7 @@ public sealed class GachaController
             bool isPityDraw = pityCount + 1 >= Mathf.Max(1, banner.Tier2PityCount);
             GachaHeroPoolEntry entry = isPityDraw ? PickTierEntry(banner, GachaRarity.Tier2) : PickNormalEntry(banner);
             results.Add(new GachaRolledEntry(entry, isPityDraw));
-            pityCount = entry.Rarity == GachaRarity.Tier2 ? 0 : pityCount + 1;
+            pityCount = GetEntryRarity(entry) == GachaRarity.Tier2 ? 0 : pityCount + 1;
         }
 
         nextPityCount = pityCount;
@@ -228,7 +231,7 @@ public sealed class GachaController
     }
 
     // 티어 가중치로 일반 소환의 등급을 먼저 선택함
-    private static GachaHeroPoolEntry PickNormalEntry(GachaBannerDataSO banner)
+    private GachaHeroPoolEntry PickNormalEntry(GachaBannerDataSO banner)
     {
         int totalTierWeight = banner.Tier1Weight + banner.Tier2Weight;
         if (totalTierWeight <= 0)
@@ -242,10 +245,10 @@ public sealed class GachaController
     }
 
     // 선택된 티어 안에서 픽업 영웅만 보정해 영웅을 선택함
-    private static GachaHeroPoolEntry PickTierEntry(GachaBannerDataSO banner, GachaRarity rarity)
+    private GachaHeroPoolEntry PickTierEntry(GachaBannerDataSO banner, GachaRarity rarity)
     {
         List<GachaHeroPoolEntry> tierEntries = banner.HeroPool
-            .Where(entry => entry != null && entry.Rarity == rarity && !string.IsNullOrWhiteSpace(entry.HeroId))
+            .Where(entry => IsEntryOfRarity(entry, rarity))
             .ToList();
 
         if (tierEntries.Count == 0)
@@ -267,6 +270,22 @@ public sealed class GachaController
         }
 
         return tierEntries[^1];
+    }
+
+    // 영웅별 가챠 티어 데이터베이스에서 풀 엔트리의 티어를 확인함
+    private bool IsEntryOfRarity(GachaHeroPoolEntry entry, GachaRarity rarity) =>
+        entry != null && !string.IsNullOrWhiteSpace(entry.HeroId) && heroTierDatabase != null &&
+        heroTierDatabase.TryGetRarity(entry.HeroData, out GachaRarity entryRarity) && entryRarity == rarity;
+
+    // 유효성 검사를 통과한 풀 엔트리의 티어를 반환함
+    private GachaRarity GetEntryRarity(GachaHeroPoolEntry entry)
+    {
+        if (entry != null && heroTierDatabase != null && heroTierDatabase.TryGetRarity(entry.HeroData, out GachaRarity rarity))
+        {
+            return rarity;
+        }
+
+        throw new InvalidOperationException($"가챠 영웅 티어 데이터가 없음: {entry?.HeroId}");
     }
 
     // 배너 그룹별 천장 진행도 컨테이너를 준비함

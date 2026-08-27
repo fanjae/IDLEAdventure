@@ -86,16 +86,18 @@ public sealed class StageManager : MonoBehaviour
         battleManager.OnBattleEnded -= HandleBattleEnded;
     }
 
-    // 전투 승리 시 스테이지 진행도와 업적을 기록하고 저장함
+    // 전투 결과에 따라 스테이지 클리어 또는 패배 이력을 저장함
     private void HandleBattleEnded(UnitTeam winner)
     {
-        if (winner != UnitTeam.Hero)
+        if (winner == UnitTeam.Hero)
         {
+            stageProgressController.CompleteStage(currentStageId);
+            AchievementManager.Instance.RecordStageCleared(currentStageId);
+            SaveManager.Instance.Save();
             return;
         }
 
-        stageProgressController.CompleteStage(currentStageId);
-        AchievementManager.Instance.RecordStageCleared(currentStageId);
+        stageProgressController.RecordStageDefeat(currentStageId);
         SaveManager.Instance.Save();
     }
 }
