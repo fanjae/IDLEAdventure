@@ -25,6 +25,10 @@ public sealed class MainBottomPanelController : MonoBehaviour
     [SerializeField] private GameObject gachaRoot;
     [SerializeField] private UIPanelTransition gachaPanelTransition;
 
+    [Header("전체 메뉴 패널")]
+    [SerializeField] private GameObject allPanelRoot;
+    [SerializeField] private AllPanelController allPanelController;
+
     [Header("자동 스테이지")]
     [SerializeField] private Button autoStageButton;
     [SerializeField] private AutoStagePanelController autoStagePanelController;
@@ -55,6 +59,11 @@ public sealed class MainBottomPanelController : MonoBehaviour
         if (autoStagePanelController != null)
         {
             autoStagePanelController.OnClosed += HandleChildPanelClosed;
+        }
+
+        if (allPanelController != null)
+        {
+            allPanelController.OnClosed += HandleChildPanelClosed;
         }
     }
 
@@ -91,6 +100,11 @@ public sealed class MainBottomPanelController : MonoBehaviour
         if (autoStagePanelController != null)
         {
             autoStagePanelController.OnClosed -= HandleChildPanelClosed;
+        }
+
+        if (allPanelController != null)
+        {
+            allPanelController.OnClosed -= HandleChildPanelClosed;
         }
     }
 
@@ -190,6 +204,16 @@ public sealed class MainBottomPanelController : MonoBehaviour
     private void HandleAllButtonClicked()
     {
         SetSelectedMenu(BottomMenuType.All);
+
+        if (allPanelRoot == null)
+        {
+            return;
+        }
+
+        // 전체 메뉴 UI 활성화 후 기존 하단 메뉴 숨김
+        allPanelRoot.SetActive(true);
+        allPanelController?.PlayOpenAnimation();
+        gameObject.SetActive(false);
     }
 
     // 선택된 하단 메뉴 갱신
