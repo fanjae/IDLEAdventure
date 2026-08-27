@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class WhirlwindSkillDamage : MonoBehaviour
 {
@@ -12,20 +13,37 @@ public class WhirlwindSkillDamage : MonoBehaviour
 
     private readonly Dictionary<BattleUnit, float> nextHitTimes = new Dictionary<BattleUnit, float>();
 
+    private IObjectPool<WhirlwindSkillDamage> pool;
+    private UnitSkill poolOwner;
+    private Coroutine whirlwindRoutine;
+
+
+    public void SetPool(IObjectPool<WhirlwindSkillDamage> pool, UnitSkill poolOwner)
+    {
+        this.pool = pool;
+        this.poolOwner = poolOwner;
+    }
+
     public void Initialize(BattleUnit owner, float duration, float hitInterval, float damageRatio)
     {
         if (owner == null)
         {
-            Destroy(gameObject);
+            Finish(false);
             return;
+        }
+        if (whirlwindRoutine != null)
+        {
+            StopCoroutine(whirlwindRoutine);
+            whirlwindRoutine = null;
         }
 
         this.owner = owner;
         this.duration = duration;
         this.hitInterval = hitInterval;
         this.damageRatio = damageRatio;
+        nextHitTimes.Clear();
 
-        StartCoroutine(WhirlwindRoutine());
+        whirlwindRoutine = StartCoroutine(WhirlwindRoutine());
     }
 
     private IEnumerator WhirlwindRoutine()
@@ -35,15 +53,39 @@ public class WhirlwindSkillDamage : MonoBehaviour
         {
             if (owner == null || owner.IsDead || !owner.IsUsingSkill)
             {
-                Destroy(gameObject);
+                whirlwindRoutine = null;
+                Finish(false);
                 yield break;
             }
             yield return null;
         }
         if (owner != null && !owner.IsDead && owner.IsUsingSkill) owner.SkillEndEvent();
 
+        whirlwindRoutine = null;
+        Finish(false);
+    }
+    private void Finish(bool stopRoutine)
+    {
+        if (stopRoutine && whirlwindRoutine != null)
+        {
+            StopCoroutine(whirlwindRoutine);
+            whirlwindRoutine = null;
+        }
+
+        owner = null;
+        duration = 0.0f;
+        hitInterval = 0.0f;
+        damageRatio = 0.0f;
+        nextHitTimes.Clear();
+
+        if (pool != null && poolOwner != null)
+        {
+            pool.Release(this);
+            return;
+        }
         Destroy(gameObject);
     }
+
     private void OnTriggerStay(Collider other)
     {
         if (owner == null || owner.IsDead || !owner.IsUsingSkill) return;
@@ -69,5 +111,14 @@ public class WhirlwindSkillDamage : MonoBehaviour
         if (target == null) return;
 
         nextHitTimes.Remove(target);
+    }
+    private void OnDisable()
+    {
+        if (whirlwindRoutine != null)
+        {
+            StopCoroutine(whirlwindRoutine);
+            whirlwindRoutine = null;
+        }
+        nextHitTimes.Clear();
     }
 }

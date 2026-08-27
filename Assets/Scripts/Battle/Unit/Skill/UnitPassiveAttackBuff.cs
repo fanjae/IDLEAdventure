@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class UnitPassiveAttackBuff : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class UnitPassiveAttackBuff : MonoBehaviour
     private Coroutine passiveRoutine;
 
     private Coroutine subscribeRoutine;
+
+    private ObjectPool<GameObject> castVfxPool;
 
     private void Awake()
     {
@@ -43,6 +46,14 @@ public class UnitPassiveAttackBuff : MonoBehaviour
             BattleManager.Instance.OnBattleEnded -= HandleBattleEnded;
         }
         StopPassiveRoutine();
+    }
+    private void OnDestroy()
+    {
+        if (castVfxPool != null)
+        {
+            castVfxPool.Clear();
+            castVfxPool = null;
+        }
     }
 
     private void HandleBattleStarted()
@@ -86,11 +97,66 @@ public class UnitPassiveAttackBuff : MonoBehaviour
     private void PlayCastVfx()
     {
         if (castVfxPrefab == null) return;
+        if (castVfxPool == null) CreateCastVfxPool();
+        if (castVfxPool == null) return;
 
         Transform point = castVfxPoint != null ? castVfxPoint : transform;
-        GameObject vfx = Instantiate(castVfxPrefab, point.position, point.rotation, point);
-        Destroy(vfx, castVfxDuration);
+        GameObject vfx = castVfxPool.Get();
+        vfx.transform.SetParent(point);
+        vfx.transform.SetPositionAndRotation(point.position, point.rotation);
+        vfx.SetActive(true);
+        RestartParticles(vfx);
+        StartCoroutine(ReleaseCastVfxRoutine(vfx, castVfxDuration));
     }
+    //풀
+    private void CreateCastVfxPool()
+    {
+        castVfxPool = new ObjectPool<GameObject>(
+            CreateCastVfx,
+            OnGetCastVfx,
+            OnReleaseCastVfx,
+            OnDestroyCastVfx,
+            true,
+            3,
+            10);
+    }
+    private GameObject CreateCastVfx()
+    {
+        GameObject vfx = Instantiate(castVfxPrefab);
+        vfx.SetActive(false);
+        return vfx;
+    }
+    private void OnGetCastVfx(GameObject vfx)
+    {
+
+    }
+    private void OnReleaseCastVfx(GameObject vfx)
+    {
+        vfx.transform.SetParent(null);
+        vfx.SetActive(false);
+    }
+    private void OnDestroyCastVfx(GameObject vfx)
+    {
+        if (vfx != null) Destroy(vfx);
+    }
+
+    //파티클
+    private void RestartParticles(GameObject vfx)
+    {
+        ParticleSystem[] particles = vfx.GetComponentsInChildren<ParticleSystem>(true);
+        for (int i = 0; i < particles.Length; i++)
+        {
+            particles[i].Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            particles[i].Play(true);
+        }
+    }
+    private IEnumerator ReleaseCastVfxRoutine(GameObject vfx, float duration)
+    {
+        yield return new WaitForSeconds(Mathf.Max(0.01f, duration));
+        if (vfx == null) yield break;
+        castVfxPool.Release(vfx);
+    }
+
     private void StopPassiveRoutine()
     {
         if (passiveRoutine == null) return;

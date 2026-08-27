@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class UnitAttack : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class UnitAttack : MonoBehaviour
     private BattleUnit unit;
     //공격 애니메이션의 공격?타격? 시점까지 공격 대상을 보관?저장?하는 용
     private BattleUnit attackTarget;
+
+    private ObjectPool<RangedProjectile> projectilePool;
 
     private AttackType attackType;
 
@@ -77,6 +80,14 @@ public class UnitAttack : MonoBehaviour
             return;
         }
         CheckAttackSafety();
+    }
+
+    private void OnDestroy()
+    {
+        if (projectilePool == null) return;
+
+        projectilePool.Clear();
+        projectilePool = null;
     }
 
     private void CheckAttackSafety()
@@ -153,15 +164,56 @@ public class UnitAttack : MonoBehaviour
             LogMissingProjectile();
             return;
         }
+        if (projectilePool == null) CreateProjectilePool();
+        if (projectilePool == null) return;
+
         //발사 위치를 지정했으면 해당 위치에서 발사하고, 지정하지 않았으면 유닛 몸 중심쯤에서..
         Vector3 spawnPosition = projectileSpawnPoint != null ? 
                                 projectileSpawnPoint.position : transform.position + Vector3.up;
         Quaternion spawnRotation = projectileSpawnPoint != null ?
                                    projectileSpawnPoint.rotation : transform.rotation;
-        RangedProjectile projectile = Instantiate(projectilePrefab, spawnPosition, spawnRotation);
+        RangedProjectile projectile = projectilePool.Get();
 
+        projectile.transform.SetPositionAndRotation(spawnPosition, spawnRotation);
         projectile.Initialize(unit, target, damage);
+        projectile.gameObject.SetActive(true);
     }
+    //풀 관련
+    private void CreateProjectilePool()
+    {
+        if (projectilePool != null) return;
+        if (projectilePrefab == null) return;
+
+        projectilePool = new ObjectPool<RangedProjectile>(
+            CreateProjectile,
+            OnGetProjectile,
+            OnReleaseProjectile,
+            OnDestroyProjectile,
+            true,
+            5,
+            20);
+    }
+    private RangedProjectile CreateProjectile()
+    {
+        RangedProjectile projectile = Instantiate(projectilePrefab);
+        projectile.gameObject.SetActive(false);
+        projectile.SetPool(projectilePool, this);
+        return projectile;
+    }
+    private void OnGetProjectile(RangedProjectile projectile)
+    {
+        //위치와 초기화가 끝난 후 FireProjectile에서 초기화
+    }
+    private void OnReleaseProjectile(RangedProjectile projectile)
+    {
+        projectile.gameObject.SetActive(false);
+    }
+    private void OnDestroyProjectile(RangedProjectile projectile)
+    {
+        if (projectile != null) Destroy(projectile.gameObject);
+    }
+
+
     //외부 능력치 변경 시 실제 기본 공격력 갱신
     public void SetAttackPower(int newAttackPower)
     {

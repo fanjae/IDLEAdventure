@@ -412,8 +412,9 @@ public class BattleUnit : MonoBehaviour
         int appliedDamage = health.TakeDamage(damage);
         //피격 애니메이션 추가
         if (appliedDamage <= 0 || IsDead) return appliedDamage;
-
-        if (!IsAttacking && !IsUsingSkill) unitAnimator?.PlayDamaged();
+        //공격/스킬 진행 중이거나 해당 State에 이미 진입한 경우, 피격 애니메이션이 끼어들지 않도록 함
+        bool isActionState = CurrentState == UnitState.Attack || CurrentState == UnitState.Skill;
+        if (!IsAttacking && !IsUsingSkill && !isActionState) unitAnimator?.PlayDamaged();
 
         //실제로 받은 데미지 반환(감소한 체력량)
         return appliedDamage;

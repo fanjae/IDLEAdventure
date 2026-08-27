@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class RangedProjectile : MonoBehaviour
 {
@@ -21,6 +22,16 @@ public class RangedProjectile : MonoBehaviour
     private int damage;
     private float remainingLifeTime; // 투사체의 남은 생존시간
     private bool isFinished;
+
+    private IObjectPool<RangedProjectile> pool;
+    private UnitAttack poolOwner;
+
+
+    public void SetPool(IObjectPool<RangedProjectile> pool, UnitAttack poolOwner)
+    {
+        this.pool = pool;
+        this.poolOwner = poolOwner;
+    }
 
     public void Initialize(BattleUnit owner, BattleUnit target, int damage)
     {
@@ -93,6 +104,18 @@ public class RangedProjectile : MonoBehaviour
     {
         if (isFinished) return;
         isFinished = true;
+        
+        owner = null;
+        target = null;
+        damage = 0;
+        remainingLifeTime = 0.0f;
+        //풀을 만든 UnitAttack이 아직 존재하면 풀로 반환
+        if (pool != null && poolOwner != null)
+        {
+            pool.Release(this);
+            return;
+        }
+        //풀의 주인이 이미 제거된 경우 그냥 제거
         Destroy(gameObject);
     }
 }
