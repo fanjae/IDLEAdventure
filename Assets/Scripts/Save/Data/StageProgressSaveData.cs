@@ -4,5 +4,9 @@ using System;
 [Serializable]
 public sealed class StageProgressSaveData
 {
+    // 현재 진행 중인 스테이지
     public int CurrentStageId { get; set; } = 1;
+
+    // 지금까지 클리어한 최고 스테이지
+    public int HighestClearedStageId { get; set; } = 0;
 }
