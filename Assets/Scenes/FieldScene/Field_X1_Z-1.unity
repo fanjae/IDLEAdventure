@@ -257,6 +257,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_RockDesert_CliffA06
       objectReference: {fileID: 0}
+    - target: {fileID: 7547696149058588018, guid: ee2dc1962c226fc44b694f28e4da7a78, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2630,6 +2634,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_RockDesert_CliffA06
       objectReference: {fileID: 0}
+    - target: {fileID: 7547696149058588018, guid: ee2dc1962c226fc44b694f28e4da7a78, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3588,7 +3596,7 @@ GameObject:
   - component: {fileID: 787293266}
   - component: {fileID: 787293265}
   - component: {fileID: 787293264}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Field_Forest_X1_Z-1_Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4632,6 +4640,69 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 768189478935723223, guid: 34137985de459464e83480bdd984cea9, type: 3}
   m_PrefabInstance: {fileID: 986339791}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &987668924
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 264066582483917435, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      propertyPath: m_Name
+      value: CactusPBRMaskTint
+      objectReference: {fileID: 0}
+    - target: {fileID: 640064771670999233, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 90.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 640064771670999233, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 640064771670999233, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -35.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 640064771670999233, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 640064771670999233, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 640064771670999233, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 640064771670999233, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 640064771670999233, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 640064771670999233, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 640064771670999233, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 264066582483917435, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1373995254}
+    - targetCorrespondingSourceObject: {fileID: 264066582483917435, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1373995253}
+  m_SourcePrefab: {fileID: 100100000, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
 --- !u!1001 &994469686
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5047,6 +5118,10 @@ PrefabInstance:
     - target: {fileID: 7486123871743920420, guid: dcded3c6a4a884242ad7fc9b25c19790, type: 3}
       propertyPath: m_Name
       value: P_RockDesert_HoodooCliff08
+      objectReference: {fileID: 0}
+    - target: {fileID: 7486123871743920420, guid: dcded3c6a4a884242ad7fc9b25c19790, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7831721626066359198, guid: dcded3c6a4a884242ad7fc9b25c19790, type: 3}
       propertyPath: m_LocalScale.x
@@ -6072,6 +6147,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 768189478935723223, guid: 34137985de459464e83480bdd984cea9, type: 3}
   m_PrefabInstance: {fileID: 1367801756}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1373995250 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 264066582483917435, guid: 555cd83f3e3fbe44196ee748fbab0944, type: 3}
+  m_PrefabInstance: {fileID: 987668924}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1373995253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373995250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ea071287990a9c4ab2f86f09fa892a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyFieldAI
+  wanderRadius: 6
+  minIdleTime: 1
+  maxIdleTime: 3
+  detectDistance: 8
+  loseDistance: 12
+  maxChaseDistance: 15
+  encounterDistance: 1.2
+  battleSceneName: BattleScene
+--- !u!195 &1373995254
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373995250}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1001 &1381988505
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8239,5 +8361,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 787293266}
+  - {fileID: 987668924}
   - {fileID: 1527398673}
   - {fileID: 1091984734}

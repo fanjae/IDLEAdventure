@@ -499,6 +499,79 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1252378095571775044, guid: 1b08a80f301d7144799b8e4e214de6f9, type: 3}
   m_PrefabInstance: {fileID: 100055708}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &102126363
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1030998790, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_Name
+      value: PF_CoinSack_03 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 120.04283
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 17.946444
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998791, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: abc00000000009299584750557974664, type: 3}
 --- !u!1001 &104196868
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1848,6 +1921,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_RockDesert_HoodooCliff07
       objectReference: {fileID: 0}
+    - target: {fileID: 3464675506572532297, guid: e01cca206f6a76e4fb169e5bedda82aa, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4278086118805651699, guid: e01cca206f6a76e4fb169e5bedda82aa, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.10940535
@@ -2064,7 +2141,7 @@ GameObject:
   - component: {fileID: 440999584}
   - component: {fileID: 440999583}
   - component: {fileID: 440999582}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Field_Forest_X2_Z0_Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5518,6 +5595,10 @@ PrefabInstance:
     - target: {fileID: 7547696149058588018, guid: ee2dc1962c226fc44b694f28e4da7a78, type: 3}
       propertyPath: m_Name
       value: P_RockDesert_CliffA06
+      objectReference: {fileID: 0}
+    - target: {fileID: 7547696149058588018, guid: ee2dc1962c226fc44b694f28e4da7a78, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9409,3 +9490,4 @@ SceneRoots:
   - {fileID: 440999584}
   - {fileID: 1979090967}
   - {fileID: 1323724224}
+  - {fileID: 102126363}
