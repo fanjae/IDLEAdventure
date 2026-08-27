@@ -341,6 +341,116 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6442846538587936754, guid: 33bd97a9a62fd51468de07ab9471e458, type: 3}
   m_PrefabInstance: {fileID: 384178550}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &455348924
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1316590647590212054, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      propertyPath: m_Name
+      value: SalamanderPBRMaskTint
+      objectReference: {fileID: 0}
+    - target: {fileID: 1805565886216997740, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -29.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1805565886216997740, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1805565886216997740, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 113.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1805565886216997740, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1805565886216997740, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1805565886216997740, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1805565886216997740, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1805565886216997740, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1805565886216997740, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1805565886216997740, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1316590647590212054, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 455348927}
+    - targetCorrespondingSourceObject: {fileID: 1316590647590212054, guid: 8d78333431bedcb4593c590334576313, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 455348926}
+  m_SourcePrefab: {fileID: 100100000, guid: 8d78333431bedcb4593c590334576313, type: 3}
+--- !u!1 &455348925 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1316590647590212054, guid: 8d78333431bedcb4593c590334576313, type: 3}
+  m_PrefabInstance: {fileID: 455348924}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &455348926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455348925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ea071287990a9c4ab2f86f09fa892a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyFieldAI
+  wanderRadius: 6
+  minIdleTime: 1
+  maxIdleTime: 3
+  detectDistance: 8
+  loseDistance: 12
+  maxChaseDistance: 15
+  encounterDistance: 1.2
+  battleSceneName: 
+--- !u!195 &455348927
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455348925}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1001 &475814984
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2894,4 +3004,5 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 864524663}
+  - {fileID: 455348924}
   - {fileID: 1519159983}
