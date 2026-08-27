@@ -14,6 +14,7 @@ public class MainUIController : MonoBehaviour
     [SerializeField] private GameObject gachaPanel;
     [SerializeField] private GameObject equipmentPanel;
     [SerializeField] private GameObject resonancePanel;
+    [SerializeField] private GameObject shopPanel;
 
     [Header("Modal Popups")]
     [SerializeField] private GameObject idleRewardsPopup;
@@ -37,7 +38,8 @@ public class MainUIController : MonoBehaviour
             heroesDictionaryPanel,
             gachaPanel,
             equipmentPanel,
-            resonancePanel
+            resonancePanel,
+            shopPanel
         };
 
         popupPanels = new[]
@@ -133,6 +135,7 @@ public class MainUIController : MonoBehaviour
     public void OpenGacha() => OpenPage(gachaPanel);
     public void OpenEquipment() => OpenPage(equipmentPanel);
     public void OpenResonance() => OpenPage(resonancePanel);
+    public void OpenShop() => OpenPage(shopPanel);
 
     // 모험 버튼은 배틀 씬으로 넘김
     // 배틀 씬에서 스테이지 선택 패널 처음 표시함
@@ -176,4 +179,5 @@ public class MainUIController : MonoBehaviour
 
         SceneManager.LoadScene(adventureBattleSceneName);
     }
+
 }

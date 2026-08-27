@@ -10,7 +10,7 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
     [SerializeField] private ItemDatabaseSO itemDatabase;
     [SerializeField] private HeroClassIconCatalog classIconCatalog;
 
-    private readonly List<InventoryItemSlotView> createdSlots = new();
+    private readonly List<InventoryItemSlotView> slotViews = new();
 
     private InventoryController inventoryController;
     private Sequence slotSequence;
@@ -31,6 +31,8 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
 
     private void OnDestroy()
     {
+        slotSequence?.Kill();
+
         if (inventoryController != null)
         {
             inventoryController.OnInventoryChanged -= Refresh;
@@ -40,10 +42,17 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
     // 현재 보유 중인 인벤토리 데이터를 기준으로 슬롯 목록 갱신
     public void Refresh()
     {
-        ClearSlots();
+        if (inventoryController == null)
+        {
+            return;
+        }
 
-        CreateItemSlots();
-        CreateEquipmentSlots();
+        int slotIndex = 0;
+
+        slotIndex = RefreshItemSlots(slotIndex);
+        slotIndex = RefreshEquipmentSlots(slotIndex);
+
+        HideUnusedSlots(slotIndex);
     }
 
     // 생성된 슬롯을 하나씩 순서대로 표시
@@ -53,14 +62,20 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
 
         slotSequence = DOTween.Sequence();
 
-        foreach (InventoryItemSlotView slot in createdSlots)
+        foreach (InventoryItemSlotView slotView in slotViews)
         {
-            slotSequence.Append(slot.CreateShowTween());
+            if (slotView == null || !slotView.gameObject.activeSelf)
+            {
+                continue;
+            }
+
+            slotView.PrepareHiddenState();
+            slotSequence.Append(slotView.CreateShowTween());
         }
     }
 
-    // 현재 보유 중인 일반 아이템 슬롯 생성
-    private void CreateItemSlots()
+    // 현재 보유 중인 일반 아이템 슬롯 갱신
+    private int RefreshItemSlots(int slotIndex)
     {
         foreach (InventoryItemData ownedItem in inventoryController.Items)
         {
@@ -70,16 +85,18 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
                 continue;
             }
 
-            InventoryItemSlotView slot = Instantiate(itemSlotPrefab, content);
-            slot.BindItem(item, ownedItem.Quantity);
-            slot.PrepareHiddenState();
+            InventoryItemSlotView slotView = GetSlotView(slotIndex);
+            slotView.BindItem(item, ownedItem.Quantity);
+            slotView.gameObject.SetActive(true);
 
-            createdSlots.Add(slot);
+            slotIndex++;
         }
+
+        return slotIndex;
     }
 
-    // 현재 보유 중인 장비 슬롯 생성
-    private void CreateEquipmentSlots()
+    // 현재 보유 중인 장비 슬롯 갱신
+    private int RefreshEquipmentSlots(int slotIndex)
     {
         foreach (OwnedEquipmentData ownedEquipment in inventoryController.Equipments)
         {
@@ -89,28 +106,38 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
                 continue;
             }
 
-            InventoryItemSlotView slot = Instantiate(itemSlotPrefab, content);
-            slot.BindEquipment(equipment, ownedEquipment, classIconCatalog);
-            slot.PrepareHiddenState();
+            InventoryItemSlotView slotView = GetSlotView(slotIndex);
+            slotView.BindEquipment(equipment, ownedEquipment, classIconCatalog);
+            slotView.gameObject.SetActive(true);
 
-            createdSlots.Add(slot);
+            slotIndex++;
         }
+
+        return slotIndex;
     }
 
-    // 현재 생성되어 있는 인벤토리 슬롯 제거
-    private void ClearSlots()
+    // 필요한 수만큼 인벤토리 슬롯 생성
+    private InventoryItemSlotView GetSlotView(int index)
     {
-        createdSlots.Clear();
-
-        for (int i = content.childCount - 1; i >= 0; i--)
+        while (slotViews.Count <= index)
         {
-            Destroy(content.GetChild(i).gameObject);
+            InventoryItemSlotView slotView = Instantiate(itemSlotPrefab, content);
+            slotView.gameObject.SetActive(false);
+            slotViews.Add(slotView);
         }
+
+        return slotViews[index];
     }
 
-    // 슬롯 순서에 따른 등장 애니메이션 지연 시간 계산
-    private static float GetSlotAnimationDelay(int slotIndex)
+    // 현재 사용하지 않는 슬롯 숨김
+    private void HideUnusedSlots(int visibleCount)
     {
-        return slotIndex * 0.02f;
+        for (int index = visibleCount; index < slotViews.Count; index++)
+        {
+            if (slotViews[index] != null)
+            {
+                slotViews[index].gameObject.SetActive(false);
+            }
+        }
     }
 }

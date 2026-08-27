@@ -54,6 +54,12 @@ public sealed class SaveManager : Singleton<SaveManager>
             achievementManager.WriteSaveData(CurrentData);
         }
 
+        // 현재 생성되어 있는 상점 구매 제한과 출석 수령 상태를 저장 데이터에 반영
+        if (ShopManager.TryGetExistingInstance(out ShopManager shopManager) && shopManager.IsInitialized)
+        {
+            shopManager.WriteSaveData(CurrentData);
+        }
+
         // 저장 시점을 UTC Unix Time 기준으로 갱신
         CurrentData.SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         fileService.Save(CurrentData);
