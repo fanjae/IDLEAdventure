@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class SkillProjectile : MonoBehaviour
 {
@@ -16,6 +17,16 @@ public class SkillProjectile : MonoBehaviour
     private bool initialized;
     //투사체가 같은 적에게 여러번 데미지를 주는 것을 방지하기 위해 사용
     private readonly HashSet<BattleUnit> hitTargets = new HashSet<BattleUnit>();
+
+    private IObjectPool<SkillProjectile> pool;
+    private UnitSkill poolOwner;
+
+
+    public void SetPool(IObjectPool<SkillProjectile> pool, UnitSkill poolOwner)
+    {
+        this.pool = pool;
+        this.poolOwner = poolOwner;
+    }
 
     public void Initialize(BattleUnit owner, Vector3 direction, int damage, float speed)
     {
@@ -42,7 +53,7 @@ public class SkillProjectile : MonoBehaviour
 
         transform.position += moveDir * speed * Time.deltaTime;
         currentLifeTime += Time.deltaTime;
-        if (currentLifeTime >= lifetime) Destroy(gameObject);
+        if (currentLifeTime >= lifetime) Finish();
     }
 
     private void UpdateRotation()
@@ -64,5 +75,25 @@ public class SkillProjectile : MonoBehaviour
         int appliedDamage = target.TakeDamage(finalDamage, owner);
 
         Debug.Log($"[관통 스킬] {owner.name} -> {target.name} / 피해량 : {appliedDamage} / 적중 수 : {hitTargets.Count}");
+    }
+
+    private void Finish()
+    {
+        if (!initialized) return;
+        initialized = false;
+
+        owner = null;
+        moveDir = Vector3.zero;
+        attackPower = 0;
+        speed = 0.0f;
+        currentLifeTime = 0.0f;
+        hitTargets.Clear();
+
+        if (pool != null && poolOwner != null )
+        {
+            pool.Release(this);
+            return;
+        }
+        Destroy(gameObject);
     }
 }

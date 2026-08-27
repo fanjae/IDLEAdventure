@@ -1,10 +1,38 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class AreaSkillDamage : MonoBehaviour
 {
     private float areaRadius;
 
+    private IObjectPool<AreaSkillDamage> pool;
+    private UnitSkill poolOwner;
+
+    private ParticleSystem[] particles;
+    private Coroutine effectRoutine;
+
+
+    private void Awake()
+    {
+        particles = GetComponentsInChildren<ParticleSystem>(true);
+    }
+    private void OnDisable()
+    {
+        if (effectRoutine != null)
+        {
+            StopCoroutine(effectRoutine);
+            effectRoutine = null;
+        }
+    }
+
+
+    public void SetPool(IObjectPool<AreaSkillDamage> pool, UnitSkill poolOwner)
+    {
+        this.pool = pool;
+        this.poolOwner = poolOwner;
+    }
     public void SetAreaRadius(float radius)
     {
         areaRadius = Mathf.Max(0.1f, radius);
@@ -32,6 +60,58 @@ public class AreaSkillDamage : MonoBehaviour
             Debug.Log($"[광역 스킬] {owner.name} -> {target.name} / 피해량 : {appliedDamage}");
         }
     }
+    public void PlayEffect()
+    {
+        if (effectRoutine != null)
+        {
+            StopCoroutine(effectRoutine);
+            effectRoutine = null;
+        }
+
+        RestartParticles();
+        effectRoutine = StartCoroutine(EffectRoutine());
+    }
+    private void RestartParticles()
+    {
+        if (particles == null) return;
+
+        for (int i = 0; i < particles.Length; i++)
+        {
+            if (particles[i] == null) continue;
+            particles[i].Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            particles[i].Play(true);
+        }
+    }
+    private IEnumerator EffectRoutine()
+    {
+        //재생이 실제로 시작될 한 프레임 확보
+        yield return null;
+
+        while (HasAliveParticle()) yield return null;
+        effectRoutine = null;
+        Finish();
+    }
+    private bool HasAliveParticle()
+    {
+        if (particles == null || particles.Length == 0) return false;
+
+        for (int i = 0; i < particles.Length; i++)
+        {
+            if (particles[i] != null && particles[i].IsAlive(true)) return true;
+        }
+        return false;
+    }
+    private void Finish()
+    {
+        areaRadius = 0.0f;
+        if (pool != null && poolOwner != null)
+        {
+            pool.Release(this);
+            return;
+        }
+        Destroy(gameObject);
+    }
+
 
     private void OnDrawGizmosSelected()
     {
