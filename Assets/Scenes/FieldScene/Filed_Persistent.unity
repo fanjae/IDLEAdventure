@@ -722,7 +722,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldMapInputHandler
   worldMapController: {fileID: 754010479}
-  mouseZoomSpeed: 0.1
+  mouseZoomSpeed: 0.03
   pinchZoomSpeed: 2
 --- !u!225 &515963903
 CanvasGroup:
@@ -1843,10 +1843,12 @@ MonoBehaviour:
   worldMap: {fileID: 754010478}
   mapViewportCanvasGroup: {fileID: 515963903}
   worldMapController: {fileID: 754010479}
+  fieldStreamingManager: {fileID: 891487525}
   mapCameraY: 50
   transitionDuration: 0.7
   mapFadeStart: 0.55
   worldBlendStartZoom: 1.5
+  map3DStartZoom: 1.7
 --- !u!4 &1202080603
 Transform:
   m_ObjectHideFlags: 0
@@ -1964,7 +1966,7 @@ RectTransform:
   m_GameObject: {fileID: 1969817986}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 998869115}
