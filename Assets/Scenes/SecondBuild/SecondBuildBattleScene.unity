@@ -7507,7 +7507,7 @@ MonoBehaviour:
   slotBoard: {fileID: 776744951}
   slotDragController: {fileID: 776744950}
   slotHighlightController: {fileID: 776744952}
-  heroListController: {fileID: 0}
+  heroListController: {fileID: 871978592}
   heroRoot: {fileID: 1313193008}
   maxHeroCount: 5
   spawnHeight: -0.2
@@ -8632,6 +8632,14 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5320860933457029356, guid: b066a02cfa5f2d846a44b48aba5640df, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 776744945}
+    - target: {fileID: 5320860933457029356, guid: b066a02cfa5f2d846a44b48aba5640df, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: StartBattle
+      objectReference: {fileID: 0}
     - target: {fileID: 8613487833822025536, guid: b066a02cfa5f2d846a44b48aba5640df, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -8717,6 +8725,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b066a02cfa5f2d846a44b48aba5640df, type: 3}
+--- !u!114 &871978592 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2620089803103642345, guid: b066a02cfa5f2d846a44b48aba5640df, type: 3}
+  m_PrefabInstance: {fileID: 871978591}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8393df7bf247fdb4a8d679db450832d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FormationHeroListController
 --- !u!1 &878487498
 GameObject:
   m_ObjectHideFlags: 0
