@@ -34,6 +34,8 @@ public class QuestManager : Singleton<QuestManager>
     public event Action OnMainQuestChanged;
     public event Action OnSubQuestChanged;
     public event Action<int, bool> OnNPCInteracted;
+    
+    public event Action<QuestData> OnQuestCleared;
 
     // 프로퍼티
     public int CurrentMainQuestId => currentMainQuestId;
@@ -195,7 +197,8 @@ public class QuestManager : Singleton<QuestManager>
             {
                 Debug.Log($"{id} 메인 퀘스트를 클리어 했습니다.");
 
-                // 보상 수령은 여기서 하는 게 좋을까?
+                GiveQuestReward(quest);
+
                 currentMainQuestId++;
 
                 Debug.Log($"{id} 메인 퀘스트를 자동 수락했습니다.");
@@ -214,7 +217,8 @@ public class QuestManager : Singleton<QuestManager>
             {
                 Debug.Log($"{id} 서브 퀘스트를 클리어 했습니다.");
 
-                // 마찬가지로 보상 수령은 여기서 하는 게 좋을까?
+                GiveQuestReward(quest);
+
                 acceptedSubQuestIds.Remove(id);
                 clearSubQuestIds.Add(id);
             }
@@ -233,7 +237,8 @@ public class QuestManager : Singleton<QuestManager>
         }
 
         // 아니면 외부 데이터 + 퀘스트 ID값을 통해 보상을 제공할 테니 모든 걸 빠져나온 후 최종적으로 지급하는 게 좋을까?
-        
+        OnQuestCleared?.Invoke(quest);
+
         UpdateSaveData();
     }
 
@@ -273,5 +278,18 @@ public class QuestManager : Singleton<QuestManager>
 
         currentQuestNPC.selfDestroy();
         currentQuestNPC = null;
+    }
+    //
+    private void GiveQuestReward(QuestData quest)
+    {
+        if (quest.RewardData != null)
+        {
+            quest.RewardData.GiveReward();
+            Debug.Log($"[{quest.QuestName}] 퀘스트 보상 지급 완료!");
+        }
+        else
+        {
+            Debug.Log($"[{quest.QuestName}] 설정된 퀘스트 보상이 없습니다.");
+        }
     }
 }

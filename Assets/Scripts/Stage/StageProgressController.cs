@@ -13,6 +13,15 @@ public sealed class StageProgressController
         }
     }
 
+    public int HighestClearedStageId
+    {
+        get
+        {
+            StageProgressSaveData progress = GetProgressData();
+            return progress.HighestClearedStageId;
+        }
+    }
+
     // 현재 진행 중인 스테이지 클리어 처리
     public void CompleteStage(int stageId)
     {
@@ -22,6 +31,8 @@ public sealed class StageProgressController
         {
             return;
         }
+
+        progress.HighestClearedStageId = Mathf.Max(progress.HighestClearedStageId, stageId);
 
         int nextStageId = Mathf.Min(stageId + 1, StageDatabase.Instance.StageCount);
         progress.CurrentStageId = nextStageId;
