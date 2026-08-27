@@ -1399,9 +1399,6 @@ MonoBehaviour:
   loadingPanel: {fileID: 1052892863}
   chunkSize: 50
   loadRadius: 1
-  mapMinChunk: {x: -3, y: -3}
-  mapMaxChunk: {x: 3, y: 3}
-  mapBackgroundLoadDelay: 0.05
   unloadDelay: 2
   showLog: 1
 --- !u!4 &891487526
@@ -1812,75 +1809,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1001 &1173996251
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2364977855752419471, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2838267163965576514, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7791465609737101113, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8606755148461151098, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_Name
-      value: NPC
-      objectReference: {fileID: 0}
-    - target: {fileID: 8951615198464756160, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 19.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8951615198464756160, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8951615198464756160, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 21.9
-      objectReference: {fileID: 0}
-    - target: {fileID: 8951615198464756160, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8951615198464756160, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8951615198464756160, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8951615198464756160, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8951615198464756160, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8951615198464756160, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 8951615198464756160, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: bf3896d80b06b09488a4c98cd6d5d851, type: 3}
 --- !u!1 &1202080601
 GameObject:
   m_ObjectHideFlags: 0
@@ -1915,12 +1843,10 @@ MonoBehaviour:
   worldMap: {fileID: 754010478}
   mapViewportCanvasGroup: {fileID: 515963903}
   worldMapController: {fileID: 754010479}
-  fieldStreamingManager: {fileID: 891487525}
   mapCameraY: 50
   transitionDuration: 0.7
   mapFadeStart: 0.55
   worldBlendStartZoom: 1.5
-  mapStreamingStartZoom: 1.3
 --- !u!4 &1202080603
 Transform:
   m_ObjectHideFlags: 0
@@ -2220,4 +2146,3 @@ SceneRoots:
   - {fileID: 700908475}
   - {fileID: 1202080603}
   - {fileID: 120641697}
-  - {fileID: 1173996251}
