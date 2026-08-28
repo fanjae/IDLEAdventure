@@ -1,3 +1,4 @@
+using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -26,6 +27,9 @@ public class EnemyFieldAI : MonoBehaviour
     [SerializeField] private float loseDistance = 12f;
     [SerializeField] private float maxChaseDistance = 15f;
     [SerializeField] private float encounterDistance = 1.2f;
+
+    [Header("Enemy Type")]
+    [SerializeField] private bool isWorm;
 
     //
     private Animator animator;
@@ -66,8 +70,18 @@ public class EnemyFieldAI : MonoBehaviour
 
     private void Update()
     {
-        if (state != EnemyState.Chase && state != EnemyState.Return && IsPlayerInRange(detectDistance)) StartChase();
-
+        if (isWorm)
+        {
+            if (IsPlayerInRange(encounterDistance))
+            {
+                StartBattle();
+                return;
+            }
+        }
+        else
+        {
+            if (state != EnemyState.Chase && state != EnemyState.Return && IsPlayerInRange(detectDistance)) StartChase();
+        }
         switch (state)
         {
             case EnemyState.Idle:
