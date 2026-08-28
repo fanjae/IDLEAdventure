@@ -22,7 +22,7 @@ public class IdleRewardChest : MonoBehaviour
 
     private bool isOpened = false;
 
-    private readonly string Open = "Open";
+    //private readonly string Open = "Open";
 
     private void Start()
     {

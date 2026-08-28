@@ -11,9 +11,11 @@ public class IdleReward : MonoBehaviour
     // 방치 보상 데이터 세팅
     [Header("Idle Reward Setting")]
     [SerializeField] private TextAsset rewardCSVData;       // 방치 보상 데이터 테이블.
-    [SerializeField] private float maxIdleTime = 100.0f;    // 최대 방치 시간. (단위: 초)
-    //[SerializeField] private int testClearStageNum;         // 현재는 스테이지 관리 매니저가 없기에 임의 스테이지 번호.
-
+    
+    [Tooltip("X: Hours, Y: Minutes, Z: Seconds")]
+    [SerializeField] private Vector3Int maxIdleTimeSetting = new Vector3Int(0, 1, 40);
+    private float maxIdleTime;    // 최대 방치 시간.
+    
     // 스테이지 번호 별 보상 테이블 저장 딕셔너리.
     private Dictionary<int, StageRewardData> stageRewards = new Dictionary<int, StageRewardData>();
     // 보상 지급 후 남겨질 보상 저장 딕셔너리.
@@ -26,6 +28,11 @@ public class IdleReward : MonoBehaviour
     public float MaxIdleTime => maxIdleTime;
 
     private readonly StageProgressController stageProgressController = new();
+
+    private void Awake()
+    {
+        SetMaxIdleTime();
+    }
 
     private void Start()
     {
@@ -206,5 +213,12 @@ public class IdleReward : MonoBehaviour
         }
 
         return expectedRewards;
+    }
+
+    private void SetMaxIdleTime()
+    {
+        maxIdleTime = (maxIdleTimeSetting.x * 3600.0f)
+                    + (maxIdleTimeSetting.y * 60.0f)
+                    + maxIdleTimeSetting.z;
     }
 }
