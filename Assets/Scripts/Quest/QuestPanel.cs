@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -7,6 +8,9 @@ using UnityEngine;
 /// </summary>
 public class QuestPanel : MonoBehaviour
 {
+    // Quest Panel 이벤트(0828 UI 연결 용으로 추가)
+    public event Action OnClosed;
+
     [Header("UI Component")]
     [SerializeField] private GameObject questPanel;
 
@@ -61,6 +65,13 @@ public class QuestPanel : MonoBehaviour
         {
             questPanel.SetActive(false);
         }
+    }
+
+    // 퀘스트 패널 뒤로가기 처리 (0828 추가)
+    public void CloseQuestPanelToAllMenu()
+    {
+        CloseQuestPanel();
+        OnClosed?.Invoke();
     }
 
     // 퀘스트 현황 패널에서 메인 퀘스트 버튼을 눌렀을 때 호출될 함수.

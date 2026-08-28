@@ -22,6 +22,7 @@ public sealed class AllPanelController : MonoBehaviour
 
     [Header("퀘스트")]
     [SerializeField] private Button questButton;
+    [SerializeField] private QuestPanel questPanel;
 
     [Header("업적")]
     [SerializeField] private Button achievementButton;
@@ -41,6 +42,8 @@ public sealed class AllPanelController : MonoBehaviour
         if (inventoryButton != null) inventoryButton.onClick.AddListener(HandleInventoryButtonClicked);
         if (shopButton != null) shopButton.onClick.AddListener(HandleShopButtonClicked);
         if (shopPanelPresenter != null) shopPanelPresenter.OnClosed += HandleShopPanelClosed;
+        if (questButton != null) questButton.onClick.AddListener(HandleQuestButtonClicked);
+        if (questPanel != null) questPanel.OnClosed += HandleQuestPanelClosed;
         if (achievementButton != null) achievementButton.onClick.AddListener(HandleAchievementButtonClicked);
         if (achievementPanelPresenter != null) achievementPanelPresenter.OnClosed += HandleAchievementPanelClosed;
     }
@@ -51,6 +54,8 @@ public sealed class AllPanelController : MonoBehaviour
         if (inventoryButton != null) inventoryButton.onClick.RemoveListener(HandleInventoryButtonClicked);
         if (shopButton != null) shopButton.onClick.RemoveListener(HandleShopButtonClicked);
         if (shopPanelPresenter != null) shopPanelPresenter.OnClosed -= HandleShopPanelClosed;
+        if (questButton != null) questButton.onClick.RemoveListener(HandleQuestButtonClicked);
+        if (questPanel != null) questPanel.OnClosed -= HandleQuestPanelClosed;
         if (achievementButton != null) achievementButton.onClick.RemoveListener(HandleAchievementButtonClicked);
         if (achievementPanelPresenter != null) achievementPanelPresenter.OnClosed -= HandleAchievementPanelClosed;
     }
@@ -100,6 +105,30 @@ public sealed class AllPanelController : MonoBehaviour
         }
 
         shopPanelPresenter.gameObject.SetActive(false);
+        allMenuRoot.SetActive(true);
+    }
+
+    // 퀘스트 버튼 클릭 처리
+    private void HandleQuestButtonClicked()
+    {
+        if (allMenuRoot == null || questPanel == null)
+        {
+            return;
+        }
+
+        // 전체 메뉴 화면을 숨기고 퀘스트 패널 표시
+        allMenuRoot.SetActive(false);
+        questPanel.OpenQuestPanel();
+    }
+
+    // 퀘스트 패널 종료 후 전체 메뉴 화면 복원
+    private void HandleQuestPanelClosed()
+    {
+        if (allMenuRoot == null)
+        {
+            return;
+        }
+
         allMenuRoot.SetActive(true);
     }
 
