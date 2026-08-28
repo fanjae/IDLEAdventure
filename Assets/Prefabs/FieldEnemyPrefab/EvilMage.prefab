@@ -1128,6 +1128,8 @@ GameObject:
   - component: {fileID: 958975181134800002}
   - component: {fileID: 4657354266583775861}
   - component: {fileID: 7377713160741756925}
+  - component: {fileID: -832597060902954537}
+  - component: {fileID: -8320258175908674190}
   m_Layer: 0
   m_Name: EvilMage
   m_TagString: Untagged
@@ -1215,6 +1217,43 @@ MonoBehaviour:
   loseDistance: 12
   maxChaseDistance: 15
   encounterDistance: 1.2
+  isWorm: 0
+--- !u!65 &-832597060902954537
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5203355995830595516}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-8320258175908674190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5203355995830595516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f29b25c08d65cc54b8fb4d2458d7cfac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FieldEnemyInteraction
+  enemyId: 0
+  fieldType: 1
+  battleSceneName: SecondBuildBattleScene
 --- !u!1 &5259211938948676904
 GameObject:
   m_ObjectHideFlags: 0

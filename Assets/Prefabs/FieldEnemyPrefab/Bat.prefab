@@ -1100,6 +1100,8 @@ GameObject:
   - component: {fileID: 3666202009624938187}
   - component: {fileID: 5160565559114649478}
   - component: {fileID: 777748004633800956}
+  - component: {fileID: 6541413856891010250}
+  - component: {fileID: 5138324220800213809}
   m_Layer: 0
   m_Name: Bat
   m_TagString: Untagged
@@ -1187,6 +1189,45 @@ MonoBehaviour:
   loseDistance: 12
   maxChaseDistance: 15
   encounterDistance: 1.2
+  isWorm: 0
+--- !u!136 &6541413856891010250
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8467513825051153345}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5138324220800213809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8467513825051153345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f29b25c08d65cc54b8fb4d2458d7cfac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FieldEnemyInteraction
+  enemyId: 0
+  fieldType: 1
+  battleSceneName: SecondBuildBattleScene
 --- !u!1 &8555228944643051557
 GameObject:
   m_ObjectHideFlags: 0
