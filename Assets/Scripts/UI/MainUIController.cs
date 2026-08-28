@@ -14,6 +14,7 @@ public class MainUIController : MonoBehaviour
     [SerializeField] private GameObject gachaPanel;
     [SerializeField] private GameObject equipmentPanel;
     [SerializeField] private GameObject resonancePanel;
+    [SerializeField] private GameObject shopPanel;
 
     [Header("Modal Popups")]
     [SerializeField] private GameObject idleRewardsPopup;
@@ -37,7 +38,8 @@ public class MainUIController : MonoBehaviour
             heroesDictionaryPanel,
             gachaPanel,
             equipmentPanel,
-            resonancePanel
+            resonancePanel,
+            shopPanel
         };
 
         popupPanels = new[]
@@ -49,6 +51,16 @@ public class MainUIController : MonoBehaviour
         pageHistory.Clear();
         ShowPage(homePanel);
         CloseAllPopups();
+    }
+
+    // 메인 씬 최초 진입 시 미구매 1회 한정 패키지가 있으면 상점을 열어 구매 팝업을 표시함
+    private void Start()
+    {
+        if (ShopManager.TryGetExistingInstance(out ShopManager shopManager) && shopManager.IsInitialized &&
+            shopManager.Controller.TryGetFirstUnpurchasedPackage(out _))
+        {
+            OpenShop();
+        }
     }
 
     private void OnDestroy()
@@ -133,6 +145,7 @@ public class MainUIController : MonoBehaviour
     public void OpenGacha() => OpenPage(gachaPanel);
     public void OpenEquipment() => OpenPage(equipmentPanel);
     public void OpenResonance() => OpenPage(resonancePanel);
+    public void OpenShop() => OpenPage(shopPanel);
 
     // 모험 버튼은 배틀 씬으로 넘김
     // 배틀 씬에서 스테이지 선택 패널 처음 표시함
@@ -176,4 +189,5 @@ public class MainUIController : MonoBehaviour
 
         SceneManager.LoadScene(adventureBattleSceneName);
     }
+
 }

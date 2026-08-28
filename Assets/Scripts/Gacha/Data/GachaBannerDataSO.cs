@@ -101,15 +101,15 @@ public sealed class GachaBannerDataSO : ScriptableObject
         banner.name = "RuntimeDevelopmentGachaBanner";
         banner.heroPool = new List<GachaHeroPoolEntry>
         {
-            new(FindDevelopmentHero(heroDatabase, "Hero_Tanker"), GachaRarity.Tier1, false),
-            new(FindDevelopmentHero(heroDatabase, "Hero_Ranger"), GachaRarity.Tier1, false),
-            new(FindDevelopmentHero(heroDatabase, "Hero_Healer"), GachaRarity.Tier2, true),
-            new(FindDevelopmentHero(heroDatabase, "Hero_Tanker_A"), GachaRarity.Tier1, false),
-            new(FindDevelopmentHero(heroDatabase, "Hero_Tanker_B"), GachaRarity.Tier1, false),
-            new(FindDevelopmentHero(heroDatabase, "Hero_Ranger_A"), GachaRarity.Tier2, false),
-            new(FindDevelopmentHero(heroDatabase, "Hero_Ranger_B"), GachaRarity.Tier1, false),
-            new(FindDevelopmentHero(heroDatabase, "Hero_Healer_A"), GachaRarity.Tier2, false),
-            new(FindDevelopmentHero(heroDatabase, "Hero_Healer_B"), GachaRarity.Tier1, false)
+            new(FindDevelopmentHero(heroDatabase, "Hero_Tanker"), false),
+            new(FindDevelopmentHero(heroDatabase, "Hero_Ranger"), false),
+            new(FindDevelopmentHero(heroDatabase, "Hero_Healer"), true),
+            new(FindDevelopmentHero(heroDatabase, "Hero_Tanker_A"), false),
+            new(FindDevelopmentHero(heroDatabase, "Hero_Tanker_B"), false),
+            new(FindDevelopmentHero(heroDatabase, "Hero_Ranger_A"), false),
+            new(FindDevelopmentHero(heroDatabase, "Hero_Ranger_B"), false),
+            new(FindDevelopmentHero(heroDatabase, "Hero_Healer_A"), false),
+            new(FindDevelopmentHero(heroDatabase, "Hero_Healer_B"), false)
         };
         return banner;
     }
@@ -130,19 +130,16 @@ public sealed class GachaBannerDataSO : ScriptableObject
 public sealed class GachaHeroPoolEntry
 {
     [SerializeField] private HeroData heroData;
-    [SerializeField] private GachaRarity rarity;
     [SerializeField] private bool isPickup;
 
     public HeroData HeroData => heroData;
     public string HeroId => heroData != null ? heroData.UnitID : string.Empty;
-    public GachaRarity Rarity => rarity;
     public bool IsPickup => isPickup;
 
     // 런타임 기본 배너 데이터를 만들 때만 사용함
-    public GachaHeroPoolEntry(HeroData heroData, GachaRarity rarity, bool isPickup)
+    public GachaHeroPoolEntry(HeroData heroData, bool isPickup)
     {
         this.heroData = heroData;
-        this.rarity = rarity;
         this.isPickup = isPickup;
     }
 }

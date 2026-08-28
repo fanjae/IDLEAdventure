@@ -470,14 +470,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3540401757751973924, guid: 9270135fa2a306c49b3827566db20402, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4125382805825219069, guid: 9270135fa2a306c49b3827566db20402, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6789267850165173550, guid: 9270135fa2a306c49b3827566db20402, type: 3}
       propertyPath: m_Name
       value: UI
@@ -563,13 +555,19 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8956272743458491848, guid: 9270135fa2a306c49b3827566db20402, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9270135fa2a306c49b3827566db20402, type: 3}
 --- !u!1 &968440942 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2225262331471496506, guid: 9270135fa2a306c49b3827566db20402, type: 3}
+  m_PrefabInstance: {fileID: 964095624}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &985617950 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5021349800525492701, guid: 9270135fa2a306c49b3827566db20402, type: 3}
   m_PrefabInstance: {fileID: 964095624}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1070884074
@@ -584,6 +582,10 @@ PrefabInstance:
       propertyPath: homePanel
       value: 
       objectReference: {fileID: 968440942}
+    - target: {fileID: 2891158576997395590, guid: 9e2d2f690f67ee744a2cd5be95b3a858, type: 3}
+      propertyPath: shopPanel
+      value: 
+      objectReference: {fileID: 985617950}
     - target: {fileID: 2891158576997395590, guid: 9e2d2f690f67ee744a2cd5be95b3a858, type: 3}
       propertyPath: gachaPanel
       value: 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,6 +14,12 @@ public sealed class AchievementPanelPresenter : MonoBehaviour
     [SerializeField] private Button closeButton;
     [SerializeField] private Button claimAllButton;
     [SerializeField] private AchievementRewardToast rewardToast;
+
+    [Header("패널 연출")]
+    [SerializeField] private UIPanelTransition panelTransition;
+
+    public event Action OnClosed;
+
     [Header("하단 분류 탭")]
     [SerializeField] private Button partyGrowthButton;
     [SerializeField] private Button gachaButton;
@@ -63,6 +70,8 @@ public sealed class AchievementPanelPresenter : MonoBehaviour
 
         SubscribeToAchievementEvents();
         Rebuild();
+
+        panelTransition?.PlayOpen();
     }
 
     // 모험단 성장 분류를 열고 목록을 다시 만듦
@@ -85,8 +94,21 @@ public sealed class AchievementPanelPresenter : MonoBehaviour
 
     public void Close()
     {
+        if (panelTransition == null)
+        {
+            ClosePanel();
+            return;
+        }
+
+        panelTransition.PlayClose(ClosePanel);
+    }
+
+    // 업적 패널 종료 처리
+    private void ClosePanel()
+    {
         UnsubscribeFromAchievementEvents();
         panelRoot.SetActive(false);
+        OnClosed?.Invoke();
     }
 
     public void Refresh()

@@ -21,6 +21,7 @@ public class MainUIRelay : MonoBehaviour
     public void OpenGacha() => WithController(controller => controller.OpenGacha());
     public void OpenEquipment() => WithController(controller => controller.OpenEquipment());
     public void OpenResonance() => WithController(controller => controller.OpenResonance());
+    public void OpenShop() => WithController(controller => controller.OpenShop());
     public void OpenAdventure() => WithController(controller => controller.OpenAdventure());
     public void OpenIdleRewards() => WithController(controller => controller.OpenIdleRewards());
     public void OpenSettings() => WithController(controller => controller.OpenSettings());

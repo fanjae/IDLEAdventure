@@ -26611,55 +26611,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1bbf7ee90dc9ce43b1dd7bae100200e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageEnemySpawner
-  tileSlots:
-  - {fileID: 1166160298}
-  - {fileID: 1019441741}
-  - {fileID: 132958781}
-  - {fileID: 677818608}
-  - {fileID: 1931669371}
-  - {fileID: 313865266}
-  - {fileID: 78995990}
-  - {fileID: 1007398819}
-  - {fileID: 668019868}
-  - {fileID: 1997202949}
-  - {fileID: 700298952}
-  - {fileID: 377018401}
-  - {fileID: 2084611487}
-  - {fileID: 1059008832}
-  - {fileID: 105070229}
-  - {fileID: 383547178}
-  - {fileID: 1948710750}
-  - {fileID: 351646234}
-  - {fileID: 1118454963}
-  - {fileID: 1880233023}
-  - {fileID: 2123655561}
-  - {fileID: 1825334422}
-  - {fileID: 91606462}
-  - {fileID: 1336654666}
-  - {fileID: 1411450522}
-  - {fileID: 416248238}
-  - {fileID: 1456822272}
-  - {fileID: 2032290023}
-  - {fileID: 1626901538}
-  - {fileID: 913005683}
-  - {fileID: 2090013648}
-  - {fileID: 628084627}
-  - {fileID: 1448271594}
-  - {fileID: 1763369220}
-  - {fileID: 159000091}
-  - {fileID: 1792386356}
-  - {fileID: 1045065027}
-  - {fileID: 1708824118}
-  - {fileID: 1002307698}
-  - {fileID: 2042887792}
-  - {fileID: 1352992322}
-  - {fileID: 1296919712}
-  - {fileID: 931851123}
-  - {fileID: 481477303}
-  - {fileID: 1894151156}
-  enemyPrefabs:
-  - enemyId: GOBLIN_BASE
-    prefab: {fileID: 5649157844948141021, guid: f34f0ea7397b7fb4bb753cd241a6acf5, type: 3}
+  slots: []
+  enemyPrefabPath: Prefab/Enemy
   enemyRoot: {fileID: 651083357}
   slotHighlightController: {fileID: 0}
   spawnHeight: 0.2
@@ -84184,6 +84137,63 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1001 &1944693098
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1030998937, guid: abc00000000000122685398679938398, type: 3}
+      propertyPath: m_Name
+      value: PF_LionChest
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998938, guid: abc00000000000122685398679938398, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998938, guid: abc00000000000122685398679938398, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998938, guid: abc00000000000122685398679938398, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998938, guid: abc00000000000122685398679938398, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998938, guid: abc00000000000122685398679938398, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998938, guid: abc00000000000122685398679938398, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998938, guid: abc00000000000122685398679938398, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998938, guid: abc00000000000122685398679938398, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998938, guid: abc00000000000122685398679938398, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030998938, guid: abc00000000000122685398679938398, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: abc00000000000122685398679938398, type: 3}
 --- !u!1 &1948710749
 GameObject:
   m_ObjectHideFlags: 0
@@ -98088,3 +98098,4 @@ SceneRoots:
   - {fileID: 4162961489264942808}
   - {fileID: 7935420550258089213}
   - {fileID: 851123824}
+  - {fileID: 1944693098}
