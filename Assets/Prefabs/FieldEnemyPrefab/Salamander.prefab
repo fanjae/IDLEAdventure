@@ -422,6 +422,8 @@ GameObject:
   - component: {fileID: 7942388983296968804}
   - component: {fileID: 4056487415359669633}
   - component: {fileID: 4756352241162887781}
+  - component: {fileID: 5163635568879720142}
+  - component: {fileID: 910000000000000009}
   m_Layer: 0
   m_Name: Salamander
   m_TagString: Untagged
@@ -509,6 +511,43 @@ MonoBehaviour:
   loseDistance: 12
   maxChaseDistance: 15
   encounterDistance: 1.2
+  isWorm: 0
+--- !u!65 &5163635568879720142
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2645474938410776543}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5, y: 1, z: 1.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &910000000000000009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2645474938410776543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f29b25c08d65cc54b8fb4d2458d7cfac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FieldEnemyInteraction
+  enemyId: 0
+  fieldType: 3
+  battleSceneName: SecondBuildBattleScene
 --- !u!1 &2685357587755376731
 GameObject:
   m_ObjectHideFlags: 0
