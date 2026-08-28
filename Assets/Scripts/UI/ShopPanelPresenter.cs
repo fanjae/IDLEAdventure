@@ -149,7 +149,7 @@ public sealed class ShopPanelPresenter : MonoBehaviour
         }
 
         unpurchasedPackageNoticeQueue.Clear();
-        foreach (ShopProductSO product in shopManager.Controller.GetUnpurchasedPackages())
+        foreach (ShopProductSO product in shopManager.Controller.GetNotifiableUnpurchasedPackages())
             unpurchasedPackageNoticeQueue.Enqueue(product.ProductId);
 
         ShowNextUnpurchasedPackageNotice();
@@ -211,10 +211,18 @@ public sealed class ShopPanelPresenter : MonoBehaviour
         ShowNextUnpurchasedPackageNotice();
     }
 
-    // 나중에 보기로 넘긴 패키지는 이번 상점 진입의 안내 대기열에서만 건너뜀
+    // 나중에 보기로 넘긴 패키지는 저장하고 오늘 안내 대상에서 제외함
     private void SkipUnpurchasedPackageNotice()
     {
+        string productId = pendingPackageNoticeProductId;
         CloseUnpurchasedPackageNotice();
+
+        if (!string.IsNullOrWhiteSpace(productId) &&
+            ShopManager.TryGetExistingInstance(out ShopManager shopManager) && shopManager.IsInitialized)
+        {
+            shopManager.Controller.DismissPackageNoticeForToday(productId);
+        }
+
         ShowNextUnpurchasedPackageNotice();
     }
 

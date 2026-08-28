@@ -57,6 +57,9 @@ public sealed class ShopProductSO : ScriptableObject
     [Min(0)] [SerializeField] private int requiredClearedStageId;
     [Tooltip("0이면 패배 조건이 없으며, 지정한 번호의 스테이지에 한 번 이상 패배한 뒤 등장함")]
     [Min(0)] [SerializeField] private int requiredDefeatedStageId;
+    [Tooltip("None이면 재화 보유량 조건이 없으며, 선택한 재화가 지정 수치 이하일 때 등장함")]
+    [SerializeField] private CurrencyType requiredCurrencyBelow = CurrencyType.None;
+    [Min(0)] [SerializeField] private int requiredCurrencyBelowAmount;
 
     [Header("구매 비용")]
     [SerializeField] private ShopPriceType priceType = ShopPriceType.Currency;
@@ -84,6 +87,10 @@ public sealed class ShopProductSO : ScriptableObject
     public int DisplayOrder => displayOrder;
     public int RequiredClearedStageId => Mathf.Max(0, requiredClearedStageId);
     public int RequiredDefeatedStageId => Mathf.Max(0, requiredDefeatedStageId);
+    public CurrencyType RequiredCurrencyBelow => requiredCurrencyBelow;
+    public int RequiredCurrencyBelowAmount => Mathf.Max(0, requiredCurrencyBelowAmount);
+    public bool HasCurrencyAmountRequirement =>
+        RequiredCurrencyBelow >= CurrencyType.GOLD && RequiredCurrencyBelow < CurrencyType.Length;
     public ShopPriceType PriceType => priceType;
     public CurrencyType PriceCurrency => priceCurrency;
     public int PriceAmount => priceAmount;
@@ -95,14 +102,19 @@ public sealed class ShopProductSO : ScriptableObject
     public Sprite Icon => icon;
     public Sprite Artwork => artwork;
 
-    // 저장된 현재 스테이지가 요구 스테이지 다음으로 진행됐는지 확인함
-    public bool IsUnlockedAtCurrentStage(int currentStageId) =>
-        RequiredClearedStageId == 0 || currentStageId > RequiredClearedStageId;
+    // 저장된 최고 클리어 스테이지가 요구 스테이지에 도달했는지 확인함
+    public bool IsUnlockedAfterClearingStage(int highestClearedStageId) =>
+        RequiredClearedStageId == 0 || highestClearedStageId >= RequiredClearedStageId;
 
-    // 클리어와 패배 조건을 모두 만족했는지 반환함
-    public bool IsUnlockedAtCurrentProgress(int currentStageId, System.Func<int, bool> hasDefeatedStage) =>
-        IsUnlockedAtCurrentStage(currentStageId) &&
-        (RequiredDefeatedStageId == 0 || (hasDefeatedStage != null && hasDefeatedStage(RequiredDefeatedStageId)));
+    // 클리어, 패배, 재화 보유량 조건을 모두 만족했는지 반환함
+    public bool IsUnlockedAtCurrentProgress(
+        int highestClearedStageId,
+        System.Func<int, bool> hasDefeatedStage,
+        System.Func<CurrencyType, int> getCurrencyAmount) =>
+        IsUnlockedAfterClearingStage(highestClearedStageId) &&
+        (RequiredDefeatedStageId == 0 || (hasDefeatedStage != null && hasDefeatedStage(RequiredDefeatedStageId))) &&
+        (!HasCurrencyAmountRequirement ||
+         (getCurrencyAmount != null && getCurrencyAmount(RequiredCurrencyBelow) <= RequiredCurrencyBelowAmount));
 
     // 에디터 에셋이 준비되기 전 기능 확인용 상품을 생성함
     public static ShopProductSO CreateDevelopmentProduct(

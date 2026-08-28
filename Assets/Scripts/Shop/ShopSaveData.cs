@@ -14,6 +14,12 @@ public sealed class ShopSaveData
     // 일일 구매 제한을 마지막으로 초기화한 UTC 날짜임
     public string LastDailyResetDate { get; set; }
 
+    // 미구매 패키지 안내를 나중에 보기로 넘긴 UTC 날짜임
+    public string PackageNoticeDismissDate { get; set; }
+
+    // 해당 날짜에 안내를 숨긴 미구매 패키지 상품 ID 목록임
+    public List<string> DismissedPackageNoticeProductIds { get; set; } = new();
+
     // 이전 순차 출석 방식에서 마지막으로 수령한 UTC 날짜임
     public string LastAttendanceClaimDate { get; set; }
 
