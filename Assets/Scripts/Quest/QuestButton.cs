@@ -38,7 +38,7 @@ public abstract class QuestButton : MonoBehaviour
             {
                 GameObject spawnTarget = Instantiate(currentQuest.NPCPrefab, currentQuest.SpawnPosition, Quaternion.identity);
                 
-                if (spawnTarget.TryGetComponent<NPCTest>(out var npc))
+                if (spawnTarget.TryGetComponent<QuestNPCInteraction>(out var npc))
                 {
                     npc.Initialize(id);
                     QuestManager.Instance.SetQuestNPC(npc);

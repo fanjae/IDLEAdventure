@@ -27,7 +27,7 @@ public class QuestManager : Singleton<QuestManager>
     [SerializeField] private List<int> clearSubQuestIds = new List<int>();
 
     [Header("SpawnedNPC")]
-    [SerializeField] private NPCTest currentQuestNPC;
+    [SerializeField] private QuestNPCInteraction currentQuestNPC;
 
     private const int maxSubQuestCount = 2;
 
@@ -267,7 +267,7 @@ public class QuestManager : Singleton<QuestManager>
         OnNPCInteracted?.Invoke(id, isInteractable);
     }
     // 테스트용 NPC 객체 저장 함수.
-    public void SetQuestNPC(NPCTest npc)
+    public void SetQuestNPC(QuestNPCInteraction npc)
     {
         currentQuestNPC = npc;
     }
@@ -276,7 +276,7 @@ public class QuestManager : Singleton<QuestManager>
     {
         if (currentQuestNPC == null) return;
 
-        currentQuestNPC.selfDestroy();
+        currentQuestNPC.SelfDestroy();
         currentQuestNPC = null;
     }
     //
