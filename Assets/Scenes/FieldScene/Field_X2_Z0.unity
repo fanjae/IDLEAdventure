@@ -567,11 +567,48 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4854157025924577663, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: chestId
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4854157025924577663, guid: abc00000000009299584750557974664, type: 3}
+      propertyPath: chestRewards.Array.data[0].amount
+      value: 500
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1030998790, guid: abc00000000009299584750557974664, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 102126365}
   m_SourcePrefab: {fileID: 100100000, guid: abc00000000009299584750557974664, type: 3}
+--- !u!1 &102126364 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1030998790, guid: abc00000000009299584750557974664, type: 3}
+  m_PrefabInstance: {fileID: 102126363}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &102126365
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 102126364}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &104196868
 PrefabInstance:
   m_ObjectHideFlags: 0
