@@ -89,7 +89,6 @@ public class UnitBarrier : MonoBehaviour
     }
     private void OnReleaseVfx(GameObject vfx)
     {
-        vfx.transform.SetParent(null);
         vfx.SetActive(false);
     }
     private void OnDestroyVfx(GameObject vfx)

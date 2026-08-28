@@ -132,7 +132,6 @@ public class UnitPassiveAttackBuff : MonoBehaviour
     }
     private void OnReleaseCastVfx(GameObject vfx)
     {
-        vfx.transform.SetParent(null);
         vfx.SetActive(false);
     }
     private void OnDestroyCastVfx(GameObject vfx)
