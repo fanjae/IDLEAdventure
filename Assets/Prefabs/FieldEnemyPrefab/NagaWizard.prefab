@@ -748,6 +748,8 @@ GameObject:
   - component: {fileID: 437405536213622108}
   - component: {fileID: 7900217990952431809}
   - component: {fileID: 6887888138657800407}
+  - component: {fileID: 975413574806764040}
+  - component: {fileID: 910000000000000007}
   m_Layer: 0
   m_Name: NagaWizard
   m_TagString: Untagged
@@ -835,6 +837,28 @@ MonoBehaviour:
   loseDistance: 12
   maxChaseDistance: 15
   encounterDistance: 2
+  isWorm: 0
+--- !u!65 &975413574806764040
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2831613351714983279}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5, y: 1, z: 1.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2928053014661072238
 GameObject:
   m_ObjectHideFlags: 0
@@ -2459,3 +2483,18 @@ Transform:
   - {fileID: 6282376138805669137}
   m_Father: {fileID: 1978170914404160237}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000000000000007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2831613351714983279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f29b25c08d65cc54b8fb4d2458d7cfac, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FieldEnemyInteraction
+  enemyId: 0
+  fieldType: 3
+  battleSceneName: SecondBuildBattleScene

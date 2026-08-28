@@ -1095,6 +1095,8 @@ GameObject:
   - component: {fileID: 3523053049797739233}
   - component: {fileID: 4090749142769300885}
   - component: {fileID: 8987059161539571149}
+  - component: {fileID: 7846939349217330538}
+  - component: {fileID: 910000000000000012}
   m_Layer: 0
   m_Name: WormMonster
   m_TagString: Untagged
@@ -1183,6 +1185,27 @@ MonoBehaviour:
   maxChaseDistance: 1
   encounterDistance: 1.2
   isWorm: 1
+--- !u!65 &7846939349217330538
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8693611995179562485}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 1, z: 3}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8708727742934788246
 GameObject:
   m_ObjectHideFlags: 0
@@ -1280,3 +1303,18 @@ Transform:
   - {fileID: 22092588508592788}
   m_Father: {fileID: 8595702933569780022}
   m_LocalEulerAnglesHint: {x: 6.78315e-15, y: 180, z: -63.000492}
+--- !u!114 &910000000000000012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8693611995179562485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f29b25c08d65cc54b8fb4d2458d7cfac, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FieldEnemyInteraction
+  enemyId: 0
+  fieldType: 2
+  battleSceneName: SecondBuildBattleScene

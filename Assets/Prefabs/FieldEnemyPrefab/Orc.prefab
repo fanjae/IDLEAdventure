@@ -1185,6 +1185,8 @@ GameObject:
   - component: {fileID: 3948371288146249427}
   - component: {fileID: 1319825869681324525}
   - component: {fileID: 5938301295324555408}
+  - component: {fileID: 5240371675813051104}
+  - component: {fileID: 910000000000000008}
   m_Layer: 0
   m_Name: Orc
   m_TagString: Untagged
@@ -1272,6 +1274,28 @@ MonoBehaviour:
   loseDistance: 12
   maxChaseDistance: 15
   encounterDistance: 2
+  isWorm: 0
+--- !u!65 &5240371675813051104
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5738985810289365877}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5, y: 1, z: 1.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5868951351184655919
 GameObject:
   m_ObjectHideFlags: 0
@@ -2294,3 +2318,18 @@ Transform:
   - {fileID: 6733012888795742432}
   m_Father: {fileID: 6440533251839912357}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000000000000008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5738985810289365877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f29b25c08d65cc54b8fb4d2458d7cfac, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FieldEnemyInteraction
+  enemyId: 0
+  fieldType: 1
+  battleSceneName: SecondBuildBattleScene
