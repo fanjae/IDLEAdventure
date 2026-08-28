@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,6 +11,7 @@ public sealed class AutoBattleController : MonoBehaviour
     [SerializeField] private Button autoBattleButton;
     [SerializeField] private FormationPanelController formationPanelController;
     [SerializeField] private GameObject stopAutoBattlePanel;
+    [SerializeField] private TMP_Text stageInfoText;
     [SerializeField] private Image autoBattleTouchAreaImage;
 
     [Header("전투 설정")]
@@ -71,6 +73,12 @@ public sealed class AutoBattleController : MonoBehaviour
         if (BattleManager.Instance == null)
         {
             Debug.LogError("BattleManager가 없습니다.");
+            return;
+        }
+
+        // 배치된 영웅이 없는 경우 자동전투 시작하지 않음
+        if (formationPanelController != null && !formationPanelController.CanStartBattle())
+        {
             return;
         }
 
@@ -152,6 +160,8 @@ public sealed class AutoBattleController : MonoBehaviour
 
         SetAutoBattleTouchAreaActive(false);
 
+        RefreshStageInfoText();
+
         if (stopAutoBattlePanel != null)
         {
             stopAutoBattlePanel.SetActive(true);
@@ -214,5 +224,17 @@ public sealed class AutoBattleController : MonoBehaviour
 
         autoBattleTouchAreaImage.gameObject.SetActive(active);
         autoBattleTouchAreaImage.raycastTarget = active;
+    }
+
+    // 현재 진행 중인 스테이지 정보 갱신
+    private void RefreshStageInfoText()
+    {
+        if (stageInfoText == null)
+        {
+            return;
+        }
+
+        int currentStageId = StageRuntimeData.SelectedStageId;
+        stageInfoText.text = $"현재 진행 스테이지 : {currentStageId}";
     }
 }

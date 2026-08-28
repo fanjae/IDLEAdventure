@@ -22,6 +22,9 @@ public sealed class FormationManager : MonoBehaviour
     [SerializeField] private Vector3 spawnRotation = Vector3.zero;
 
     private readonly Dictionary<HeroData, GameObject> placedHeroesByData = new();
+
+    // 현재 배치된 영웅이 있는지 확인 (0828 추가)
+    public bool HasPlacedHero => placedHeroesByData.Count > 0;
     private bool isRestoringFormation;
 
     private void Awake()
