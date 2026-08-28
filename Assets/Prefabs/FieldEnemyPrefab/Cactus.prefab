@@ -44,6 +44,8 @@ GameObject:
   - component: {fileID: 2570765457184112508}
   - component: {fileID: 8428156437169294462}
   - component: {fileID: 6813487478528392241}
+  - component: {fileID: 4593986158118272308}
+  - component: {fileID: 8156289889894352484}
   m_Layer: 0
   m_Name: Cactus
   m_TagString: Untagged
@@ -131,6 +133,43 @@ MonoBehaviour:
   loseDistance: 12
   maxChaseDistance: 15
   encounterDistance: 1.2
+  isWorm: 0
+--- !u!65 &4593986158118272308
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 301339496744058308}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5, y: 1.5, z: 1.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8156289889894352484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 301339496744058308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f29b25c08d65cc54b8fb4d2458d7cfac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FieldEnemyInteraction
+  enemyId: 0
+  fieldType: 2
+  battleSceneName: SecondBuildBattleScene
 --- !u!1 &518478403123813931
 GameObject:
   m_ObjectHideFlags: 0
