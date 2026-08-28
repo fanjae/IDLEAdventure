@@ -2028,6 +2028,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.5, y: 1, z: 1.5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &910000000000000011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7082410604991481527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f29b25c08d65cc54b8fb4d2458d7cfac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FieldEnemyInteraction
+  enemyId: 0
+  fieldType: 2
+  battleSceneName: SecondBuildBattleScene
 --- !u!1 &7538038920826636062
 GameObject:
   m_ObjectHideFlags: 0
@@ -2384,18 +2399,3 @@ Transform:
   - {fileID: 7081621243796624654}
   m_Father: {fileID: 9089181036853805667}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &910000000000000011
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7082410604991481527}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f29b25c08d65cc54b8fb4d2458d7cfac, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FieldEnemyInteraction
-  enemyId: 0
-  fieldType: 2
-  battleSceneName: SecondBuildBattleScene

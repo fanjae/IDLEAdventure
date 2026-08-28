@@ -1203,7 +1203,7 @@ Transform:
   m_GameObject: {fileID: 5738985810289365877}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 137.2, y: 0, z: 136.9}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -1296,6 +1296,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.5, y: 1, z: 1.5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &910000000000000008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5738985810289365877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f29b25c08d65cc54b8fb4d2458d7cfac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FieldEnemyInteraction
+  enemyId: 0
+  fieldType: 1
+  battleSceneName: SecondBuildBattleScene
 --- !u!1 &5868951351184655919
 GameObject:
   m_ObjectHideFlags: 0
@@ -2318,18 +2333,3 @@ Transform:
   - {fileID: 6733012888795742432}
   m_Father: {fileID: 6440533251839912357}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &910000000000000008
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5738985810289365877}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f29b25c08d65cc54b8fb4d2458d7cfac, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FieldEnemyInteraction
-  enemyId: 0
-  fieldType: 1
-  battleSceneName: SecondBuildBattleScene
