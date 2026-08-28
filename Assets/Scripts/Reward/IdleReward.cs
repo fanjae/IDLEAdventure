@@ -71,7 +71,7 @@ public class IdleReward : MonoBehaviour
     public void OnClickIdleRewardButton()
     {
         // 최대 스테이지 번호도 받아와서 예외처리 추가 해주는 게 좋아보임.
-        if (stageProgressController.HighestClearedStageId <= 0) return;
+        if (1 <= 0) return;
 
         // 보상 기준 시간.
         DateTime lastTime = GetLastRewardTime();
@@ -80,7 +80,7 @@ public class IdleReward : MonoBehaviour
         float currentIdleTime = IdleCalculator.GetRewardTime(lastTime, maxIdleTime);
 
         // 스테이지별 보상 데이터 딕셔너리에서 특정 스테이지 번호가 있는지 확인 및 해당 스테이지의 보상 데이터 반환
-        if (stageRewards.TryGetValue(stageProgressController.HighestClearedStageId, out StageRewardData stageData))
+        if (stageRewards.TryGetValue(1, out StageRewardData stageData))
         {
             // 보상 id 별 계산
             Dictionary<string, RewardResult> rewards =
@@ -184,14 +184,14 @@ public class IdleReward : MonoBehaviour
     {
         Dictionary<string, int> expectedRewards = new Dictionary<string, int>();
 
-        if (stageProgressController.HighestClearedStageId <= 0) return expectedRewards;
+        if (1 <= 0) return expectedRewards;
 
         // 기준 시간과 방치 시간 계산
         DateTime lastTime = GetLastRewardTime();
         float currentIdleTime = IdleCalculator.GetRewardTime(lastTime, maxIdleTime);
 
         // 현재 스테이지의 보상 데이터가 있다면 계산
-        if (stageRewards.TryGetValue(stageProgressController.HighestClearedStageId, out StageRewardData stageData))
+        if (stageRewards.TryGetValue(1, out StageRewardData stageData))
         {
             Dictionary<string, RewardResult> rewards =
                 IdleCalculator.CalculateRewards(currentIdleTime, maxIdleTime, stageData, leftRewards);
