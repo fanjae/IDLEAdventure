@@ -76,6 +76,12 @@ public sealed class AutoBattleController : MonoBehaviour
             return;
         }
 
+        // 배치된 영웅이 없는 경우 자동전투 시작하지 않음
+        if (formationPanelController != null && !formationPanelController.CanStartBattle())
+        {
+            return;
+        }
+
         StageRuntimeData.StartAutoBattle();
 
         if (formationPanelController != null)
