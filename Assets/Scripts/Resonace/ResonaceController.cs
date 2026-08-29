@@ -4,7 +4,7 @@ using System.Collections.Generic;
 // 영웅 레벨 공명 관련 기능을 처리하는 컨트롤러
 public sealed class ResonanceController
 {
-    private const int MaxResonanceSlotCount = 4;
+    private const int MaxResonanceSlotCount = 3;
 
     private readonly HeroController heroController;
     private readonly List<string> resonanceSlotHeroIds = new();
@@ -51,7 +51,7 @@ public sealed class ResonanceController
             return false;
         }
 
-        // 공명 슬롯은 최대 4명까지 등록
+        // 공명 슬롯은 최대 3명까지 등록
         if (resonanceSlotHeroIds.Count >= MaxResonanceSlotCount)
         {
             return false;
@@ -59,7 +59,7 @@ public sealed class ResonanceController
 
         resonanceSlotHeroIds.Add(heroId);
 
-        // 슬롯 4명이 모두 등록된 경우 공명 레벨 적용
+        // 슬롯 3명이 모두 등록된 경우 공명 레벨 적용
         ApplyResonanceLevel();
 
         // 공명 슬롯 변경 알림
@@ -93,12 +93,12 @@ public sealed class ResonanceController
         return resonanceSlotHeroIds.Contains(heroId);
     }
 
-    // 공명 슬롯 4명의 실제 레벨 중 가장 낮은 레벨 반환
+    // 공명 슬롯 3명의 실제 레벨 중 가장 낮은 레벨 반환
     public bool TryGetResonanceLevel(out int resonanceLevel)
     {
         resonanceLevel = 0;
 
-        // 슬롯 4명이 모두 등록된 경우에만 공명 활성화
+        // 슬롯 3명이 모두 등록된 경우에만 공명 활성화
         if (resonanceSlotHeroIds.Count != MaxResonanceSlotCount)
         {
             return false;
@@ -206,7 +206,7 @@ public sealed class ResonanceController
 
         foreach (string heroId in saveData.Resonance.ResonanceSlotHeroIds)
         {
-            // 공명 슬롯은 최대 4명까지만 복원
+            // 공명 슬롯은 최대 3명까지만 복원
             if (resonanceSlotHeroIds.Count >= MaxResonanceSlotCount)
             {
                 break;
