@@ -110,11 +110,9 @@ public class Bootstrapper
         // 저장된 공명 상태 복원
         resonanceManager.Controller.LoadSaveData(saveManager.CurrentData);
 
-        // 방치 시간 적용은 아직 되지 않았기에 추가
-        TestSaveManager testSaveManager = TestSaveManager.Instance;
-
         // 퀘스트 관련 매니저 추가
         QuestManager questManager = QuestManager.Instance;
+        questManager.LoadSaveData(saveManager.CurrentData);
 
         Debug.Log("초기 호출 완료.");
     }
