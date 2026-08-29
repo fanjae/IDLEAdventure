@@ -1,0 +1,121 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+/// <summary>
+/// 저장될 내용 클래스.
+/// </summary>
+[Serializable]
+public class SaveData
+{
+    [Header("Save Data")]
+    [SerializeField] private int[] currencyDatas = new int[(int)CurrencyType.Length];    // 따로 호출될 곳 없이 단순 저장, 불러오기만 할 것이기에 배열로 저장
+    [SerializeField] private long lastGetIdleRewardTime;    // 시간은 int로 표현하기에 크기가 커서 long 사용
+
+    // 퀘스트 테스트용 추가
+    [SerializeField] private int currentMainQeustId;
+    [SerializeField] private List<int> acceptSubQuestIds = new List<int>();
+
+    // 프로퍼티
+    public int[] CurrencyDatas => currencyDatas;
+    public long LastGetIdleRewardTime => lastGetIdleRewardTime;
+
+    public int CurrentMainQuestId => currentMainQeustId;
+    public List<int> AcceptSubQuestIds => acceptSubQuestIds;
+
+    public void SetCurrency(CurrencyType type, int amount)
+    {
+        currencyDatas[(int)type] = amount;
+    }
+    public void SetLastIdleRewardTime(long time)
+    {
+        lastGetIdleRewardTime = time;
+    }
+
+    public void SetQuestData(int mainId, List<int> subIds)
+    {
+        currentMainQeustId = mainId;
+        acceptSubQuestIds = new List<int>(subIds);
+    }
+}
+/// <summary>
+/// 임시 저장용 클래스. <br/>
+/// 저장 파트가 구현되면 지울 스크립트. <br/>
+/// 방치 보상 테스트를 위해 임시로 PlayerPrefs를 이용한 저장 구현. <br/>
+/// 현재 저장 목록 <br/>
+/// LastTime, Gold, Exp, Upagrade
+/// </summary>
+public class TestSaveManager : Singleton<TestSaveManager>
+{
+    private SaveData currentSaveData = new SaveData();
+
+    public SaveData CurrentSaveData => currentSaveData;
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        LoadGame();
+    }
+    
+    public void SaveGame()
+    {
+        for (int i = 0; i < (int)CurrencyType.Length; i++)
+        {
+            string key = $"Test_Currency_{i}";
+            PlayerPrefs.SetInt(key, currentSaveData.CurrencyDatas[i]);
+        }
+        Debug.Log("[Test | PlayerPrebs] 현재 재화 저장");
+
+        PlayerPrefs.SetString("Text_LastGetIdleRewardTime", currentSaveData.LastGetIdleRewardTime.ToString());
+        Debug.Log("[Test | PlayerPrefs] 최근 방치 보상 획득 시간 저장");
+
+        PlayerPrefs.SetInt("Test_MainQuestId", currentSaveData.CurrentMainQuestId);
+
+        string subQuestsStr = string.Join(",", currentSaveData.AcceptSubQuestIds);
+        PlayerPrefs.SetString("Test_SubQeustIds", subQuestsStr);
+
+        PlayerPrefs.Save();
+    }
+    public void LoadGame()
+    {
+        for (int i = 0; i < (int)CurrencyType.Length; i++)
+        {
+            string key = $"Test_Currency_{i}";
+            int amount = PlayerPrefs.GetInt(key, 0);
+
+            currentSaveData.SetCurrency((CurrencyType)i, amount);
+        }
+
+        string tempSaveData = PlayerPrefs.GetString("Text_LastGetIdleRewardTime", string.Empty);
+        if (!string.IsNullOrEmpty(tempSaveData))
+        {
+            currentSaveData.SetLastIdleRewardTime(Convert.ToInt64(tempSaveData));
+        }
+
+        // 퀘스트 테스트용 추가
+        int mainId = PlayerPrefs.GetInt("Test_MainQuestId", 0);
+
+        if (mainId == 0)
+        {
+            mainId = 1000;
+        }
+
+        string subQeusts = PlayerPrefs.GetString("Test_SubQeustIds", string.Empty);
+        List<int> subIds = new List<int>();
+
+        if (!string.IsNullOrEmpty(subQeusts))
+        {
+            string[] split = subQeusts.Split(',');
+            foreach (string num in split)
+            {
+                if (int.TryParse(num, out int id))
+                {
+                    subIds.Add(id);
+                }
+            }
+        }
+
+        currentSaveData.SetQuestData(mainId, subIds);
+    }
+}
