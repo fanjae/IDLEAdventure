@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 
 
@@ -12,3 +12,15 @@ public enum EquipmentSlotType
     Body,
     Legs
 }
+
+// 장비 세트 식별자
+public enum EquipmentSetType
+{
+    None = 0,
+
+    Set01 = 100,
+    Set02 = 200,
+    Set03 = 300,
+    Set04 = 400
+}
+

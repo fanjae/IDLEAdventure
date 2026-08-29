@@ -12,6 +12,9 @@ public class EquipmentSO : ItemSO
     // 장비가 적용되는 부위
     [SerializeField] private EquipmentSlotType slotType;
 
+    // 장비가 소속된 세트 식별자
+    [SerializeField] private EquipmentSetType setType = EquipmentSetType.None;
+
     [Header("Equipment Requirement")]
 
     // 장비를 제작 가능한 레벨
@@ -27,6 +30,7 @@ public class EquipmentSO : ItemSO
 
     public HeroClassType TargetClass => targetClass;
     public EquipmentSlotType SlotType => slotType;
+    public EquipmentSetType SetType => setType;
     public int CraftLevel => craftLevel;
 
     public int Attack => attack;
