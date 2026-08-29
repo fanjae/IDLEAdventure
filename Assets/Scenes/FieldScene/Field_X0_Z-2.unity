@@ -589,18 +589,16 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 4854157025924577663, guid: abc00000000009299584750557974664, type: 3}
-      propertyPath: chestRewards.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4854157025924577663, guid: abc00000000009299584750557974664, type: 3}
-      propertyPath: chestRewards.Array.data[0].amount
-      value: 100
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1030998790, guid: abc00000000009299584750557974664, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9000000000000000041}
+    - targetCorrespondingSourceObject: {fileID: 1030998790, guid: abc00000000009299584750557974664, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9000000000000000042}
   m_SourcePrefab: {fileID: 100100000, guid: abc00000000009299584750557974664, type: 3}
 --- !u!1001 &116183351
 PrefabInstance:
@@ -7640,6 +7638,48 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2407773328998798093, guid: f2057ec72ee80c845a6327b221a3f93b, type: 3}
   m_PrefabInstance: {fileID: 2114773031}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &9000000000000000040 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1030998790, guid: abc00000000009299584750557974664, type: 3}
+  m_PrefabInstance: {fileID: 102126363}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &9000000000000000041
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9000000000000000040}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &9000000000000000042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9000000000000000040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ad4fdcbf43df56439fa650580e7fc1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FieldChestInteraction
+  chestId: 0
+  chestRewards:
+  - currencyType: 0
+    amount: 100
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
