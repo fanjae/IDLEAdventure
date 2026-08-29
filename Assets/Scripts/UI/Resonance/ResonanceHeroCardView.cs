@@ -41,6 +41,7 @@ public sealed class ResonanceHeroCardView : MonoBehaviour, IPointerClickHandler
     {
         if (hero == null || hero.HeroData == null)
         {
+            Clear();
             return;
         }
 
@@ -48,25 +49,34 @@ public sealed class ResonanceHeroCardView : MonoBehaviour, IPointerClickHandler
         this.onClicked = onClicked;
         this.onRightClicked = onRightClicked;
 
+        if (button != null)
+        {
+            button.interactable = true;
+        }
+
         if (heroPortrait != null)
         {
+            heroPortrait.gameObject.SetActive(true);
             heroPortrait.sprite = hero.HeroData.Portrait;
             heroPortrait.preserveAspect = heroPortrait.sprite != null;
         }
 
         if (classIcon != null)
         {
+            classIcon.gameObject.SetActive(true);
             classIcon.sprite = classIconCatalog != null ? classIconCatalog.GetIcon(hero.HeroData.ClassType) : null;
             classIcon.preserveAspect = classIcon.sprite != null;
         }
 
         if (levelValueText != null)
         {
+            levelValueText.gameObject.SetActive(true);
             levelValueText.text = $"<color=#373737>{hero.Level}</color>";
         }
 
         if (levelText != null)
         {
+            levelText.gameObject.SetActive(true);
             levelText.text = "레벨";
         }
     }
@@ -85,5 +95,40 @@ public sealed class ResonanceHeroCardView : MonoBehaviour, IPointerClickHandler
         }
 
         onRightClicked?.Invoke(heroId);
+    }
+
+    // 영웅 카드 정보를 빈 상태로 초기화
+    public void Clear()
+    {
+        heroId = null;
+        onClicked = null;
+        onRightClicked = null;
+
+        if (heroPortrait != null)
+        {
+            heroPortrait.sprite = null;
+            heroPortrait.gameObject.SetActive(false);
+        }
+
+        if (classIcon != null)
+        {
+            classIcon.sprite = null;
+            classIcon.gameObject.SetActive(false);
+        }
+
+        if (levelValueText != null)
+        {
+            levelValueText.gameObject.SetActive(false);
+        }
+
+        if (levelText != null)
+        {
+            levelText.gameObject.SetActive(false);
+        }
+
+        if (button != null)
+        {
+            button.interactable = false;
+        }
     }
 }
