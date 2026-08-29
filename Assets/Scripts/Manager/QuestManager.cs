@@ -119,8 +119,6 @@ public class QuestManager : Singleton<QuestManager>
         //}
         #endregion
 
-        LoadSaveData();
-        InitializeSubQuestLists();
         Debug.Log("퀘스트 초기화 완료.");
     }
     // 서브 퀘스트 목록 초기화 함수.
@@ -242,25 +240,48 @@ public class QuestManager : Singleton<QuestManager>
         UpdateSaveData();
     }
 
-    // 테스트용 퀘스트 진행도 저장 함수.
-    private void LoadSaveData()
+    // 저장된 퀘스트 진행 정보를 불러오는 함수. (0829 추가)
+    public void LoadSaveData(GameSaveData saveData)
     {
-        if (TestSaveManager.Instance != null && TestSaveManager.Instance.CurrentSaveData != null)
+        if (saveData == null || saveData.Quest == null)
         {
-            currentMainQuestId = TestSaveManager.Instance.CurrentSaveData.CurrentMainQuestId;
-            acceptedSubQuestIds = new List<int>(TestSaveManager.Instance.CurrentSaveData.AcceptSubQuestIds);
-            Debug.Log($"퀘스트 진행도 로드 완료.");
+            return;
         }
+
+        currentMainQuestId = saveData.Quest.CurrentMainQuestId;
+        acceptedSubQuestIds = new List<int>(saveData.Quest.AcceptedSubQuestIds);
+        clearSubQuestIds = new List<int>(saveData.Quest.ClearedSubQuestIds);
+
+        InitializeSubQuestLists();
+
+        Debug.Log("퀘스트 진행도 로드 완료.");
     }
-    // 테스트용 퀘스트 진행도 불러오는 함수.
+
+
+    // 현재 퀘스트 진행 정보를 저장 데이터에 반영 [0829 추가]
+    public void WriteSaveData(GameSaveData saveData)
+    {
+        if (saveData == null)
+        {
+            return;
+        }
+
+        saveData.Quest.CurrentMainQuestId = currentMainQuestId;
+        saveData.Quest.AcceptedSubQuestIds = new List<int>(acceptedSubQuestIds);
+        saveData.Quest.ClearedSubQuestIds = new List<int>(clearSubQuestIds);
+    }
+
+
+    // 변경된 퀘스트 진행 정보를 저장. (0829 수정)
     private void UpdateSaveData()
     {
-        if (TestSaveManager.Instance != null)
+        if (SaveManager.TryGetExistingInstance(out SaveManager saveManager) && saveManager.CurrentData != null)
         {
-            TestSaveManager.Instance.CurrentSaveData.SetQuestData(currentMainQuestId, acceptedSubQuestIds);
-            TestSaveManager.Instance.SaveGame();
+            saveManager.Save();
         }
     }
+
+
     // 테스트용 퀘스트 NPC와 상호작용 여부 체크 함수
     public void NPCInteractable(int id, bool isInteractable)
     {

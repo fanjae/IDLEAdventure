@@ -20,6 +20,8 @@ public sealed class GameSaveData
 
     public StageProgressSaveData StageProgress { get; set; } = new();
 
+    public QuestSaveData Quest { get; set; } = new();
+
     // 영웅 배치 저장 데이터
     public FormationSaveData Formation { get; set; } = new();
 
