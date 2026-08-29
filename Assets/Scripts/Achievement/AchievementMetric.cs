@@ -11,5 +11,6 @@ public enum AchievementMetric
     DuplicateHeroGoldConversions,
     TotalBattleVictories,
     FullPartyBattleVictories,
-    IdleRewardClaims
+    IdleRewardClaims,
+    TotalShopPackagePurchases
 }

@@ -7,13 +7,17 @@ public sealed class ShopController
 {
     private readonly ShopDatabaseSO database;
     private readonly Func<DateTime> utcNowProvider;
-    private readonly Func<int> currentStageIdProvider;
+    private readonly Func<int> highestClearedStageIdProvider;
     private readonly Func<int, bool> hasDefeatedStageProvider;
+    private readonly Func<CurrencyType, int> currencyAmountProvider;
+    private readonly ShopStageConditionReader stageConditionReader;
     private readonly HashSet<string> purchasedOnceProductIds = new(StringComparer.Ordinal);
     private readonly Dictionary<string, int> dailyPurchaseCounts = new(StringComparer.Ordinal);
     private readonly HashSet<int> claimedAttendanceRewardIndices = new();
+    private readonly HashSet<string> dismissedPackageNoticeProductIds = new(StringComparer.Ordinal);
 
     private string lastDailyResetDate;
+    private string packageNoticeDismissDate;
     private string attendanceCycleStartDate;
 
     public event Action OnShopStateChanged;
@@ -27,20 +31,24 @@ public sealed class ShopController
     public ShopController(
         ShopDatabaseSO database,
         Func<DateTime> utcNowProvider = null,
-        Func<int> currentStageIdProvider = null,
-        Func<int, bool> hasDefeatedStageProvider = null)
+        Func<int> highestClearedStageIdProvider = null,
+        Func<int, bool> hasDefeatedStageProvider = null,
+        Func<CurrencyType, int> currencyAmountProvider = null)
     {
         this.database = database ?? throw new ArgumentNullException(nameof(database));
         this.utcNowProvider = utcNowProvider ?? (() => DateTime.UtcNow);
-        this.currentStageIdProvider = currentStageIdProvider ?? (() => new StageProgressController().CurrentStageId);
-        this.hasDefeatedStageProvider = hasDefeatedStageProvider ?? (stageId => new StageProgressController().HasDefeatedStage(stageId));
+        stageConditionReader = new ShopStageConditionReader();
+        this.highestClearedStageIdProvider = highestClearedStageIdProvider ?? (() => stageConditionReader.HighestClearedStageId);
+        this.hasDefeatedStageProvider = hasDefeatedStageProvider ?? stageConditionReader.HasDefeatedStage;
+        this.currencyAmountProvider = currencyAmountProvider ?? GetCurrentCurrencyAmount;
         EnsureDailyState();
         EnsureAttendanceState();
     }
 
     // 기본 노출 설정과 스테이지 클리어·패배 조건을 모두 만족한 상품만 표시함
     public bool IsProductVisible(ShopProductSO product) =>
-        product != null && product.IsVisible && product.IsUnlockedAtCurrentProgress(currentStageIdProvider(), hasDefeatedStageProvider);
+        product != null && product.IsVisible &&
+        product.IsUnlockedAtCurrentProgress(highestClearedStageIdProvider(), hasDefeatedStageProvider, currencyAmountProvider);
 
     // 아직 구매하지 않은 표시 가능한 1회 한정 패키지를 표시 순서대로 반환함
     public IReadOnlyList<ShopProductSO> GetUnpurchasedPackages()
@@ -55,10 +63,33 @@ public sealed class ShopController
             .ToList();
     }
 
-    // 아직 구매하지 않은 표시 가능한 1회 한정 패키지 중 먼저 안내할 상품을 반환함
+    // 오늘 나중에 보기로 넘기지 않은 미구매 패키지를 안내 순서대로 반환함
+    public IReadOnlyList<ShopProductSO> GetNotifiableUnpurchasedPackages()
+    {
+        EnsurePackageNoticeDismissState();
+        return GetUnpurchasedPackages()
+            .Where(item => !dismissedPackageNoticeProductIds.Contains(item.ProductId))
+            .ToList();
+    }
+
+    // 안내 팝업에서 나중에 보기를 선택한 상품을 오늘만 숨김 처리함
+    public void DismissPackageNoticeForToday(string productId)
+    {
+        if (string.IsNullOrWhiteSpace(productId))
+            return;
+
+        EnsurePackageNoticeDismissState();
+        if (!dismissedPackageNoticeProductIds.Add(productId))
+            return;
+
+        OnShopStateChanged?.Invoke();
+        SaveImmediately();
+    }
+
+    // 아직 안내하지 않은 미구매 1회 한정 패키지 중 먼저 표시할 상품을 반환함
     public bool TryGetFirstUnpurchasedPackage(out ShopProductSO product)
     {
-        product = GetUnpurchasedPackages().FirstOrDefault();
+        product = GetNotifiableUnpurchasedPackages().FirstOrDefault();
         return product != null;
     }
 
@@ -77,7 +108,7 @@ public sealed class ShopController
             return new ShopProductAvailability(product, false, ShopFailure.ProductHidden, 0);
         }
 
-        if (!product.IsUnlockedAtCurrentProgress(currentStageIdProvider(), hasDefeatedStageProvider))
+        if (!product.IsUnlockedAtCurrentProgress(highestClearedStageIdProvider(), hasDefeatedStageProvider, currencyAmountProvider))
         {
             return new ShopProductAvailability(product, false, ShopFailure.StageRequirementNotMet, 0);
         }
@@ -136,6 +167,7 @@ public sealed class ShopController
         }
 
         MarkProductPurchased(product);
+        RecordPackagePurchaseAchievement(product);
         result = new ShopPurchaseResult(product, product.PriceCurrency, product.PriceAmount, grantedRewards);
         OnProductPurchased?.Invoke(result);
         OnShopStateChanged?.Invoke();
@@ -220,6 +252,7 @@ public sealed class ShopController
         saveData.Shop.PurchasedOnceProductIds ??= new List<string>();
         saveData.Shop.DailyPurchaseCounts ??= new List<ShopPurchaseCountSaveEntry>();
         saveData.Shop.ClaimedAttendanceRewardIndices ??= new List<int>();
+        saveData.Shop.DismissedPackageNoticeProductIds ??= new List<string>();
 
         purchasedOnceProductIds.Clear();
         foreach (string productId in saveData.Shop.PurchasedOnceProductIds.Where(productId => !string.IsNullOrWhiteSpace(productId)))
@@ -239,6 +272,13 @@ public sealed class ShopController
         }
 
         lastDailyResetDate = saveData.Shop.LastDailyResetDate;
+        packageNoticeDismissDate = saveData.Shop.PackageNoticeDismissDate;
+        dismissedPackageNoticeProductIds.Clear();
+        foreach (string productId in saveData.Shop.DismissedPackageNoticeProductIds.Where(productId => !string.IsNullOrWhiteSpace(productId)))
+        {
+            dismissedPackageNoticeProductIds.Add(productId);
+        }
+
         attendanceCycleStartDate = saveData.Shop.AttendanceCycleStartDate;
         claimedAttendanceRewardIndices.Clear();
         foreach (int rewardIndex in saveData.Shop.ClaimedAttendanceRewardIndices.Where(index => index >= 0 && index < AttendanceRewards.Count))
@@ -255,6 +295,7 @@ public sealed class ShopController
         }
 
         EnsureDailyState();
+        EnsurePackageNoticeDismissState();
         EnsureAttendanceState();
         OnShopStateChanged?.Invoke();
     }
@@ -268,6 +309,7 @@ public sealed class ShopController
         }
 
         EnsureDailyState();
+        EnsurePackageNoticeDismissState();
         saveData.Shop = new ShopSaveData
         {
             PurchasedOnceProductIds = purchasedOnceProductIds.OrderBy(productId => productId, StringComparer.Ordinal).ToList(),
@@ -276,6 +318,8 @@ public sealed class ShopController
                 .Select(pair => new ShopPurchaseCountSaveEntry { ProductId = pair.Key, Count = pair.Value })
                 .ToList(),
             LastDailyResetDate = lastDailyResetDate,
+            PackageNoticeDismissDate = packageNoticeDismissDate,
+            DismissedPackageNoticeProductIds = dismissedPackageNoticeProductIds.OrderBy(productId => productId, StringComparer.Ordinal).ToList(),
             AttendanceCycleStartDate = attendanceCycleStartDate,
             ClaimedAttendanceRewardIndices = claimedAttendanceRewardIndices.OrderBy(index => index).ToList()
         };
@@ -405,6 +449,17 @@ public sealed class ShopController
         OnShopStateChanged?.Invoke();
     }
 
+    // 날짜가 바뀌면 나중에 보기로 숨긴 패키지 안내를 다시 활성화함
+    private void EnsurePackageNoticeDismissState()
+    {
+        string today = GetCurrentDateKey();
+        if (string.Equals(packageNoticeDismissDate, today, StringComparison.Ordinal))
+            return;
+
+        dismissedPackageNoticeProductIds.Clear();
+        packageNoticeDismissDate = today;
+    }
+
     // 첫 출석 화면 기준으로 1일차를 열고 날짜가 지날수록 보상을 해금함
     private void EnsureAttendanceState()
     {
@@ -439,6 +494,23 @@ public sealed class ShopController
         if (SaveManager.TryGetExistingInstance(out SaveManager saveManager) && saveManager.CurrentData != null)
         {
             saveManager.Save();
+        }
+    }
+
+    // 재화 매니저가 준비되지 않은 동안에는 재화 부족 조건 상품을 노출하지 않음
+    private static int GetCurrentCurrencyAmount(CurrencyType currencyType)
+    {
+        return CurrencyManager.Instance == null ? int.MaxValue : CurrencyManager.Instance.GetCurrency(currencyType);
+    }
+
+    // 실제 패키지 구매에만 업적 진행도를 반영하며, 재화 교환은 제외함
+    private static void RecordPackagePurchaseAchievement(ShopProductSO product)
+    {
+        if (product != null && product.Category == ShopProductCategory.Package &&
+            AchievementManager.TryGetExistingInstance(out AchievementManager achievementManager) &&
+            achievementManager.IsInitialized)
+        {
+            achievementManager.RecordShopPackagePurchase();
         }
     }
 }

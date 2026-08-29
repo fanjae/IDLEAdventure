@@ -59,6 +59,13 @@ public sealed class ShopDatabaseSO : ScriptableObject
                 return false;
             }
 
+            if (product.RequiredCurrencyBelow != CurrencyType.None &&
+                !product.HasCurrencyAmountRequirement)
+            {
+                errorMessage = $"상점 상품 재화 조건 설정 오류: {product.ProductId}";
+                return false;
+            }
+
             if (!TryValidateRewards(product.Rewards))
             {
                 errorMessage = $"상점 상품 보상 설정 오류: {product.ProductId}";

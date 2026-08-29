@@ -143,6 +143,12 @@ public sealed class AchievementManager : Singleton<AchievementManager>
         AddMetricValue(AchievementMetric.IdleRewardClaims, 1);
     }
 
+    // 교환 상품을 제외한 상점 패키지 구매 성공 횟수를 누적함
+    public void RecordShopPackagePurchase()
+    {
+        AddMetricValue(AchievementMetric.TotalShopPackagePurchases, 1);
+    }
+
     // 누적형 업적 지표에 양수 값을 더함
     public void AddMetricValue(AchievementMetric metric, int amount)
     {
