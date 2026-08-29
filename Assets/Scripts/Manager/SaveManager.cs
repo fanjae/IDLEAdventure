@@ -60,6 +60,12 @@ public sealed class SaveManager : Singleton<SaveManager>
             shopManager.WriteSaveData(CurrentData);
         }
 
+        // 현재 생성되어 있는 퀘스트 진행 정보를 저장 데이터에 반영
+        if (QuestManager.TryGetExistingInstance(out QuestManager questManager))
+        {
+            questManager.WriteSaveData(CurrentData);
+        }
+
         // 저장 시점을 UTC Unix Time 기준으로 갱신
         CurrentData.SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         fileService.Save(CurrentData);

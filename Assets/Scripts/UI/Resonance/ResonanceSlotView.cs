@@ -27,9 +27,12 @@ public sealed class ResonanceSlotView : MonoBehaviour
     // 공명 슬롯을 빈 상태로 표시
     public void Clear()
     {
-        if (heroCardView != null)
+        if (heroCardView == null)
         {
-            heroCardView.gameObject.SetActive(false);
+            return;
         }
+
+        heroCardView.gameObject.SetActive(true);
+        heroCardView.Clear();
     }
 }
