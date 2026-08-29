@@ -15,7 +15,6 @@ public static class EquipmentCsvImporter
         public string ItemName;
         public HeroClassType TargetClass;
         public EquipmentSlotType SlotType;
-        public int ItemIndex;
         public string IconName;
 
         [CsvOptional] public string CraftLevel;
@@ -187,13 +186,10 @@ public static class EquipmentCsvImporter
         int categoryCode = row.ItemId / 1000;
         int classCode = row.ItemId / 100 % 10;
         int slotCode = row.ItemId / 10 % 10;
-        int itemIndex = row.ItemId % 10;
 
         if (categoryCode != 1) throw new InvalidOperationException($"장비 ItemId의 천의 자리는 1이어야 합니다. ItemId: {row.ItemId}");
         if (GetClassCode(row.TargetClass) != classCode) throw new InvalidOperationException($"ItemId와 TargetClass가 일치하지 않습니다. ItemId: {row.ItemId}, TargetClass: {row.TargetClass}");
         if (GetSlotCode(row.SlotType) != slotCode) throw new InvalidOperationException($"ItemId와 SlotType이 일치하지 않습니다. ItemId: {row.ItemId}, SlotType: {row.SlotType}");
-        if (row.ItemIndex < 1 || row.ItemIndex > 9) throw new InvalidOperationException($"ItemIndex는 1~9 범위여야 합니다. ItemId: {row.ItemId}, ItemIndex: {row.ItemIndex}");
-        if (row.ItemIndex != itemIndex) throw new InvalidOperationException($"ItemId와 ItemIndex가 일치하지 않습니다. ItemId: {row.ItemId}, ItemIndex: {row.ItemIndex}");
         if (string.IsNullOrWhiteSpace(row.ItemName)) throw new InvalidOperationException($"ItemName이 비어 있습니다. ItemId: {row.ItemId}");
         if (string.IsNullOrWhiteSpace(row.IconName)) throw new InvalidOperationException($"IconName이 비어 있습니다. ItemId: {row.ItemId}");
     }
