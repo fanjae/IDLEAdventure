@@ -665,18 +665,16 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 8584305723963526957, guid: abc00000000000122685398679938398, type: 3}
-      propertyPath: chestRewards.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8584305723963526957, guid: abc00000000000122685398679938398, type: 3}
-      propertyPath: chestRewards.Array.data[0].amount
-      value: 300
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1030998937, guid: abc00000000000122685398679938398, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9000000000000000031}
+    - targetCorrespondingSourceObject: {fileID: 1030998937, guid: abc00000000000122685398679938398, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9000000000000000032}
   m_SourcePrefab: {fileID: 100100000, guid: abc00000000000122685398679938398, type: 3}
 --- !u!1001 &116183351
 PrefabInstance:
@@ -10840,6 +10838,48 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8467513825051153345, guid: a1a5591e2c5d95f42a0b68a3cc19321f, type: 3}
   m_PrefabInstance: {fileID: 8370771644096444542}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &9000000000000000030 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1030998937, guid: abc00000000000122685398679938398, type: 3}
+  m_PrefabInstance: {fileID: 105669620}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &9000000000000000031
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9000000000000000030}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5, y: 1, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &9000000000000000032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9000000000000000030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ad4fdcbf43df56439fa650580e7fc1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FieldChestInteraction
+  chestId: 4
+  chestRewards:
+  - currencyType: 0
+    amount: 300
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
