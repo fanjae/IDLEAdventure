@@ -15,8 +15,14 @@ public class EquipmentPanelController : MonoBehaviour
     [SerializeField] private Button backButton;
     [SerializeField] private GameObject equipmentRoot;
 
+    [Header("정보 패널")]
+    [SerializeField] private Button infoButton;
+    [SerializeField] private Button infoCloseButton;
+    [SerializeField] private GameObject infoPanel;
+
     [Header("패널 연출")]
     [SerializeField] private UIPanelTransition panelTransition;
+    [SerializeField] private UIPanelTransition infoPanelTransition;
 
     private InventoryController inventoryController;
     private HeroClassType currentClass;
@@ -41,6 +47,16 @@ public class EquipmentPanelController : MonoBehaviour
             backButton.onClick.AddListener(HandleBackButtonClicked);
         }
 
+        if (infoButton != null)
+        {
+            infoButton.onClick.AddListener(HandleInfoButtonClicked);
+        }
+
+        if (infoCloseButton != null)
+        {
+            infoCloseButton.onClick.AddListener(HandleInfoCloseButtonClicked);
+        }
+
         Initialize(initialClass);
     }
 
@@ -63,6 +79,16 @@ public class EquipmentPanelController : MonoBehaviour
             backButton.onClick.RemoveListener(HandleBackButtonClicked);
         }
 
+        if (infoButton != null)
+        {
+            infoButton.onClick.RemoveListener(HandleInfoButtonClicked);
+        }
+
+        if (infoCloseButton != null)
+        {
+            infoCloseButton.onClick.RemoveListener(HandleInfoCloseButtonClicked);
+        }
+
         if (inventoryController == null)
         {
             return;
@@ -75,6 +101,11 @@ public class EquipmentPanelController : MonoBehaviour
     // 장비 패널 오픈 연출
     public void PlayOpenAnimation()
     {
+        if (infoPanel != null)
+        {
+            infoPanel.SetActive(false);
+        }
+
         panelTransition?.PlayOpen();
     }
 
@@ -207,6 +238,11 @@ public class EquipmentPanelController : MonoBehaviour
 
         classChangeTween?.Kill();
 
+        if (infoPanel != null && infoPanel.activeSelf)
+        {
+            infoPanelTransition?.PlayClose();
+        }
+
         if (panelTransition == null)
         {
             ClosePanel();
@@ -219,7 +255,53 @@ public class EquipmentPanelController : MonoBehaviour
     // 장비 패널 종료 처리
     private void ClosePanel()
     {
+        if (infoPanel != null)
+        {
+            infoPanel.SetActive(false);
+        }
+
         equipmentRoot.SetActive(false);
         OnClosed?.Invoke();
+    }
+
+    // 장비 도움말 열기
+    private void HandleInfoButtonClicked()
+    {
+        if (infoPanel == null)
+        {
+            return;
+        }
+
+        infoPanel.SetActive(true);
+
+        if (infoPanelTransition == null)
+        {
+            return;
+        }
+
+        infoPanelTransition.PlayOpen();
+    }
+
+    // 장비 도움말 패널 닫기
+    private void HandleInfoCloseButtonClicked()
+    {
+        CloseInfoPanel();
+    }
+
+    // 장비 도움말 패널 종료 처리
+    private void CloseInfoPanel()
+    {
+        if (infoPanel == null || !infoPanel.activeSelf)
+        {
+            return;
+        }
+
+        if (infoPanelTransition == null)
+        {
+            infoPanel.SetActive(false);
+            return;
+        }
+
+        infoPanelTransition.PlayClose(() => infoPanel.SetActive(false));
     }
 }
