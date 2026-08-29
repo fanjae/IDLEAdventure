@@ -2169,6 +2169,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2291323458887692473}
     - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
+      propertyPath: skillIcon
+      value: 
+      objectReference: {fileID: 4201657419184310508}
+    - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
       propertyPath: attackText
       value: 
       objectReference: {fileID: 6186568772574643965}
@@ -2189,6 +2193,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1630126541465403955}
     - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
+      propertyPath: skillNameText
+      value: 
+      objectReference: {fileID: 2357990537763947188}
+    - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
       propertyPath: heroViewSpawner
       value: 
       objectReference: {fileID: 5417697721722631042}
@@ -2204,6 +2212,14 @@ PrefabInstance:
       propertyPath: heroPanelTransition
       value: 
       objectReference: {fileID: 8121345903935097847}
+    - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
+      propertyPath: skillDescriptionText
+      value: 
+      objectReference: {fileID: 3393896096343462607}
+    - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
+      propertyPath: skillPanelTransition
+      value: 
+      objectReference: {fileID: 4149521375658485802}
     - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
       propertyPath: resonancePanelController
       value: 
@@ -2832,6 +2848,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &2357990537763947188 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2029832096544638267, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
+  m_PrefabInstance: {fileID: 4364597645895649167}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &3358723784445915195 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1301187433795172276, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
@@ -2843,6 +2870,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &3393896096343462607 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1408396242685187392, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
+  m_PrefabInstance: {fileID: 4364597645895649167}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &3904711646347904627 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 766307802052821500, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
@@ -2854,6 +2892,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &4149521375658485802 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 361455496636297125, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
+  m_PrefabInstance: {fileID: 4364597645895649167}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b22a6e01f35da54cab0a93ca14b0cf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkillPanelTransition
+--- !u!114 &4201657419184310508 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 494660688480849763, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
+  m_PrefabInstance: {fileID: 4364597645895649167}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!114 &5417697721722631042 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8628242885007225869, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
