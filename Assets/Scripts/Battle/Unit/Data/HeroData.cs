@@ -9,6 +9,7 @@ public class HeroData : UnitDataSO
 
     [Header("스킬 정보")]
     [SerializeField] private SkillDataSO skillData;
+    [SerializeField] private SkillDataSO passiveSkillData;
 
     [Header("UI 정보")]
     [SerializeField] private Sprite portrait;
@@ -16,6 +17,7 @@ public class HeroData : UnitDataSO
     public HeroClassType ClassType => classType;
     public HeroRole Role => role;
     public SkillDataSO SkillData => skillData;
+    public SkillDataSO PassiveSkillData => passiveSkillData;
     public Sprite Portrait => portrait;
 
 }

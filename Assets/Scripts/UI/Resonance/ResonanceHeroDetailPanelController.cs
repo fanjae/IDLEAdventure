@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,6 +31,17 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
     [SerializeField] private Image classIcon;
     [SerializeField] private HeroClassIconCatalog classIconCatalog;
 
+    [Header("Hero Skill")]
+    [SerializeField] private TMP_Text skillNameText;
+    [SerializeField] private Image skillIcon;
+    [SerializeField] private TMP_Text skillDescriptionText;
+    [SerializeField] private SkillPanelTransition skillPanelTransition;
+
+    private const float SkillChangeInterval = 5f;
+
+    private Coroutine skillRotationCoroutine;
+    private bool showPassiveSkill;
+
     // 현재 선택된 영웅 ID
     private string selectedHeroId;
 
@@ -58,6 +70,8 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
 
     private void OnDisable()
     {
+        StopSkillRotation();
+
         if (resonancePanelController != null)
         {
             resonancePanelController.OnHeroDetailRequested -= HandleHeroDetailRequested;
@@ -100,6 +114,7 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
         selectedHeroId = heroId;
 
         RefreshHeroInfo(hero);
+        RefreshHeroSkill(hero);
 
         if (resonanceHeroContentPanel != null)
         {
@@ -120,6 +135,8 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
 
     private void HandleBackButtonClicked()
     {
+        StopSkillRotation();
+
         if (heroViewSpawner != null)
         {
             heroViewSpawner.Clear();
@@ -273,6 +290,96 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
         {
             resonanceHeroContentPanel.SetActive(true);
             resonancePanelController?.PlayOpenAnimation();
+        }
+    }
+
+    // 스킬 이름과 아이콘, 설명 표시
+    private void ApplySkillInfo(SkillDataSO skillData)
+    {
+        if (skillNameText != null)
+        {
+            skillNameText.text = skillData != null ? $"[스킬명 : {skillData.DisplayName}]" : string.Empty;
+        }
+
+        if (skillIcon != null)
+        {
+            skillIcon.sprite = skillData != null ? skillData.Icon : null;
+            skillIcon.preserveAspect = true;
+            skillIcon.enabled = skillData != null && skillData.Icon != null;
+        }
+
+        if (skillDescriptionText != null)
+        {
+            skillDescriptionText.text = skillData != null ? skillData.Description : string.Empty;
+        }
+    }
+
+    // 액티브와 패시브 스킬을 일정 시간마다 교체
+    private IEnumerator RotateSkill(SkillDataSO activeSkill, SkillDataSO passiveSkill)
+    {
+        WaitForSeconds wait = new WaitForSeconds(SkillChangeInterval);
+
+        while (true)
+        {
+            yield return wait;
+
+            showPassiveSkill = !showPassiveSkill;
+            SkillDataSO nextSkill = showPassiveSkill ? passiveSkill : activeSkill;
+
+            if (skillPanelTransition != null)
+            {
+                skillPanelTransition.PlayChange(() => ApplySkillInfo(nextSkill));
+            }
+            else
+            {
+                ApplySkillInfo(nextSkill);
+            }
+        }
+    }
+
+    // 선택된 영웅의 스킬 정보 표시 시작
+    private void RefreshHeroSkill(OwnedHeroData hero)
+    {
+        StopSkillRotation();
+
+        if (hero == null || hero.HeroData == null)
+        {
+            ApplySkillInfo(null);
+            return;
+        }
+
+        SkillDataSO activeSkill = hero.HeroData.SkillData;
+        SkillDataSO passiveSkill = hero.HeroData.PassiveSkillData;
+
+        showPassiveSkill = false;
+
+        if (activeSkill != null)
+        {
+            ApplySkillInfo(activeSkill);
+        }
+        else
+        {
+            ApplySkillInfo(passiveSkill);
+        }
+
+        if (activeSkill != null && passiveSkill != null)
+        {
+            skillRotationCoroutine = StartCoroutine(RotateSkill(activeSkill, passiveSkill));
+        }
+    }
+
+    // 스킬 정보 순환 종료
+    private void StopSkillRotation()
+    {
+        if (skillRotationCoroutine != null)
+        {
+            StopCoroutine(skillRotationCoroutine);
+            skillRotationCoroutine = null;
+        }
+
+        if (skillPanelTransition != null)
+        {
+            skillPanelTransition.ResetState();
         }
     }
 }
