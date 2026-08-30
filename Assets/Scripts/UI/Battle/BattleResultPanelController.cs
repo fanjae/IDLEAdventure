@@ -55,12 +55,26 @@ public sealed class BattleResultPanelController : MonoBehaviour
     // 메인 화면으로 이동
     public void ReturnToMain()
     {
+        if (StageRuntimeData.IsFieldEnemyBattle)
+        {
+            ReturnToField();
+            return;
+        }
+
         SceneManager.LoadScene(mainSceneName);
     }
 
     // 다음 스테이지 도전
     public void ChallengeNextStage()
     {
+        // 2026.08.31 필드 적 전투는 StageData를 공유하지만
+        // 다음 스테이지로 진행하지 않고 필드로 복귀한다.
+        if (StageRuntimeData.IsFieldEnemyBattle)
+        {
+            ReturnToField();
+            return;
+        }
+
         if (StageDatabase.Instance == null)
         {
             Debug.LogError("StageDatabase가 없습니다.");
@@ -78,6 +92,14 @@ public sealed class BattleResultPanelController : MonoBehaviour
 
         StageRuntimeData.SelectStage(nextStageId);
         SceneManager.LoadScene(battleSceneName);
+    }
+
+    private void ReturnToField()
+    {
+        StageRuntimeData.StopAutoBattle();
+        StageRuntimeData.StopFieldEnemyBattle();
+
+        SceneManager.LoadScene(mainSceneName);
     }
 
     // 전투 결과 패널 숨김
@@ -108,4 +130,5 @@ public sealed class BattleResultPanelController : MonoBehaviour
 
         SceneManager.LoadScene(battleSceneName);
     }
+
 }
