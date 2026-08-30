@@ -49,14 +49,14 @@ public sealed class StageEnemySpawner : MonoBehaviour
 
         foreach (StageEnemyData enemyData in stage.enemies)
         {
-            SpawnEnemy(enemyData);
+            SpawnEnemy(enemyData, stage.act);
         }
 
         Debug.Log($"{stage.stageId}번 스테이지 적 생성 완료: {stage.enemies.Count}마리");
     }
 
 
-    private void SpawnEnemy(StageEnemyData enemyData)
+    private void SpawnEnemy(StageEnemyData enemyData, int act)
     {
         int slotNumber = enemyData.slotNumber;
 
@@ -72,7 +72,7 @@ public sealed class StageEnemySpawner : MonoBehaviour
             throw new Exception($"Tile Slots의 Element {slotNumber}에 타일이 연결되지 않음");
         }
 
-        GameObject prefab = LoadEnemyPrefab(enemyData.enemyId);
+        GameObject prefab = LoadEnemyPrefab(enemyData.enemyId, act);
 
         Vector3 spawnPosition = tile.position + tile.up * spawnHeight;
 
@@ -102,9 +102,9 @@ public sealed class StageEnemySpawner : MonoBehaviour
             $"Level={battleUnit.Level}, MaxHp={battleUnit.MaxHp}");
     }
 
-    private GameObject LoadEnemyPrefab(string enemyId)
+    private GameObject LoadEnemyPrefab(string enemyId, int act)
     {
-        string path = $"{enemyPrefabPath}/{enemyId}";
+        string path = $"{enemyPrefabPath}/Act{act}/{enemyId}";
 
         GameObject prefab = Resources.Load<GameObject>(path);
 

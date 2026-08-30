@@ -14,6 +14,9 @@ public sealed class StageData
     [CsvMin(1)]
     public int stageId;
 
+    [CsvMin(1)]
+    public int act;
+
     public string mapName;
 
     public string fieldName;
