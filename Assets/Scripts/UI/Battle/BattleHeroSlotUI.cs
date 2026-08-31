@@ -5,6 +5,7 @@ public class BattleHeroSlotUI : MonoBehaviour
 {
     [SerializeField] private Image portrait;
     [SerializeField] private RectTransform hpBarFill;
+    [SerializeField] private GameObject deadOverlay;
 
     private BattleUnit unit;
     private float fullHpWidth;
@@ -13,10 +14,12 @@ public class BattleHeroSlotUI : MonoBehaviour
     private void Awake()
     {
         if (hpBarFill != null) fullHpWidth = hpBarFill.rect.width;
+        if (deadOverlay != null) deadOverlay.SetActive(false);
     }
     private void Update()
     {
         UpdateHp();
+        UpdateDead();
     }
 
 
@@ -27,6 +30,7 @@ public class BattleHeroSlotUI : MonoBehaviour
         if (unit.UnitData is HeroData heroData && portrait != null) portrait.sprite = heroData.BattlePortrait;
 
         UpdateHp();
+        UpdateDead();
     }
 
     private void UpdateHp()
@@ -36,5 +40,11 @@ public class BattleHeroSlotUI : MonoBehaviour
 
         float hpRatio = Mathf.Clamp01((float)unit.CurrentHp / unit.MaxHp);
         hpBarFill.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, fullHpWidth * hpRatio);
+    }
+    private void UpdateDead()
+    {
+        if (unit == null || deadOverlay == null) return;
+
+        deadOverlay.SetActive(unit.IsDead);
     }
 }
