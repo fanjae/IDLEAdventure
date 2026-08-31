@@ -1,21 +1,23 @@
 using System;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 // 공명 UI에서 영웅 한 명의 정보를 표시
-public sealed class ResonanceHeroCardView : MonoBehaviour, IPointerClickHandler
+public sealed class ResonanceHeroCardView : MonoBehaviour
 { 
     [SerializeField] private Button button;
+    [SerializeField] private GameObject selectedVisual;
     [SerializeField] private Image heroPortrait;
     [SerializeField] private Image classIcon;
     [SerializeField] private TMP_Text levelValueText;
     [SerializeField] private TMP_Text levelText;
 
     private string heroId;
-    private Action<string> onClicked;
-    private Action<string> onRightClicked;
+    private Action<string> onSelected;
+
+    public string HeroId => heroId;
 
     private void Awake()
     {
@@ -33,11 +35,11 @@ public sealed class ResonanceHeroCardView : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        onClicked?.Invoke(heroId);
+        onSelected?.Invoke(heroId);
     }
 
     // 보유 영웅 정보를 카드에 표시
-    public void Bind(OwnedHeroData hero, HeroClassIconCatalog classIconCatalog, Action<string> onClicked = null, Action<string> onRightClicked = null)
+    public void Bind(OwnedHeroData hero, HeroClassIconCatalog classIconCatalog, Action<string> onSelected = null)
     {
         if (hero == null || hero.HeroData == null)
         {
@@ -46,8 +48,9 @@ public sealed class ResonanceHeroCardView : MonoBehaviour, IPointerClickHandler
         }
 
         heroId = hero.HeroId;
-        this.onClicked = onClicked;
-        this.onRightClicked = onRightClicked;
+        this.onSelected = onSelected;
+
+        SetSelected(false);
 
         if (button != null)
         {
@@ -81,28 +84,22 @@ public sealed class ResonanceHeroCardView : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    // 영웅 카드 우클릭 처리
-    public void OnPointerClick(PointerEventData eventData)
+    // 영웅 카드 선택 표시 갱신
+    public void SetSelected(bool selected)
     {
-        if (eventData.button != PointerEventData.InputButton.Right)
+        if (selectedVisual != null)
         {
-            return;
+            selectedVisual.SetActive(selected);
         }
-
-        if (string.IsNullOrEmpty(heroId))
-        {
-            return;
-        }
-
-        onRightClicked?.Invoke(heroId);
     }
 
     // 영웅 카드 정보를 빈 상태로 초기화
     public void Clear()
     {
         heroId = null;
-        onClicked = null;
-        onRightClicked = null;
+        onSelected = null;
+
+        SetSelected(false);
 
         if (heroPortrait != null)
         {
