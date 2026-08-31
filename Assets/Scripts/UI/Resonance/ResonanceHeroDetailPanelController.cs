@@ -1,4 +1,3 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,10 +36,11 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
     [SerializeField] private TMP_Text skillDescriptionText;
     [SerializeField] private SkillPanelTransition skillPanelTransition;
 
-    private const float SkillChangeInterval = 5f;
+    [Header("Hero Skill List")]
+    [SerializeField] private HeroSkillSlotUI skillSlot1;
+    [SerializeField] private HeroSkillSlotUI skillSlot2;
 
-    private Coroutine skillRotationCoroutine;
-    private bool showPassiveSkill;
+    private HeroSkillSlotUI selectedSkillSlot;
 
     // 현재 선택된 영웅 ID
     private string selectedHeroId;
@@ -70,7 +70,7 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
 
     private void OnDisable()
     {
-        StopSkillRotation();
+        ClearSelectedSkill();
 
         if (resonancePanelController != null)
         {
@@ -135,14 +135,13 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
 
     private void HandleBackButtonClicked()
     {
-        StopSkillRotation();
+        ClearSelectedSkill();
 
         if (heroViewSpawner != null)
         {
             heroViewSpawner.Clear();
         }
 
-        // 선택된 영웅 정보 초기화
         selectedHeroId = null;
 
         if (heroPanelTransition == null)
@@ -314,36 +313,15 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
         }
     }
 
-    // 액티브와 패시브 스킬을 일정 시간마다 교체
-    private IEnumerator RotateSkill(SkillDataSO activeSkill, SkillDataSO passiveSkill)
-    {
-        WaitForSeconds wait = new WaitForSeconds(SkillChangeInterval);
-
-        while (true)
-        {
-            yield return wait;
-
-            showPassiveSkill = !showPassiveSkill;
-            SkillDataSO nextSkill = showPassiveSkill ? passiveSkill : activeSkill;
-
-            if (skillPanelTransition != null)
-            {
-                skillPanelTransition.PlayChange(() => ApplySkillInfo(nextSkill));
-            }
-            else
-            {
-                ApplySkillInfo(nextSkill);
-            }
-        }
-    }
-
-    // 선택된 영웅의 스킬 정보 표시 시작
+    // 선택된 영웅의 보유 스킬 목록 갱신
     private void RefreshHeroSkill(OwnedHeroData hero)
     {
-        StopSkillRotation();
+        ClearSelectedSkill();
 
         if (hero == null || hero.HeroData == null)
         {
+            skillSlot1?.Bind(null, null);
+            skillSlot2?.Bind(null, null);
             ApplySkillInfo(null);
             return;
         }
@@ -351,35 +329,68 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
         SkillDataSO activeSkill = hero.HeroData.SkillData;
         SkillDataSO passiveSkill = hero.HeroData.PassiveSkillData;
 
-        showPassiveSkill = false;
+        skillSlot1?.Bind(activeSkill, HandleSkillSelected);
+        skillSlot2?.Bind(passiveSkill, HandleSkillSelected);
 
         if (activeSkill != null)
         {
-            ApplySkillInfo(activeSkill);
-        }
-        else
-        {
-            ApplySkillInfo(passiveSkill);
+            SelectSkill(skillSlot1, activeSkill);
+            return;
         }
 
-        if (activeSkill != null && passiveSkill != null)
+        if (passiveSkill != null)
         {
-            skillRotationCoroutine = StartCoroutine(RotateSkill(activeSkill, passiveSkill));
+            SelectSkill(skillSlot2, passiveSkill);
+            return;
         }
+
+        ApplySkillInfo(null);
     }
 
-    // 스킬 정보 순환 종료
-    private void StopSkillRotation()
+    // 보유 스킬 슬롯 선택 처리
+    private void HandleSkillSelected(HeroSkillSlotUI slot, SkillDataSO skillData)
     {
-        if (skillRotationCoroutine != null)
+        SelectSkill(slot, skillData);
+    }
+
+    // 선택된 스킬 슬롯 표시 및 하단 상세 정보 갱신
+    private void SelectSkill(HeroSkillSlotUI slot, SkillDataSO skillData)
+    {
+        if (slot == null || skillData == null)
         {
-            StopCoroutine(skillRotationCoroutine);
-            skillRotationCoroutine = null;
+            return;
         }
+
+        if (selectedSkillSlot == slot)
+        {
+            return;
+        }
+
+        if (selectedSkillSlot != null)
+        {
+            selectedSkillSlot.SetSelected(false);
+        }
+
+        selectedSkillSlot = slot;
+        selectedSkillSlot.SetSelected(true);
 
         if (skillPanelTransition != null)
         {
-            skillPanelTransition.ResetState();
+            skillPanelTransition.PlayChange(() => ApplySkillInfo(skillData));
+        }
+        else
+        {
+            ApplySkillInfo(skillData);
+        }
+    }
+
+    // 현재 선택된 스킬 슬롯 상태 초기화
+    private void ClearSelectedSkill()
+    {
+        if (selectedSkillSlot != null)
+        {
+            selectedSkillSlot.SetSelected(false);
+            selectedSkillSlot = null;
         }
     }
 }
