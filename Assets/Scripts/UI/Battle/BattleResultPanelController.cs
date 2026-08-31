@@ -6,6 +6,7 @@ public sealed class BattleResultPanelController : MonoBehaviour
 {
     [SerializeField] private GameObject winPanel;
     [SerializeField] private GameObject losePanel;
+    [SerializeField] private GameObject stagePanel;
 
     [Header("씬 이동")]
     [SerializeField] private string mainSceneName = "ItemandSaveTestMainScene";
@@ -39,6 +40,11 @@ public sealed class BattleResultPanelController : MonoBehaviour
         if (StageRuntimeData.IsAutoBattle && winner == UnitTeam.Hero)
         {
             return;
+        }
+
+        if (stagePanel != null)
+        {
+            stagePanel.SetActive(false);
         }
 
         if (winPanel != null)
