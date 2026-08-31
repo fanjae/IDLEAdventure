@@ -291,6 +291,13 @@ public class UnitSkill : MonoBehaviour
     {
         if (!isUsingSkill || hasAppliedSkillEffect || activeSkillData == null) return;
 
+        //공격 대상이 필요한 스킬인데, 기존 타겟이 죽었으면 스킬 취소
+        if (NeedsEnemyTarget(activeSkillData) && !IsValidTarget(skillTarget, activeSkillData))
+        {
+            CancelSkill();
+            return;
+        }
+
         SkillDataSO data = activeSkillData;
         switch (data.EffectType)
         {
@@ -610,8 +617,8 @@ public class UnitSkill : MonoBehaviour
         if (healTargetVfxPool == null) return;
 
         GameObject vfx = healTargetVfxPool.Get();
-        vfx.transform.SetParent(target.transform);
         vfx.transform.SetPositionAndRotation(target.transform.position, Quaternion.identity);
+
         vfx.SetActive(true);
         RestartParticles(vfx);
         StartCoroutine(ReleaseVfxRoutine(vfx, healTargetVfxPool, data.HealVfxDuration));
@@ -833,4 +840,16 @@ public class UnitSkill : MonoBehaviour
         isBattleEventSubscribed = false;
     }
     #endregion
+
+
+    private bool NeedsEnemyTarget(SkillDataSO data)
+    {
+        if (data == null) return false;
+
+        return data.EffectType == SkillEffectType.Damage ||
+            data.EffectType == SkillEffectType.ProjectileDamage ||
+            data.EffectType == SkillEffectType.AreaDamage ||
+            data.EffectType == SkillEffectType.Whirlwind ||
+            data.EffectType == SkillEffectType.Laser;
+    }
 }
