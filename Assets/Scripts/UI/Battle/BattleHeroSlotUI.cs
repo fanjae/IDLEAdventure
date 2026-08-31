@@ -9,8 +9,6 @@ public class BattleHeroSlotUI : MonoBehaviour
 
     private BattleUnit unit;
     private float fullHpWidth;
-
-
     private void Awake()
     {
         if (hpBarFill != null) fullHpWidth = hpBarFill.rect.width;
@@ -21,7 +19,6 @@ public class BattleHeroSlotUI : MonoBehaviour
         UpdateHp();
         UpdateDead();
     }
-
 
     public void Initialize(BattleUnit battleUnit)
     {
