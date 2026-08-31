@@ -1,13 +1,27 @@
+using System;
 using TMPro;
 using UnityEngine;
 
+// 표기될 재화 정보 설정용 구조체.
+[Serializable]
+public struct RewardUISet
+{
+    [SerializeField] private CurrencyType currencyType;
+    [SerializeField] private string currencyName;
+    [SerializeField] private TMP_Text currencyUIText;
+
+    // 프로퍼티
+    public CurrencyType CurrencyType => currencyType;
+    public string CurrencyName => currencyName;
+    public TMP_Text CurrencyUIText => currencyUIText;
+}
+/// <summary>
+/// 스테이지 클리어 보상을 출력하는 클래스.
+/// </summary>
 public class StageRewardView : MonoBehaviour
 {
     [Header("UI Component")]
-    [SerializeField] private TMP_Text goldText;
-    [SerializeField] private TMP_Text expText;
-    [SerializeField] private TMP_Text upgradeText;
-    [SerializeField] private TMP_Text gemText;
+    [SerializeField] private RewardUISet[] rewardUISets;
 
     [Header("StageClearRewardData")]
     [SerializeField] private StageClearRewardTest rewardData;
@@ -27,48 +41,22 @@ public class StageRewardView : MonoBehaviour
         }
     }
 
-    //
+    // UI 갱신 함수.
     private void UpdateUI(int stageId, StageRewardData rewardData)
     {
-        if (goldText != null)
+        foreach (var uiSet in rewardUISets)
         {
-            int gold = 0;
-            // "GOLD" 키가 존재한다면 꺼내서 int로 형변환
-            if (rewardData.Rewards.TryGetValue("GOLD", out IReward goldReward))
-            {
-                gold = (int)goldReward.RewardValue;
-            }
-            goldText.text = $"Gold: {gold}";
-        }
+            if (uiSet.CurrencyUIText == null) continue;
 
-        if (expText != null)
-        {
-            int exp = 0;
-            if (rewardData.Rewards.TryGetValue("EXP", out IReward expReward))
-            {
-                exp = (int)expReward.RewardValue;
-            }
-            expText.text = $"Exp: {exp}";
-        }
+            int amount = 0;
+            string rewardType = uiSet.CurrencyType.ToString();
 
-        if (upgradeText != null)
-        {
-            int upgrade = 0;
-            if (rewardData.Rewards.TryGetValue("UPGRADE", out IReward upgradeReward))
+            if (rewardData.Rewards.TryGetValue(rewardType, out IReward reward))
             {
-                upgrade = (int)upgradeReward.RewardValue;
+                amount = (int)reward.RewardValue;
             }
-            upgradeText.text = $"Upgrade: {upgrade}";
-        }
 
-        if (gemText != null)
-        {
-            int equip = 0;
-            if (rewardData.Rewards.TryGetValue("EQUIPBOX", out IReward equipReward))
-            {
-                equip = (int)equipReward.RewardValue;
-            }
-            gemText.text = $"Gem: {equip}";
+            uiSet.CurrencyUIText.text = $"{uiSet.CurrencyName}: {amount}";
         }
     }
 }
