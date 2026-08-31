@@ -64,6 +64,12 @@ public class UnitAttack : MonoBehaviour
             CancelAttack();
             return;
         }
+        //공격 도중 기존 타겟이 죽으면 바로 공격 취소
+        if (attackTarget == null || attackTarget.IsDead || !attackTarget.gameObject.activeInHierarchy)
+        {
+            CancelAttack();
+            return;
+        }
         
         bool attackAnimationActive = unit.IsAttackAnimationActive();
         //실제 Attack 애니메이션 상태에 진입했는지 확인
