@@ -19,6 +19,7 @@ public sealed class AutoBattleController : MonoBehaviour
 
     [Header("씬")]
     [SerializeField] private string battleSceneName = "NewUIBattleScene";
+    [SerializeField] private string mainSceneName = "Filed_Persistent";
 
     private void Start()
     {
@@ -103,6 +104,16 @@ public sealed class AutoBattleController : MonoBehaviour
         }
 
         SetAutoBattleTouchAreaActive(false);
+
+        // 2026.08.31 필드 적 전투는 자동전투로 다음 스테이지에
+        // 연속 진입하지 않고 필드로 복귀한다.
+        if (StageRuntimeData.IsFieldEnemyBattle)
+        {
+            StopAutoBattle();
+            StageRuntimeData.StopFieldEnemyBattle();
+            SceneManager.LoadScene(mainSceneName);
+            return;
+        }
 
         // 패배하면 자동전투 종료
         if (winner == UnitTeam.Enemy)
