@@ -67,8 +67,15 @@ public class FieldStreamingManager : MonoBehaviour
     private bool checkReferences;
     private bool initialized;
 
+
+    //
+    private CharacterController characterController;
+    //
     private void Awake()
     {
+        characterController = player.GetComponent<CharacterController>();
+        if (characterController != null) characterController.enabled = false;
+
         checkReferences = CheckReferences();
 
 
@@ -90,7 +97,7 @@ public class FieldStreamingManager : MonoBehaviour
 
         yield return new WaitUntil(LoadingOn);
 
-
+        if (characterController != null) characterController.enabled = true;
 
 
         initialized = true;
