@@ -69,12 +69,13 @@ public class FieldStreamingManager : MonoBehaviour
 
 
     //
-    private CharacterController characterController;
+    //private CharacterController characterController;
     //
     private void Awake()
     {
-        characterController = player.GetComponent<CharacterController>();
-        if (characterController != null) characterController.enabled = false;
+        //characterController = player.GetComponent<CharacterController>();
+        //if (characterController != null) characterController.enabled = false;
+        if (player != null) player.gameObject.SetActive(false);
 
         checkReferences = CheckReferences();
 
@@ -97,7 +98,8 @@ public class FieldStreamingManager : MonoBehaviour
 
         yield return new WaitUntil(LoadingOn);
 
-        if (characterController != null) characterController.enabled = true;
+        //if (characterController != null) characterController.enabled = true;
+        if (player != null) player.gameObject.SetActive(true);
 
 
         initialized = true;
