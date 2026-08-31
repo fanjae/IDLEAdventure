@@ -2686,6 +2686,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3358723784445915195}
     - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
+      propertyPath: skillSlot1
+      value: 
+      objectReference: {fileID: 8463331392574602319}
+    - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
+      propertyPath: skillSlot2
+      value: 
+      objectReference: {fileID: 8840925247252129832}
+    - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
       propertyPath: defenseText
       value: 
       objectReference: {fileID: 3904711646347904627}
@@ -3218,6 +3226,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 5897144515546450886}
+    - target: {fileID: 2812545273132987863, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3492862505966722744, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
       propertyPath: m_Name
       value: HeroPanel
@@ -3225,6 +3237,10 @@ PrefabInstance:
     - target: {fileID: 3492862505966722744, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3730188276023651982, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
+      propertyPath: m_Color.a
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6432283989085697407, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
       propertyPath: m_Pivot.x
@@ -3479,6 +3495,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 979130b6285302f4e968220fe362287f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIPanelTransition
+--- !u!114 &8463331392574602319 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5323784040079162304, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
+  m_PrefabInstance: {fileID: 4364597645895649167}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e5e18e510e4e08459d4d4de6899dfbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeroSkillSlotUI
+--- !u!114 &8840925247252129832 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5054002800189714343, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
+  m_PrefabInstance: {fileID: 4364597645895649167}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e5e18e510e4e08459d4d4de6899dfbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeroSkillSlotUI
 --- !u!114 &9208500225815482318 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4852910372082665537, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
