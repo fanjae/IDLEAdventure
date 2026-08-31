@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 3326113536658547079}
   - component: {fileID: 2617017204834742514}
   - component: {fileID: 3050317775501279631}
+  - component: {fileID: 4420854167087631734}
+  - component: {fileID: 3153640155380983703}
   m_Layer: 5
   m_Name: ExitOptionPanel
   m_TagString: Untagged
@@ -78,6 +80,36 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &4420854167087631734
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 578406691041303009}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &3153640155380983703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 578406691041303009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 979130b6285302f4e968220fe362287f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPanelTransition
+  canvasGroup: {fileID: 4420854167087631734}
+  panelTransform: {fileID: 3326113536658547079}
+  openOffset: {x: -300, y: 0}
+  closeOffset: {x: -300, y: 0}
+  openDuration: 0.25
+  closeDuration: 0.15
 --- !u!1 &2771010251177166873
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,6 +481,7 @@ GameObject:
   - component: {fileID: 3956654986098727835}
   - component: {fileID: 6464026320899124383}
   - component: {fileID: 1408106583724713235}
+  - component: {fileID: 1600468038480975964}
   m_Layer: 5
   m_Name: SecondBuildUI
   m_TagString: Untagged
@@ -542,6 +575,22 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &1600468038480975964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6154790001192468406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af50ddfa4db118a4f9bd3e4e27e1a5e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExitOptionController
+  exitOptionPanel: {fileID: 578406691041303009}
+  exitOptionTransition: {fileID: 3153640155380983703}
+  cancelButton: {fileID: 3063245701013892496}
+  exitButton: {fileID: 1360931964913130427}
 --- !u!1 &7465124338639519208
 GameObject:
   m_ObjectHideFlags: 0
