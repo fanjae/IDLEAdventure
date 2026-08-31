@@ -92,10 +92,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a0b99ef2b2b4a94f8b901108242857c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageRewardView
-  goldText: {fileID: 841804656217273700}
-  expText: {fileID: 3588615261319127463}
-  upgradeText: {fileID: 1852220585590954074}
-  gemText: {fileID: 1900786163288182629}
+  rewardUISets:
+  - currencyType: 0
+    currencyName: Gold
+    currencyUIText: {fileID: 841804656217273700}
+  - currencyType: 1
+    currencyName: Exp
+    currencyUIText: {fileID: 3588615261319127463}
+  - currencyType: 2
+    currencyName: Upgrade
+    currencyUIText: {fileID: 1852220585590954074}
+  - currencyType: 3
+    currencyName: Gem
+    currencyUIText: {fileID: 1900786163288182629}
   rewardData: {fileID: 0}
 --- !u!1 &840009098992955093
 GameObject:
