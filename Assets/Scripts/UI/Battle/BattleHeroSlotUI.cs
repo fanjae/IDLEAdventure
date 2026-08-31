@@ -24,7 +24,7 @@ public class BattleHeroSlotUI : MonoBehaviour
     {
         unit = battleUnit;
         if (unit == null) return;
-        if (unit.UnitData is HeroData heroData && portrait != null) portrait.sprite = heroData.Portrait;
+        if (unit.UnitData is HeroData heroData && portrait != null) portrait.sprite = heroData.BattlePortrait;
 
         UpdateHp();
     }

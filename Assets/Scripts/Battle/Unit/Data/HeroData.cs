@@ -13,11 +13,15 @@ public class HeroData : UnitDataSO
 
     [Header("UI 정보")]
     [SerializeField] private Sprite portrait;
+
+    [Header("전투 UI")]
+    [SerializeField] private Sprite battlePortrait;
     
     public HeroClassType ClassType => classType;
     public HeroRole Role => role;
     public SkillDataSO SkillData => skillData;
     public SkillDataSO PassiveSkillData => passiveSkillData;
     public Sprite Portrait => portrait;
+    public Sprite BattlePortrait => battlePortrait;
 
 }
