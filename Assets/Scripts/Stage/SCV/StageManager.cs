@@ -89,6 +89,14 @@ public sealed class StageManager : MonoBehaviour
     // 전투 결과에 따라 스테이지 클리어 또는 패배 이력을 저장함
     private void HandleBattleEnded(UnitTeam winner)
     {
+        // 2026.08.31 필드 적은 StageData만 공유하며
+        // 실제 스테이지 클리어 및 다음 스테이지 진행에는 포함하지 않는다.
+        if (StageRuntimeData.IsFieldEnemyBattle)
+        {
+            SaveManager.Instance.Save();
+            return;
+        }
+
         if (winner == UnitTeam.Hero)
         {
             stageProgressController.CompleteStage(currentStageId);

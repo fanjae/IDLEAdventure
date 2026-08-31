@@ -54,6 +54,10 @@ public class FieldEnemyInteraction : MonoBehaviour
         
         // 스테이지 진입 방식 확인 필요.
         StageRuntimeData.SelectStage(setStageId);
+
+        // 2026.08.31 필드 적 상호작용으로 진입한 전투임을 기록
+        StageRuntimeData.StartFieldEnemyBattle();
+
         FieldEnemyRuntimeData.SetEnemyData(enemyId);
 
         Debug.Log($"스테이지 전투 진입: {setStageId}");

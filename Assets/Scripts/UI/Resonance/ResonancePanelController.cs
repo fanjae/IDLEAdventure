@@ -19,6 +19,12 @@ public sealed class ResonancePanelController : MonoBehaviour
     [SerializeField] private ResonanceSlotView[] resonanceSlots;
     [SerializeField] private TMP_Text resonanceLevelText;
 
+    [SerializeField] private Button placeButton;
+    [SerializeField] private Button heroDetailButton;
+    [SerializeField] private TMP_Text placeButtonText;
+
+    private string selectedHeroId;
+
     private readonly List<ResonanceHeroCardView> heroCardViews = new();
 
     private HeroController heroController;
@@ -36,6 +42,17 @@ public sealed class ResonancePanelController : MonoBehaviour
         {
             backButton.onClick.AddListener(HandleBackButtonClicked);
         }
+
+        if (placeButton != null)
+        {
+            placeButton.onClick.AddListener(HandlePlaceButtonClicked);
+        }
+
+        if (heroDetailButton != null)
+        {
+            heroDetailButton.onClick.AddListener(HandleHeroDetailButtonClicked);
+        }
+
     }
 
     private void OnDisable()
@@ -43,6 +60,16 @@ public sealed class ResonancePanelController : MonoBehaviour
         if (backButton != null)
         {
             backButton.onClick.RemoveListener(HandleBackButtonClicked);
+        }
+
+        if (placeButton != null)
+        {
+            placeButton.onClick.RemoveListener(HandlePlaceButtonClicked);
+        }
+
+        if (heroDetailButton != null)
+        {
+            heroDetailButton.onClick.RemoveListener(HandleHeroDetailButtonClicked);
         }
 
         Unsubscribe();
@@ -53,6 +80,8 @@ public sealed class ResonancePanelController : MonoBehaviour
     {
         RefreshResonanceSlots();
         RefreshHeroList();
+        RefreshSelectionVisuals();
+        RefreshBottomArea();
         RefreshResonanceLevel();
     }
 
@@ -101,7 +130,7 @@ public sealed class ResonancePanelController : MonoBehaviour
             }
 
             ResonanceHeroCardView cardView = GetHeroCardView(visibleCount);
-            cardView.Bind(hero, classIconCatalog, HandleHeroCardClicked, HandleHeroCardRightClicked);
+            cardView.Bind(hero, classIconCatalog, HandleHeroCardSelected);
             cardView.gameObject.SetActive(true);
 
             visibleCount++;
@@ -184,30 +213,98 @@ public sealed class ResonancePanelController : MonoBehaviour
                 continue;
             }
 
-            slotView.Bind(hero, classIconCatalog, HandleResonanceSlotClicked, HandleHeroCardRightClicked);
+            slotView.Bind(hero, classIconCatalog, HandleHeroCardSelected);
         }
     }
 
-    // 보유 영웅 카드를 선택해 공명 슬롯에 등록
-    private void HandleHeroCardClicked(string heroId)
+    // 영웅 카드 선택
+    private void HandleHeroCardSelected(string heroId)
     {
-        if (resonanceController == null)
+        if (string.IsNullOrEmpty(heroId))
         {
             return;
         }
 
-        resonanceController.TryAddResonanceSlotHero(heroId);
+        selectedHeroId = heroId;
+
+        RefreshSelectionVisuals();
+        RefreshBottomArea();
     }
 
-    // 공명 슬롯 영웅을 선택해 등록 해제
-    private void HandleResonanceSlotClicked(string heroId)
+    // 영웅 배치 또는 배치 해제
+    private void HandlePlaceButtonClicked()
     {
-        if (resonanceController == null)
+        if (string.IsNullOrEmpty(selectedHeroId) ||
+            resonanceController == null)
         {
             return;
         }
 
-        resonanceController.TryRemoveResonanceSlotHero(heroId);
+        if (resonanceController.ContainsResonanceSlotHero(selectedHeroId))
+        {
+            resonanceController.TryRemoveResonanceSlotHero(selectedHeroId);
+            return;
+        }
+
+        resonanceController.TryAddResonanceSlotHero(selectedHeroId);
+    }
+
+    // 선택된 영웅 상세 정보 표시
+    private void HandleHeroDetailButtonClicked()
+    {
+        if (string.IsNullOrEmpty(selectedHeroId))
+        {
+            return;
+        }
+
+        OnHeroDetailRequested?.Invoke(selectedHeroId);
+    }
+
+    // 모든 영웅 카드 선택 표시 갱신
+    private void RefreshSelectionVisuals()
+    {
+        foreach (ResonanceHeroCardView cardView in heroCardViews)
+        {
+            if (cardView == null)
+            {
+                continue;
+            }
+
+            cardView.SetSelected(cardView.HeroId == selectedHeroId);
+        }
+
+        if (resonanceSlots == null)
+        {
+            return;
+        }
+
+        foreach (ResonanceSlotView slotView in resonanceSlots)
+        {
+            slotView?.SetSelected(selectedHeroId);
+        }
+    }
+
+    // 하단 영웅 액션 버튼 상태 갱신
+    private void RefreshBottomArea()
+    {
+        bool hasSelection = !string.IsNullOrEmpty(selectedHeroId) && heroController != null && heroController.TryGetHero(selectedHeroId, out _);
+        bool isPlaced = hasSelection && resonanceController != null && resonanceController.ContainsResonanceSlotHero(selectedHeroId);
+        bool canPlace = hasSelection && !isPlaced && resonanceController != null && resonanceController.ResonanceSlotHeroIds.Count < 3;
+
+        if (placeButtonText != null)
+        {
+            placeButtonText.text = isPlaced ? "배치 해제" : "영웅 배치";
+        }
+
+        if (placeButton != null)
+        {
+            placeButton.interactable = canPlace || isPlaced;
+        }
+
+        if (heroDetailButton != null)
+        {
+            heroDetailButton.interactable = hasSelection;
+        }
     }
 
     // 현재 공명 레벨 표시 갱신
@@ -226,17 +323,6 @@ public sealed class ResonancePanelController : MonoBehaviour
         }
 
         resonanceLevelText.text = $"공명 레벨 : {resonanceLevel}";
-    }
-
-    // 보유 영웅 카드 우클릭 시 상세 패널 표시 요청
-    private void HandleHeroCardRightClicked(string heroId)
-    {
-        if (string.IsNullOrEmpty(heroId))
-        {
-            return;
-        }
-
-        OnHeroDetailRequested?.Invoke(heroId);
     }
 
     // 공명 패널 닫기
@@ -268,4 +354,6 @@ public sealed class ResonancePanelController : MonoBehaviour
     {
         panelTransition?.PlayOpen();
     }
+
+
 }
