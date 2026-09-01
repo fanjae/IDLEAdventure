@@ -514,7 +514,7 @@ public class UnitSkill : MonoBehaviour
     }
     private void OnDestroyWhirlwind(WhirlwindSkillDamage whirlwind)
     {
-        if (whirlwindPool != null) Destroy(whirlwind.gameObject);
+        if (whirlwind != null) Destroy(whirlwind.gameObject);
     }
 
     //레이저

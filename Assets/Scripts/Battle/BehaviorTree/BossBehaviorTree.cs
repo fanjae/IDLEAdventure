@@ -20,6 +20,16 @@ public class BossBehaviorTree : MonoBehaviour
         if (!unit.CanBattle) return;
 
         root?.Run();
+
+        //버그 확인용
+        //Debug.Log(
+        //    $"[Boss] State : {unit.CurrentState}" + 
+        //    $"Attack : {unit.IsAttacking}" + 
+        //    $"Skill : {unit.IsUsingSkill}" + 
+        //    $"Target : {(unit.Target != null ? unit.Target.name : "NULL")}" + 
+        //    $"Valid : {unit.HasValidTarget()}" + 
+        //    $"Range : {unit.IsTargetInAttackRange()}" + 
+        //    $"CanSkill : {unit.CanUseSkill()}");
     }
 
     private void CreateTree()
@@ -30,6 +40,8 @@ public class BossBehaviorTree : MonoBehaviour
             new BTSequence(new BTCondition(() => unit.IsUsingSkill), ChangeStateNode(UnitState.Skill)),
             //기본 공격 중이면 Attack State 유지
             new BTSequence(new BTCondition(() => unit.IsAttacking), ChangeStateNode(UnitState.Attack)),
+            //공격은 취소됐어도 기존 공격 애니메이션이 끝나기 전에는 스킬로 넘어가지 않음
+            new BTSequence(new BTCondition(() => unit.IsAttackAnimationActive()), ChangeStateNode(UnitState.Attack)),
             //스킬 사용 가능하면 Skill 우선 사용
             new BTSequence(new BTCondition(() => unit.CanUseSkill()), ChangeStateNode(UnitState.Skill)),
             //타겟이 없으면 탐색
