@@ -48,19 +48,13 @@ public class EnemyFieldAI : MonoBehaviour
 
         animator = GetComponent<Animator>();
         //
+        FieldStreamingManager fieldStreamingManager = FindFirstObjectByType<FieldStreamingManager>();
+
+        if (fieldStreamingManager != null) player = fieldStreamingManager.Player;
     }
 
     private void Start()
     {
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-
-        if (playerObject == null)
-        {
-            Debug.LogError("Player");
-            return;
-        }
-
-        player = playerObject.transform;
         homePosition = transform.position;
 
         StartIdle();
