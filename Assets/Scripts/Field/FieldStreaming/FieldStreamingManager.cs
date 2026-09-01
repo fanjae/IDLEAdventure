@@ -67,6 +67,8 @@ public class FieldStreamingManager : MonoBehaviour
     private bool checkReferences;
     private bool initialized;
 
+    public Transform Player => player;
+
 
     //
     //private CharacterController characterController;

@@ -6,6 +6,7 @@ public class MapModeController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera mainCamera;
     [SerializeField] private GameObject miniMap;
+    [SerializeField] private GameObject bottomCanvas;
     [SerializeField] private GameObject worldMap;
     [SerializeField] private CanvasGroup mapViewportCanvasGroup;
     [SerializeField] private WorldMapController worldMapController;
@@ -45,6 +46,7 @@ public class MapModeController : MonoBehaviour
 
     private void Awake()
     {
+        bottomCanvas.SetActive(true);
         miniMap.SetActive(true);
         worldMap.SetActive(false);
 
@@ -93,6 +95,7 @@ public class MapModeController : MonoBehaviour
 
         mainCamera.transform.SetParent(null, true);
 
+        bottomCanvas.SetActive(false);
         miniMap.SetActive(false);
         worldMap.SetActive(true);
 
@@ -247,6 +250,7 @@ public class MapModeController : MonoBehaviour
 
         worldMap.SetActive(false);
         miniMap.SetActive(true);
+        bottomCanvas.SetActive(true);
 
         mapViewportCanvasGroup.alpha = 1f;
 
