@@ -67,7 +67,7 @@ public sealed class ExitOptionController : MonoBehaviour
     }
 
     // 종료 옵션 패널 열기
-    private void OpenExitOptionPanel()
+    public void OpenExitOptionPanel()
     {
         // 종료 처리 중이거나 이미 패널이 열려있는 경우 처리하지 않음
         if (isExiting || isExitPanelOpen)
