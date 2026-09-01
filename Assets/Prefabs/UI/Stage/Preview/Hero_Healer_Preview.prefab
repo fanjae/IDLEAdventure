@@ -22298,7 +22298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7eed866e0d9ef9648807df953a4352fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitWorldUI
-  unit: {fileID: 7632320296121289706}
+  unit: {fileID: 0}
   hpSlider: {fileID: 2126406407736822305}
   hpFill: {fileID: 714972022604968145}
   skillSlider: {fileID: 7154727558539266964}
@@ -22439,15 +22439,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7041003311885478805}
   - component: {fileID: 2219832821967646133}
-  - component: {fileID: 7681335874279005250}
-  - component: {fileID: 6309291049171655238}
-  - component: {fileID: 6656321222266021984}
-  - component: {fileID: 2556076480607028103}
-  - component: {fileID: 7632320296121289706}
   - component: {fileID: 8453822778064992784}
-  - component: {fileID: 8242877392833974253}
-  - component: {fileID: 9221351644450993682}
-  - component: {fileID: -7105900188080818593}
   m_Layer: 0
   m_Name: Hero_Healer_Preview
   m_TagString: Untagged
@@ -22496,84 +22488,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1.6, z: 1}
   m_Center: {x: 0, y: 0.8, z: 0}
---- !u!195 &7681335874279005250
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7308511790779391104}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.45
-  m_Speed: 3.5
-  m_Acceleration: 20
-  avoidancePriority: 50
-  m_AngularSpeed: 720
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 1.65
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
---- !u!114 &6309291049171655238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7308511790779391104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e6fc5b8aecafe343805e97b778e6e4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitHealth
---- !u!114 &6656321222266021984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7308511790779391104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01e4842471486e8428c5cdbd074a431b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitMovement
---- !u!114 &2556076480607028103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7308511790779391104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4365356606652a4d93ec271dacb50d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitAttack
-  projectilePrefab: {fileID: 7864348474093049585, guid: 1e9dc3abb293dbd41ab3f68f86cf0a49, type: 3}
-  projectileSpawnPoint: {fileID: 7342155558954535637}
-  attackSafetyDuration: 3
---- !u!114 &7632320296121289706
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7308511790779391104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1305fb73e41e0484390de09ee38a8e3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BattleUnit
-  unitData: {fileID: 11400000, guid: 495bf02069f3c144e9111ff0dbece533, type: 2}
-  team: 0
-  level: 1
-  rotateSpeed: 720
-  destroyDelay: 2
 --- !u!114 &8453822778064992784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22587,52 +22501,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimator
   animator: {fileID: 6583243608216671944}
---- !u!114 &8242877392833974253
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7308511790779391104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f32758d6eed30cb4cb688097c1033fef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitSkill
-  skillData: {fileID: 11400000, guid: 784da3c3dd02ad54fb42720842dc2d2c, type: 2}
-  projectileSpawnPoint: {fileID: 0}
-  skillVfxPoint: {fileID: 418818434605588715}
---- !u!114 &9221351644450993682
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7308511790779391104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c0de45dd789d0b479fd780295c080a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitPassiveAttackBuff
-  activateDelay: 15
-  attackBuff: 20
-  buffDuration: 20
-  castVfxPrefab: {fileID: 385743127462260663, guid: 6b159c0a5acc358439e1a994a0871578, type: 3}
-  targetVfxPrefab: {fileID: 5126489433114200694, guid: 858bb4a68b7ef4649843bd8b7aa37dd3, type: 3}
-  castVfxDuration: 1.5
-  castVfxPoint: {fileID: 418818434605588715}
---- !u!114 &-7105900188080818593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7308511790779391104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f480a671209d5654f9828380151f2327, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitBuff
+  damagedInterval: 0.9
 --- !u!1 &7562316618504284157
 GameObject:
   m_ObjectHideFlags: 0

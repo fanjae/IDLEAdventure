@@ -4241,7 +4241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7eed866e0d9ef9648807df953a4352fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitWorldUI
-  unit: {fileID: 2888773064011749291}
+  unit: {fileID: 0}
   hpSlider: {fileID: 4760891771149128264}
   hpFill: {fileID: 5076185158068479306}
   skillSlider: {fileID: 8206047306257719239}
@@ -4827,15 +4827,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6777309989188821467}
   - component: {fileID: 584167706460828831}
-  - component: {fileID: 6454771820457866929}
-  - component: {fileID: 2888773064011749291}
-  - component: {fileID: 1968324923006380787}
-  - component: {fileID: 2414094676599198597}
-  - component: {fileID: 8700798750903111627}
   - component: {fileID: 6640888274503076808}
-  - component: {fileID: 7025246349611711462}
-  - component: {fileID: 9074417791259514073}
-  - component: {fileID: -7545877310919493244}
   m_Layer: 0
   m_Name: Hero_Tanker_Preview
   m_TagString: Untagged
@@ -4883,84 +4875,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1.6, z: 1}
   m_Center: {x: 0, y: 0.8, z: 0}
---- !u!195 &6454771820457866929
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997512738005830746}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.45
-  m_Speed: 3.5
-  m_Acceleration: 20
-  avoidancePriority: 50
-  m_AngularSpeed: 720
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 1.7
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
---- !u!114 &2888773064011749291
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997512738005830746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1305fb73e41e0484390de09ee38a8e3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BattleUnit
-  unitData: {fileID: 11400000, guid: 526edfcf6a5e73947a766e7f11f81acf, type: 2}
-  team: 0
-  level: 1
-  rotateSpeed: 720
-  destroyDelay: 2
---- !u!114 &1968324923006380787
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997512738005830746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e6fc5b8aecafe343805e97b778e6e4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitHealth
---- !u!114 &2414094676599198597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997512738005830746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01e4842471486e8428c5cdbd074a431b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitMovement
---- !u!114 &8700798750903111627
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997512738005830746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4365356606652a4d93ec271dacb50d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitAttack
-  projectilePrefab: {fileID: 0}
-  projectileSpawnPoint: {fileID: 0}
-  attackSafetyDuration: 3
 --- !u!114 &6640888274503076808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4974,47 +4888,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimator
   animator: {fileID: 2473640388339650934}
---- !u!114 &7025246349611711462
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997512738005830746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fee1cf5012defe04c932cbd9bc9b3903, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitBarrier
-  vfxPoint: {fileID: 7875351391599481110}
---- !u!114 &9074417791259514073
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997512738005830746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f32758d6eed30cb4cb688097c1033fef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitSkill
-  skillData: {fileID: 11400000, guid: d5380b928d262aa4883c93b3cfb7a956, type: 2}
-  secondarySkillData: {fileID: 0}
-  projectileSpawnPoint: {fileID: 0}
-  skillVfxPoint: {fileID: 0}
---- !u!114 &-7545877310919493244
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997512738005830746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f480a671209d5654f9828380151f2327, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitBuff
+  damagedInterval: 0.9
 --- !u!1 &2005234226908366482
 GameObject:
   m_ObjectHideFlags: 0
