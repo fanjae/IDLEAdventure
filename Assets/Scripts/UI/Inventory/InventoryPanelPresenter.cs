@@ -95,19 +95,35 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
         return slotIndex;
     }
 
-    // 현재 보유 중인 장비 슬롯 갱신
+    // 현재 보유 중인 장비를 종류별로 묶어 슬롯 갱신
     private int RefreshEquipmentSlots(int slotIndex)
     {
+        Dictionary<int, int> equipmentCounts = new();
+
+        // 동일한 장비의 보유 수량 계산
         foreach (OwnedEquipmentData ownedEquipment in inventoryController.Equipments)
         {
-            if (!itemDatabase.TryGetItem(ownedEquipment.EquipmentId, out EquipmentSO equipment))
+            if (equipmentCounts.TryGetValue(ownedEquipment.EquipmentId, out int count))
             {
-                Debug.LogWarning($"[InventoryPanelPresenter] ItemDatabase에서 장비를 찾을 수 없습니다. EquipmentId: {ownedEquipment.EquipmentId}");
+                equipmentCounts[ownedEquipment.EquipmentId] = count + 1;
+            }
+            else
+            {
+                equipmentCounts.Add(ownedEquipment.EquipmentId, 1);
+            }
+        }
+
+        // 장비 종류별로 슬롯 하나씩 표시
+        foreach (KeyValuePair<int, int> equipmentData in equipmentCounts)
+        {
+            if (!itemDatabase.TryGetItem(equipmentData.Key, out EquipmentSO equipment))
+            {
+                Debug.LogWarning($"[InventoryPanelPresenter] ItemDatabase에서 장비를 찾을 수 없습니다. EquipmentId: {equipmentData.Key}");
                 continue;
             }
 
             InventoryItemSlotView slotView = GetSlotView(slotIndex);
-            slotView.BindEquipment(equipment, ownedEquipment, classIconCatalog);
+            slotView.BindEquipment(equipment, equipmentData.Value, classIconCatalog);
             slotView.gameObject.SetActive(true);
 
             slotIndex++;
