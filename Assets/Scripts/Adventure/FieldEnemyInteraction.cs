@@ -60,12 +60,6 @@ public class FieldEnemyInteraction : MonoBehaviour
 
         FieldEnemyRuntimeData.SetEnemyData(enemyId);
 
-        // 2026.09.01 전투 씬 이동 전에 현재 필드 플레이어 위치 저장
-        if (FieldPlayerPositionController.Current != null && SaveManager.TryGetExistingInstance(out SaveManager saveManager) && saveManager.CurrentData != null)
-        {
-            FieldPlayerPositionController.Current.WriteSaveData(saveManager.CurrentData);
-        }
-
         Debug.Log($"스테이지 전투 진입: {setStageId}");
 
         SceneManager.LoadScene(battleSceneName);

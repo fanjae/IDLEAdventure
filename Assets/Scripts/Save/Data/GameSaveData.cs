@@ -36,7 +36,4 @@ public sealed class GameSaveData
 
     // 상점 구매 제한과 출석 보상 수령 상태
     public ShopSaveData Shop { get; set; } = new();
-
-    // 필드 플레이어의 마지막 위치
-    public PlayerPositionSaveData PlayerPosition { get; set; } = new();
 }

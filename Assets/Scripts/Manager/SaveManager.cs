@@ -66,12 +66,6 @@ public sealed class SaveManager : Singleton<SaveManager>
             questManager.WriteSaveData(CurrentData);
         }
 
-        // 현재 필드 플레이어가 존재하는 경우 위치 상태를 저장 데이터에 반영
-        if (FieldPlayerPositionController.Current != null)
-        {
-            FieldPlayerPositionController.Current.WriteSaveData(CurrentData);
-        }
-
         // 저장 시점을 UTC Unix Time 기준으로 갱신
         CurrentData.SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         fileService.Save(CurrentData);
