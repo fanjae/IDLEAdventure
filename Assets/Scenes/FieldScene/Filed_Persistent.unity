@@ -506,11 +506,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1663c8c768f83ce4f94218675e6c2be4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldMapController
---- !u!225 &679959595 stripped
-CanvasGroup:
-  m_CorrespondingSourceObject: {fileID: 4639836856805272704, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
-  m_PrefabInstance: {fileID: 2097024043}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &700908472
 GameObject:
   m_ObjectHideFlags: 0
@@ -825,9 +820,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapModeController
   mainCamera: {fileID: 799476617}
-  miniMap: {fileID: 1577740427}
+  miniMap: {fileID: 1947377230}
+  bottomCanvas: {fileID: 1361149653}
   worldMap: {fileID: 679959592}
-  mapViewportCanvasGroup: {fileID: 679959595}
+  mapViewportCanvasGroup: {fileID: 1592071735}
   worldMapController: {fileID: 679959594}
   fieldStreamingManager: {fileID: 891487525}
   mapCameraY: 50
@@ -850,6 +846,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1361149653 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8759364192398322377, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+  m_PrefabInstance: {fileID: 2097024043}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1415511915
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -918,9 +919,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a20805e2dae68047a350479e3404e69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualPad
---- !u!1 &1577740427 stripped
+--- !u!225 &1592071735 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 6532244286096654255, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+  m_PrefabInstance: {fileID: 2097024043}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1947377230 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 7932369175814268910, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8452849658119650456, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
   m_PrefabInstance: {fileID: 2097024043}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1973446997
@@ -991,6 +997,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 452262255}
     - target: {fileID: 334491692599715593, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e6a0c7a551640ec4b9a32b6bf8f186e1, type: 3}
+    - target: {fileID: 334491692599715593, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
       propertyPath: m_RaycastTarget
       value: 0
       objectReference: {fileID: 0}
@@ -1049,6 +1059,14 @@ PrefabInstance:
     - target: {fileID: 5266685807251714158, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OpenMap
+      objectReference: {fileID: 0}
+    - target: {fileID: 5786800501952725952, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 503fd698f5e0e7349841b3bf4c23eea2, type: 3}
+    - target: {fileID: 5786800501952725952, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6154790001192468406, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
       propertyPath: m_Name
