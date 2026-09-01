@@ -30,6 +30,7 @@ public sealed class AllPanelController : MonoBehaviour
 
     [Header("설정")]
     [SerializeField] private Button settingButton;
+    [SerializeField] private GameObject optionPanel;
 
     [Header("패널 연출")]
     [SerializeField] private UIPanelTransition panelTransition;
@@ -46,6 +47,7 @@ public sealed class AllPanelController : MonoBehaviour
         if (questPanel != null) questPanel.OnClosed += HandleQuestPanelClosed;
         if (achievementButton != null) achievementButton.onClick.AddListener(HandleAchievementButtonClicked);
         if (achievementPanelPresenter != null) achievementPanelPresenter.OnClosed += HandleAchievementPanelClosed;
+        if (settingButton != null) settingButton.onClick.AddListener(HandleSettingButtonClicked);
     }
 
     private void OnDisable()
@@ -58,6 +60,7 @@ public sealed class AllPanelController : MonoBehaviour
         if (questPanel != null) questPanel.OnClosed -= HandleQuestPanelClosed;
         if (achievementButton != null) achievementButton.onClick.RemoveListener(HandleAchievementButtonClicked);
         if (achievementPanelPresenter != null) achievementPanelPresenter.OnClosed -= HandleAchievementPanelClosed;
+        if (settingButton != null) settingButton.onClick.RemoveListener(HandleSettingButtonClicked);
     }
 
     // 전체 메뉴 패널 오픈 연출
@@ -178,5 +181,16 @@ public sealed class AllPanelController : MonoBehaviour
     {
         allPanelRoot.SetActive(false);
         OnClosed?.Invoke();
+    }
+
+    // 설정 버튼 클릭 처리
+    private void HandleSettingButtonClicked()
+    {
+        if (optionPanel == null)
+        {
+            return;
+        }
+
+        optionPanel.SetActive(true);
     }
 }

@@ -39,4 +39,7 @@ public sealed class GameSaveData
 
     // 필드 플레이어의 마지막 위치
     public PlayerPositionSaveData PlayerPosition { get; set; } = new();
+
+    // 옵션 설정 저장 데이터
+    public OptionSaveData Option { get; set; } = new();
 }
