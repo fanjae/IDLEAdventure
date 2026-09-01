@@ -25,6 +25,7 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
 
         inventoryController = inventoryManager.Controller;
         inventoryController.OnInventoryChanged += Refresh;
+        inventoryController.OnEquipmentChanged += Refresh;
 
         Refresh();
     }
@@ -36,6 +37,7 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
         if (inventoryController != null)
         {
             inventoryController.OnInventoryChanged -= Refresh;
+            inventoryController.OnEquipmentChanged -= Refresh;
         }
     }
 
@@ -95,14 +97,20 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
         return slotIndex;
     }
 
-    // 현재 보유 중인 장비를 종류별로 묶어 슬롯 갱신
+    // 현재 보유 중인 미장착 장비를 종류별로 묶어 슬롯 갱신
     private int RefreshEquipmentSlots(int slotIndex)
     {
         Dictionary<int, int> equipmentCounts = new();
 
-        // 동일한 장비의 보유 수량 계산
+        // 동일한 미장착 장비의 보유 수량 계산
         foreach (OwnedEquipmentData ownedEquipment in inventoryController.Equipments)
         {
+            // 현재 장착 중인 장비는 인벤토리 슬롯에서 제외
+            if (inventoryController.IsEquipped(ownedEquipment.InstanceId))
+            {
+                continue;
+            }
+
             if (equipmentCounts.TryGetValue(ownedEquipment.EquipmentId, out int count))
             {
                 equipmentCounts[ownedEquipment.EquipmentId] = count + 1;
