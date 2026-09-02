@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 // 플레이어가 보유한 일반 아이템의 수량 데이터
@@ -30,7 +30,9 @@ public sealed class OwnedEquipmentData
     // 원본 EquipmentSO를 식별하기 위한 ID
     [SerializeField] private int equipmentId;
 
-    // 해당 장비 인스턴스의 강화 단계
+    // 플레이어가 보유한 장비 한 개의 데이터
+    // 같은 종류의 장비라도 각각 별도의 InstanceId를 가짐
+    // enhancementLevel은 기존 저장 데이터 호환을 위해 유지 (기획상 삭제)
     [SerializeField] private int enhancementLevel;
 
     public string InstanceId => instanceId;

@@ -47,6 +47,10 @@ public class Bootstrapper
         SaveManager saveManager = SaveManager.Instance;
         saveManager.Initialize();
 
+        // 2026.09.02 사운드 매니저 초기화 및 저장된 음량 설정 복원
+        SoundManager soundManager = SoundManager.Instance;
+        soundManager.Initialize(saveManager.CurrentData.Option);
+
         // 저장된 인벤토리와 장비 장착 상태 복원
         inventoryManager.Controller.LoadSaveData(saveManager.CurrentData);
 

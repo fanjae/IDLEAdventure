@@ -90,6 +90,14 @@ public class FieldStreamingManager : MonoBehaviour
     {
         if (!checkReferences) yield break;
 
+        // 2026.09.01 저장된 위치를 기준으로 필드 플레이어 위치 복원
+        FieldPlayerPositionController playerPositionController = player.GetComponent<FieldPlayerPositionController>();
+
+        if (playerPositionController != null && SaveManager.TryGetExistingInstance(out SaveManager saveManager) && saveManager.CurrentData != null)
+        {
+            playerPositionController.LoadSaveData(saveManager.CurrentData);
+        }
+
         CurrentChunk = WorldToChunk(player.position);
 
         streamingTrigger.Initialize(this, player, chunkSize, CurrentChunk);

@@ -25,6 +25,7 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
 
         inventoryController = inventoryManager.Controller;
         inventoryController.OnInventoryChanged += Refresh;
+        inventoryController.OnEquipmentChanged += Refresh;
 
         Refresh();
     }
@@ -36,6 +37,7 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
         if (inventoryController != null)
         {
             inventoryController.OnInventoryChanged -= Refresh;
+            inventoryController.OnEquipmentChanged -= Refresh;
         }
     }
 
@@ -95,19 +97,41 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
         return slotIndex;
     }
 
-    // 현재 보유 중인 장비 슬롯 갱신
+    // 현재 보유 중인 미장착 장비를 종류별로 묶어 슬롯 갱신
     private int RefreshEquipmentSlots(int slotIndex)
     {
+        Dictionary<int, int> equipmentCounts = new();
+
+        // 동일한 미장착 장비의 보유 수량 계산
         foreach (OwnedEquipmentData ownedEquipment in inventoryController.Equipments)
         {
-            if (!itemDatabase.TryGetItem(ownedEquipment.EquipmentId, out EquipmentSO equipment))
+            // 현재 장착 중인 장비는 인벤토리 슬롯에서 제외
+            if (inventoryController.IsEquipped(ownedEquipment.InstanceId))
             {
-                Debug.LogWarning($"[InventoryPanelPresenter] ItemDatabase에서 장비를 찾을 수 없습니다. EquipmentId: {ownedEquipment.EquipmentId}");
+                continue;
+            }
+
+            if (equipmentCounts.TryGetValue(ownedEquipment.EquipmentId, out int count))
+            {
+                equipmentCounts[ownedEquipment.EquipmentId] = count + 1;
+            }
+            else
+            {
+                equipmentCounts.Add(ownedEquipment.EquipmentId, 1);
+            }
+        }
+
+        // 장비 종류별로 슬롯 하나씩 표시
+        foreach (KeyValuePair<int, int> equipmentData in equipmentCounts)
+        {
+            if (!itemDatabase.TryGetItem(equipmentData.Key, out EquipmentSO equipment))
+            {
+                Debug.LogWarning($"[InventoryPanelPresenter] ItemDatabase에서 장비를 찾을 수 없습니다. EquipmentId: {equipmentData.Key}");
                 continue;
             }
 
             InventoryItemSlotView slotView = GetSlotView(slotIndex);
-            slotView.BindEquipment(equipment, ownedEquipment, classIconCatalog);
+            slotView.BindEquipment(equipment, equipmentData.Value, classIconCatalog);
             slotView.gameObject.SetActive(true);
 
             slotIndex++;

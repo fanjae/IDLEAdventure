@@ -16,10 +16,10 @@ public class QuestMakerTool : EditorWindow
     private Vector3 arrivePosition;
     private Vector3 spawnPosition;
 
-    private GameObject[] npcPrefabs;
-    private string[] npcNames;
-    private int selectedNPCIndex;
-    private readonly string npcPrefabPath = "Assets/Resources/GameData/Quests/QuestNPCPrefabs";
+    private GameObject[] targetPrefabs;
+    private string[] targetNames;
+    private int selectedTargetIndex;
+    private readonly string interactablePrefabPath = "Assets/Resources/GameData/Quests/QuestInteractablePrefabs";
 
     private QuestDialogueData tempDialogue;
     private QuestRewardData tempReward;
@@ -59,7 +59,7 @@ public class QuestMakerTool : EditorWindow
         spawnPosition = EditorGUILayout.Vector3Field("Spawn Position", spawnPosition);
 
         // 저장해둔 NPC 리스트 선택 UI 그리기.
-        selectedNPCIndex = EditorGUILayout.Popup("NPC Prefab", selectedNPCIndex, npcNames);
+        selectedTargetIndex = EditorGUILayout.Popup("Target Prefab", selectedTargetIndex, targetNames);
 
         GUILayout.Space(15);
 
@@ -102,22 +102,22 @@ public class QuestMakerTool : EditorWindow
     private void LoadNPCPrefabs()
     {
         // 경로 존재 확인 및 없다면 생성.
-        if (!Directory.Exists(npcPrefabPath))
+        if (!Directory.Exists(interactablePrefabPath))
         {
-            Directory.CreateDirectory(npcPrefabPath);
+            Directory.CreateDirectory(interactablePrefabPath);
         }
 
         // 지정된 경로에서 조건에 맞는 에셋 가져오기.
         // AssetDatabase.FindAssets: 유니티 에디터 검색 함수.
         // 검색 결과는 해당 파읠의 ID값(문자열)으로 반환.
         // t:Prefab: 프리팹 형태의 데이터만 검색.
-        string[] datas = AssetDatabase.FindAssets("t:Prefab", new[] { npcPrefabPath });
+        string[] datas = AssetDatabase.FindAssets("t:Prefab", new[] { interactablePrefabPath });
         // 찾은 데이터 수만큼의 크기로 배열 초기화.
-        npcPrefabs = new GameObject[datas.Length + 1];
-        npcNames = new string[datas.Length + 1];
+        targetPrefabs = new GameObject[datas.Length + 1];
+        targetNames = new string[datas.Length + 1];
         // 빈 상태 추가
-        npcNames[0] = "None";
-        npcPrefabs[0] = null;
+        targetNames[0] = "None";
+        targetPrefabs[0] = null;
 
         // 출력할 데이터 배열에 저장.
         for (int i = 0; i < datas.Length; i++)
@@ -125,9 +125,9 @@ public class QuestMakerTool : EditorWindow
             // 찾은 데이터 ID를 경로 값으로 변환.
             string path = AssetDatabase.GUIDToAssetPath(datas[i]);
             // 경로에 맞는 프리팹 저장.
-            npcPrefabs[i + 1] = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            targetPrefabs[i + 1] = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             // 메뉴에 출력할 문자열 배열에 해당 프리팹 이름 저장.
-            npcNames[i + 1] = npcPrefabs[i + 1].name;
+            targetNames[i + 1] = targetPrefabs[i + 1].name;
         }
     }
     // 메모리에 임시 데이터 생성 함수.
@@ -164,7 +164,7 @@ public class QuestMakerTool : EditorWindow
         questSO.FindProperty("questType").enumValueIndex = (int)questType;
         questSO.FindProperty("arrivePosition").vector3Value = arrivePosition;
         questSO.FindProperty("spawnPosition").vector3Value = spawnPosition;
-        questSO.FindProperty("npcPrefab").objectReferenceValue = npcPrefabs[selectedNPCIndex];
+        questSO.FindProperty("interactablePrefab").objectReferenceValue = targetPrefabs[selectedTargetIndex];
         questSO.FindProperty("dialogueData").objectReferenceValue = tempDialogue;
         questSO.FindProperty("rewardData").objectReferenceValue = tempReward;
         questSO.ApplyModifiedProperties();
