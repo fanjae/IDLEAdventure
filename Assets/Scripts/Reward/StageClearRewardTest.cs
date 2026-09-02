@@ -9,7 +9,6 @@ public class StageClearRewardTest : MonoBehaviour
 {
     [Header("Setting Reward")]
     [SerializeField] private TextAsset rewardCSVData;    // 보상 테이블로 사용할 CSV 데이터 연결
-    //[SerializeField] private int testClearStageNum;
 
     // 배틀 매니저 이벤트를 받아오기 위함.
     [Header("Binding BattleManager")]
@@ -37,30 +36,22 @@ public class StageClearRewardTest : MonoBehaviour
         }
     }
 
-    // 스테이지 보상 딕셔너리 기반 보상 지급 함수
-    //public void GiveStageClearReward(int stageNum)
-    //{
-    //    if (stageRewards.TryGetValue(stageNum, out StageRewardData stageRewardData))
-    //    {
-    //        foreach (KeyValuePair<string, IReward> reward in stageRewardData.Rewards)
-    //        {
-    //            int amount = (int)reward.Value.RewardValue;
-
-    //            if (amount > 0)
-    //            {
-    //                reward.Value.GiveReward(amount);
-    //            }
-    //        }
-    //        Debug.Log($"스테이지 {stageNum}의 클리어 보상을 획득했습니다.");
-    //    }
-    //    else
-    //    {
-    //        Debug.Log($"스테이지 {stageNum}의 클리어 보상 데이터가 존재하지 않습니다.");
-    //    }
-    //}
     public void GiveStageClearReward(UnitTeam winner)
     {
         if (winner == UnitTeam.Enemy) return;
+
+        if (QuestEnemyRuntimeData.InteractedQuestId != 0)
+        {
+            int questId = QuestEnemyRuntimeData.InteractedQuestId;
+
+            if (QuestManager.Instance != null)
+            {
+                QuestManager.Instance.ClearQuest(questId);
+            }
+
+            QuestEnemyRuntimeData.SetQuestEnemyData(0);
+        }
+
         if (stageRewards.TryGetValue(StageRuntimeData.SelectedStageId, out StageRewardData stageRewardData))
         {
             foreach (KeyValuePair<string, IReward> reward in stageRewardData.Rewards)
@@ -83,15 +74,9 @@ public class StageClearRewardTest : MonoBehaviour
         if (FieldEnemyRuntimeData.InteractedFieldEnemyId != 0)
         {
             // 여기서 런타임 상호작용한 필드 적 ID를 가져다 처치로 저장하면 될듯?
-
+            
             // 다 됐으니 런타임 상호작용한 필드 적 ID 초기화.
             FieldEnemyRuntimeData.SetEnemyData(0);
         }
     }
-
-    // 강제로 스테이지 1 클리어 보상 지급 함수 (스테이지 단계에 맞는 보상 지급 잘 되는지 확인용)
-    //public void TestGiveRewardButtonClick()
-    //{
-    //    GiveStageClearReward(1);
-    //}
 }

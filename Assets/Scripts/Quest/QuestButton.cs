@@ -1,5 +1,4 @@
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -22,7 +21,7 @@ public abstract class QuestButton : MonoBehaviour
         QuestData currentQuest = QuestManager.Instance.GetQuestData(id);
         if (currentQuest == null) return;
 
-        QuestManager.Instance.DestroyNPC();
+        QuestManager.Instance.DestroyQuestTarget();
 
         PathManager.Instance.ShowLine(currentQuest.ArrivePosition);
 
@@ -34,14 +33,14 @@ public abstract class QuestButton : MonoBehaviour
         {
             PathManager.Instance.HideLine();
 
-            if (currentQuest.NPCPrefab != null)
+            if (currentQuest.InteractablePrefab != null)
             {
-                GameObject spawnTarget = Instantiate(currentQuest.NPCPrefab, currentQuest.SpawnPosition, Quaternion.identity);
+                GameObject spawnTarget = Instantiate(currentQuest.InteractablePrefab, currentQuest.SpawnPosition, Quaternion.identity);
                 
-                if (spawnTarget.TryGetComponent<QuestNPCInteraction>(out var npc))
+                if (spawnTarget.TryGetComponent<QuestInteractableObject>(out var target))
                 {
-                    npc.Initialize(id);
-                    QuestManager.Instance.SetQuestNPC(npc);
+                    target.Initialize(id);
+                    QuestManager.Instance.SetQuestTarget(target);
                 }
             }
             else

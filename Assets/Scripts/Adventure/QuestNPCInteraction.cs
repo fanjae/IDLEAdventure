@@ -1,32 +1,10 @@
 using UnityEngine;
 
-public class QuestNPCInteraction : MonoBehaviour
+public class QuestNPCInteraction : QuestInteractableObject
 {
-    [Header("Quest Data")]
-    [SerializeField] private int questId;
+    protected override InteractType GetInteractType() => InteractType.NPC;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            InteractionUIManager.Instance.SetInteractable(true, InteractType.NPC, OnInteractNPC);
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            InteractionUIManager.Instance.SetInteractable(false, InteractType.NPC);
-        }
-    }
-
-    public void Initialize(int id)
-    {
-        questId = id;
-    }
-
-    private void OnInteractNPC()
+    protected override void OnInteract()
     {
         if (QuestManager.Instance == null || DialogueManager.Instance == null) return;
 
@@ -35,7 +13,6 @@ public class QuestNPCInteraction : MonoBehaviour
 
         if (data.DialogueData != null)
         {
-            // 대화를 띄우고 끝나면 클리어 및 삭제되도록 세팅
             DialogueManager.Instance.StartDialogue(data.DialogueData, () =>
             {
                 QuestManager.Instance.ClearQuest(questId);
@@ -47,10 +24,5 @@ public class QuestNPCInteraction : MonoBehaviour
             QuestManager.Instance.ClearQuest(questId);
             SelfDestroy();
         }
-    }
-
-    public void SelfDestroy()
-    {
-        Destroy(gameObject);
     }
 }
