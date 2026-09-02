@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 // 전투 결과 UI 관리
 public sealed class BattleResultPanelController : MonoBehaviour
@@ -7,6 +8,7 @@ public sealed class BattleResultPanelController : MonoBehaviour
     [SerializeField] private GameObject winPanel;
     [SerializeField] private GameObject losePanel;
     [SerializeField] private GameObject stagePanel;
+    [SerializeField] private TMP_Text nextButtonText;
 
     [Header("씬 이동")]
     [SerializeField] private string mainSceneName = "ItemandSaveTestMainScene";
@@ -55,6 +57,11 @@ public sealed class BattleResultPanelController : MonoBehaviour
         if (losePanel != null)
         {
             losePanel.SetActive(winner == UnitTeam.Enemy);
+        }
+
+        if (winner == UnitTeam.Hero)
+        {
+            UpdateNextButtonText();
         }
     }
 
@@ -140,4 +147,14 @@ public sealed class BattleResultPanelController : MonoBehaviour
         SceneManager.LoadScene(battleSceneName);
     }
 
+    // 필드 전투 유무에 따른 버튼 업데이트
+    private void UpdateNextButtonText()
+    {
+        if (nextButtonText == null)
+        {
+            return;
+        }
+
+        nextButtonText.text = StageRuntimeData.IsFieldEnemyBattle ? "Return" : "Next";
+    }
 }
