@@ -23,8 +23,18 @@ public sealed class FormationManager : MonoBehaviour
 
     private readonly Dictionary<HeroData, GameObject> placedHeroesByData = new();
 
+    // 출전 영웅 변경 시 영웅 카드의 선택 표시를 갱신 (0903 추가)
+    public event Action OnFormationChanged;
+
     // 현재 배치된 영웅이 있는지 확인 (0828 추가)
     public bool HasPlacedHero => placedHeroesByData.Count > 0;
+
+    // 카드 선택 표시가 실제 배치 딕셔너리와 일치하는지 확인하기 위해 (0903 추가)
+    public bool IsHeroPlaced(HeroData heroData)
+    {
+        return heroData != null && placedHeroesByData.ContainsKey(heroData);
+    }
+
     private bool isRestoringFormation;
 
     private void Awake()
@@ -160,6 +170,7 @@ public sealed class FormationManager : MonoBehaviour
         if (!isRestoringFormation)
         {
             WriteFormationData();
+            OnFormationChanged?.Invoke();
         }
 
         Debug.Log($"영웅 배치: Hero={heroData.UnitName}, Slot={slotNumber}");
@@ -184,6 +195,7 @@ public sealed class FormationManager : MonoBehaviour
 
         // 현재 영웅 배치 상태 저장
         WriteFormationData();
+        OnFormationChanged?.Invoke();
 
         Destroy(hero);
 
@@ -234,6 +246,7 @@ public sealed class FormationManager : MonoBehaviour
 
         // 비워진 영웅 배치 상태 저장
         WriteFormationData();
+        OnFormationChanged?.Invoke();
 
         Debug.Log("모든 영웅 배치를 해제");
     }
@@ -363,6 +376,7 @@ public sealed class FormationManager : MonoBehaviour
         finally
         {
             isRestoringFormation = false;
+            OnFormationChanged?.Invoke();
         }
     }
 
