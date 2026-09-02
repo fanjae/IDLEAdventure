@@ -61,6 +61,7 @@ public sealed class ShopPanelPresenter : MonoBehaviour
     private Button unpurchasedPackageNoticeLaterButton;
     private string pendingPackageNoticeProductId;
     private bool showNextPackageNoticeAfterPurchaseConfirm;
+    private bool suppressPackageNoticeOnNextEnable;
 
     public event Action OnClosed;
 
@@ -82,7 +83,13 @@ public sealed class ShopPanelPresenter : MonoBehaviour
     {
         Subscribe();
         Refresh();
-        ShowUnpurchasedPackagePopup();
+        if (suppressPackageNoticeOnNextEnable)
+        {
+            suppressPackageNoticeOnNextEnable = false;
+            return;
+        }
+
+        ShowUnpurchasedPackageNotices();
     }
 
     // 페이지가 꺼지면 이벤트 구독을 해제함
@@ -140,13 +147,21 @@ public sealed class ShopPanelPresenter : MonoBehaviour
     }
 
     // 상점에 들어왔을 때 아직 구매하지 않은 1회 한정 패키지를 안내 패널로 순서대로 표시함
-    private void ShowUnpurchasedPackagePopup()
+    public void ShowUnpurchasedPackageNotices()
     {
         if (unpurchasedPackageNoticePopup == null || unpurchasedPackageNoticePopup.activeSelf ||
             !ShopManager.TryGetExistingInstance(out ShopManager shopManager) || !shopManager.IsInitialized)
         {
             return;
         }
+
+        // 스테이지 1을 하나 이상 클리어한 뒤에만 메인·상점 공통 안내를 표시함
+        if (shopManager.Controller.HighestClearedStageId < 1)
+        {
+            return;
+        }
+
+        ConfigureUnpurchasedPackageNoticePopup();
 
         unpurchasedPackageNoticeQueue.Clear();
         foreach (ShopProductSO product in shopManager.Controller.GetNotifiableUnpurchasedPackages())
@@ -198,6 +213,15 @@ public sealed class ShopPanelPresenter : MonoBehaviour
             return;
         }
 
+        if (!gameObject.activeInHierarchy)
+        {
+            MainPackageNoticeEntry packageNoticeEntry = FindFirstObjectByType<MainPackageNoticeEntry>(FindObjectsInactive.Include);
+            if (packageNoticeEntry != null && packageNoticeEntry.OpenShopForPackageNotice(productId))
+            {
+                return;
+            }
+        }
+
         selectedTab = ShopTab.Package;
         Refresh();
         OpenPurchaseConfirm(productId);
@@ -211,7 +235,7 @@ public sealed class ShopPanelPresenter : MonoBehaviour
         ShowNextUnpurchasedPackageNotice();
     }
 
-    // 나중에 보기로 넘긴 패키지는 저장하고 오늘 안내 대상에서 제외함
+    // 나중에 보기로 넘기면 오늘은 메인과 상점 모두에서 안내를 숨김
     private void SkipUnpurchasedPackageNotice()
     {
         string productId = pendingPackageNoticeProductId;
@@ -220,10 +244,10 @@ public sealed class ShopPanelPresenter : MonoBehaviour
         if (!string.IsNullOrWhiteSpace(productId) &&
             ShopManager.TryGetExistingInstance(out ShopManager shopManager) && shopManager.IsInitialized)
         {
-            shopManager.Controller.DismissPackageNoticeForToday(productId);
+            shopManager.Controller.DismissAllPackageNoticesForToday();
         }
 
-        ShowNextUnpurchasedPackageNotice();
+        unpurchasedPackageNoticeQueue.Clear();
     }
 
     // 별도 안내 패널을 닫고 현재 선택 정보를 비움
@@ -402,6 +426,20 @@ public sealed class ShopPanelPresenter : MonoBehaviour
 
         showNextPackageNoticeAfterPurchaseConfirm = false;
         ShowNextUnpurchasedPackageNotice();
+    }
+
+    // 메인 안내 패널에서 구매하러 가기를 누른 경우, 상점 활성화 직후 구매 확인창을 바로 표시함
+    public void OpenPurchaseConfirmFromPackageNotice(string productId)
+    {
+        suppressPackageNoticeOnNextEnable = true;
+        selectedTab = ShopTab.Package;
+        Refresh();
+        OpenPurchaseConfirm(productId);
+
+        if (purchaseConfirmPopup != null && purchaseConfirmPopup.activeSelf)
+        {
+            showNextPackageNoticeAfterPurchaseConfirm = true;
+        }
     }
 
     // 프리팹에 배치한 정보 전용 안내 패널의 버튼과 표시 참조를 구성함
