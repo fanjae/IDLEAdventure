@@ -70,13 +70,5 @@ public class StageClearRewardTest : MonoBehaviour
         {
             Debug.Log($"스테이지 {StageRuntimeData.SelectedStageId}의 클리어 보상 데이터가 존재하지 않습니다.");
         }
-
-        if (FieldEnemyRuntimeData.InteractedFieldEnemyId != 0)
-        {
-            // 여기서 런타임 상호작용한 필드 적 ID를 가져다 처치로 저장하면 될듯?
-            
-            // 다 됐으니 런타임 상호작용한 필드 적 ID 초기화.
-            FieldEnemyRuntimeData.SetEnemyData(0);
-        }
     }
 }

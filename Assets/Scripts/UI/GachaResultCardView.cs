@@ -8,6 +8,7 @@ public sealed class GachaResultCardView : MonoBehaviour
     [SerializeField] private TMP_Text heroNameText;
     [SerializeField] private TMP_Text stateText;
     [SerializeField] private Image backgroundImage;
+    [SerializeField] private Image portraitImage;
 
     [Header("결과 카드 배경")]
     [SerializeField] private Sprite tier1Background;
@@ -20,21 +21,41 @@ public sealed class GachaResultCardView : MonoBehaviour
     [SerializeField] private Sprite duplicateGoldIcon;
 
     // 영웅 이름과 획득 상태 문구를 결과 카드에 표시함
-public void Bind(GachaPullResult result, string heroName)
+    public void Bind(
+        GachaPullResult result,
+        string heroName,
+        Sprite heroPortrait,
+        bool showDuplicateGoldIcon = true,
+        bool showText = true)
     {
         if (result == null)
         {
             return;
         }
 
-        ApplyBackground(result);
+        ApplyBackground(result, showDuplicateGoldIcon);
+
+        if (portraitImage != null)
+        {
+            portraitImage.sprite = heroPortrait;
+            portraitImage.preserveAspect = heroPortrait != null;
+            portraitImage.enabled = heroPortrait != null;
+        }
 
         if (heroNameText != null)
         {
+            heroNameText.gameObject.SetActive(showText);
             heroNameText.text = result.IsDuplicate ? "골드" : heroName;
         }
 
         if (stateText == null)
+        {
+            return;
+        }
+
+        stateText.gameObject.SetActive(showText);
+
+        if (!showText)
         {
             return;
         }
@@ -46,7 +67,7 @@ public void Bind(GachaPullResult result, string heroName)
         stateText.text = state;
     }
 
-private void ApplyBackground(GachaPullResult result)
+    private void ApplyBackground(GachaPullResult result, bool showDuplicateGoldIcon)
     {
         if (backgroundImage != null)
         {
@@ -63,7 +84,7 @@ private void ApplyBackground(GachaPullResult result)
         if (duplicateGoldIconImage != null)
         {
             duplicateGoldIconImage.sprite = duplicateGoldIcon;
-            duplicateGoldIconImage.enabled = result.IsDuplicate && duplicateGoldIcon != null;
+            duplicateGoldIconImage.enabled = showDuplicateGoldIcon && result.IsDuplicate && duplicateGoldIcon != null;
         }
     }
 

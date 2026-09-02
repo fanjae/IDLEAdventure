@@ -23,11 +23,21 @@ public class FieldChestInteraction : MonoBehaviour
 
     private bool isOpened = false;
 
-    // 저장 파트가 들어오면 저장된 데이터를 받아와 획득한 상자면 바로 지워버리는? 방식으로 진행하면 될듯.
-    //private void Start()
-    //{
-        
-    //}
+    // 2026.09.02 저장된 상자 획득 이력이 있으면 필드에서 제거
+    private void Start()
+    {
+        if (!SaveManager.TryGetExistingInstance(out SaveManager saveManager) || saveManager.CurrentData == null)
+        {
+            return;
+        }
+
+        saveManager.CurrentData.FieldObjects ??= new FieldObjectSaveData();
+
+        if (saveManager.CurrentData.FieldObjects.OpenedChestIds.Contains(chestId))
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -59,6 +69,19 @@ public class FieldChestInteraction : MonoBehaviour
             IReward reward = new CurrencyReward(info.CurrencyType, info.Amount);
             reward.GiveReward(info.Amount);
             Debug.Log($"상자 보상 획득 | [{info.CurrencyType}] + {info.Amount}");
+        }
+
+        // 2026.09.02 획득한 필드 상자를 저장하여 다시 생성되지 않도록 처리
+        if (SaveManager.TryGetExistingInstance(out SaveManager saveManager) && saveManager.CurrentData != null)
+        {
+            saveManager.CurrentData.FieldObjects ??= new FieldObjectSaveData();
+
+            if (!saveManager.CurrentData.FieldObjects.OpenedChestIds.Contains(chestId))
+            {
+                saveManager.CurrentData.FieldObjects.OpenedChestIds.Add(chestId);
+            }
+
+            saveManager.Save();
         }
 
         Destroy(gameObject);
