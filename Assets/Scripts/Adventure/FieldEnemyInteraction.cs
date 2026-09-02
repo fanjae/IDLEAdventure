@@ -20,11 +20,21 @@ public class FieldEnemyInteraction : MonoBehaviour
 
     private bool isBattle = false;
 
-    // 저장 파트가 들어오면 저장된 데이터를 받아와 획득한 상자면 바로 지워버리는? 방식으로 진행하면 될듯.
-    //private void Start()
-    //{
+    // 2026.09.02 저장된 필드 적 처치 이력이 있으면 필드에서 제거
+    private void Start()
+    {
+        if (!SaveManager.TryGetExistingInstance(out SaveManager saveManager) || saveManager.CurrentData == null)
+        {
+            return;
+        }
 
-    //}
+        saveManager.CurrentData.FieldObjects ??= new FieldObjectSaveData();
+
+        if (saveManager.CurrentData.FieldObjects.DefeatedEnemyIds.Contains(enemyId))
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {

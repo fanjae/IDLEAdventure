@@ -102,6 +102,9 @@ public sealed class BattleResultPanelController : MonoBehaviour
 
     private void ReturnToField()
     {
+        // 2026.09.02 필드 복귀 시 사용이 끝난 필드 적 런타임 정보 초기화
+        FieldEnemyRuntimeData.ClearEnemyData();
+
         StageRuntimeData.StopAutoBattle();
         StageRuntimeData.StopFieldEnemyBattle();
 

@@ -109,9 +109,8 @@ public sealed class AutoBattleController : MonoBehaviour
         // 연속 진입하지 않고 필드로 복귀한다.
         if (StageRuntimeData.IsFieldEnemyBattle)
         {
-            StopAutoBattle();
-            StageRuntimeData.StopFieldEnemyBattle();
-            SceneManager.LoadScene(mainSceneName);
+            // 2026.09.02 전투 종료 이벤트 처리가 모두 끝난 뒤 필드로 복귀
+            StartCoroutine(ReturnToFieldAfterBattleEnded());
             return;
         }
 
@@ -123,6 +122,18 @@ public sealed class AutoBattleController : MonoBehaviour
         }
 
         StartCoroutine(MoveNextStageAfterDelay());
+    }
+
+    // 2026.09.02 다른 전투 종료 이벤트 처리 이후 필드 전투 상태를 초기화하고 복귀
+    private IEnumerator ReturnToFieldAfterBattleEnded()
+    {
+        yield return null;
+
+        FieldEnemyRuntimeData.ClearEnemyData();
+        StopAutoBattle();
+        StageRuntimeData.StopFieldEnemyBattle();
+
+        SceneManager.LoadScene(mainSceneName);
     }
 
     // 승리 후 다음 스테이지 진행
