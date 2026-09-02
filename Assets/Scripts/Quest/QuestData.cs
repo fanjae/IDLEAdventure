@@ -17,7 +17,7 @@ public class QuestData : ScriptableObject
     [Header("Target Data")]
     [SerializeField] private Vector3 arrivePosition;
     [SerializeField] private Vector3 spawnPosition;
-    [SerializeField] private GameObject npcPrefab;
+    [SerializeField] private GameObject interactablePrefab;
     // 퀴스트 대사
     [Header("Dialogue Data")]
     [SerializeField] private QuestDialogueData dialogueData;
@@ -32,7 +32,7 @@ public class QuestData : ScriptableObject
 
     public Vector3 ArrivePosition => arrivePosition;
     public Vector3 SpawnPosition => spawnPosition;
-    public GameObject NPCPrefab => npcPrefab;
+    public GameObject InteractablePrefab => interactablePrefab;
 
     public QuestDialogueData DialogueData => dialogueData;
     public QuestRewardData RewardData => rewardData;

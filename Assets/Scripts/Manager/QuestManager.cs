@@ -26,8 +26,8 @@ public class QuestManager : Singleton<QuestManager>
     [SerializeField] private List<int> acceptedSubQuestIds = new List<int>();
     [SerializeField] private List<int> clearSubQuestIds = new List<int>();
 
-    [Header("SpawnedNPC")]
-    [SerializeField] private QuestNPCInteraction currentQuestNPC;
+    [Header("SpawnedTarget")]
+    [SerializeField] private QuestInteractableObject currentQuestTarget;
 
     private const int maxSubQuestCount = 2;
 
@@ -78,46 +78,6 @@ public class QuestManager : Singleton<QuestManager>
                 }
             }
         }
-        #region 코드가 중복된 것 같아서 합쳐봤는데 합친 코드에서 오류가 생기면 복구하기 위해 남겨둠. >>> 못 접어두나?
-        //// 지정된 경로에서 메인 퀘스트 데이터 받아오기.
-        //QuestData[] mainQuests = Resources.LoadAll<QuestData>("GameData/Quests/Main");
-        //if (mainQuests == null)
-        //{
-        //    Debug.Log("메인 퀘스트를 받아오지 못 했습니다.");
-        //    return;
-        //}
-        //// 받아온 퀘스트 데이터를 퀘스트 정보를 담아둘 딕셔너리에 퀘스트 ID를 Key값으로 저장.
-        //foreach (QuestData quest in mainQuests)
-        //{
-        //    if (!questDatas.ContainsKey(quest.QuestId))
-        //    {
-        //        questDatas.Add(quest.QuestId, quest);
-        //    }
-        //    else
-        //    {
-        //        Debug.Log($"{quest.QuestId} (은)는 중복된 퀘스트 Id입니다.");
-        //    }
-        //}
-        //// 지정된 경로에서 서브 퀘스트 데이터 받아오기.
-        //QuestData[] subQuests = Resources.LoadAll<QuestData>("GameData/Quests/Sub");
-        //if (subQuests == null)
-        //{
-        //    Debug.Log("서브 퀘스트를 받아오지 못 했습니다.");
-        //    return;
-        //}
-        //// 받아온 퀘스트 데이터를 퀘스트 정보를 담아둘 딕셔너리에 퀘스트 ID를 Key값으로 저장.
-        //foreach (QuestData quest in subQuests)
-        //{
-        //    if (!questDatas.ContainsKey(quest.QuestId))
-        //    {
-        //        questDatas.Add(quest.QuestId, quest);
-        //    }
-        //    else
-        //    {
-        //        Debug.Log($"{quest.QuestId} (은)는 중복된 퀘스트 Id입니다.");
-        //    }
-        //}
-        #endregion
 
         Debug.Log("퀘스트 초기화 완료.");
     }
@@ -234,7 +194,6 @@ public class QuestManager : Singleton<QuestManager>
             return;
         }
 
-        // 아니면 외부 데이터 + 퀘스트 ID값을 통해 보상을 제공할 테니 모든 걸 빠져나온 후 최종적으로 지급하는 게 좋을까?
         OnQuestCleared?.Invoke(quest);
 
         UpdateSaveData();
@@ -282,23 +241,23 @@ public class QuestManager : Singleton<QuestManager>
     }
 
 
-    // 테스트용 퀘스트 NPC와 상호작용 여부 체크 함수
+    // 퀘스트 NPC와 상호작용 여부 체크 함수
     public void NPCInteractable(int id, bool isInteractable)
     {
         OnNPCInteracted?.Invoke(id, isInteractable);
     }
-    // 테스트용 NPC 객체 저장 함수.
-    public void SetQuestNPC(QuestNPCInteraction npc)
+    // 퀘스트 객체 저장 함수.
+    public void SetQuestTarget(QuestInteractableObject questTarget)
     {
-        currentQuestNPC = npc;
+        currentQuestTarget = questTarget;
     }
-    // 테스트용 NPC 제거 함수
-    public void DestroyNPC()
+    // 퀘스트 객체 제거 함수
+    public void DestroyQuestTarget()
     {
-        if (currentQuestNPC == null) return;
+        if (currentQuestTarget == null) return;
 
-        currentQuestNPC.SelfDestroy();
-        currentQuestNPC = null;
+        currentQuestTarget.SelfDestroy();
+        currentQuestTarget = null;
     }
     //
     private void GiveQuestReward(QuestData quest)
