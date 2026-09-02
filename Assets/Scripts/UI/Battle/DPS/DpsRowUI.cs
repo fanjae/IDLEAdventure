@@ -23,7 +23,8 @@ public class DpsRowUI : MonoBehaviour
             dps = DpsManager.Instance.GetDps(unit);
         }
 
-        infoText.text = $"{unit.name}/DPS : {FormatDps(dps)}";
+        string unitName = unit.UnitData != null ? unit.UnitData.UnitName : unit.name;
+        infoText.text = $"{unitName}/DPS : {FormatDps(dps)}";
     }
     private string FormatDps(float value)
     {
