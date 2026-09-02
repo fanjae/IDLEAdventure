@@ -342,6 +342,7 @@ GameObject:
   - component: {fileID: 2599946706500472936}
   - component: {fileID: 2201058591663820430}
   - component: {fileID: 2236514561916394173}
+  - component: {fileID: 658632237337783240}
   m_Layer: 5
   m_Name: BottomCanvas
   m_TagString: Untagged
@@ -445,6 +446,22 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &658632237337783240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8759364192398322377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf42d6b893318b34cbc10124e77336d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainPackageNoticeEntry
+  shopPanelPresenter: {fileID: 3642936120052082581}
+  mainBottomPanelRoot: {fileID: 5897144515546450886}
+  allPanelRoot: {fileID: 2825667589536085862}
+  allMenuRoot: {fileID: 1063784601499722615}
 --- !u!1001 &527356704695741730
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2844,6 +2861,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3390779726534270686, guid: 4a990d84d6f670a4195d2cf620b43e7b, type: 3}
   m_PrefabInstance: {fileID: 2680314770313900557}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1063784601499722615 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3166371800357605754, guid: 4a990d84d6f670a4195d2cf620b43e7b, type: 3}
+  m_PrefabInstance: {fileID: 2680314770313900557}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1797241806534117538 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4450526148337105583, guid: 4a990d84d6f670a4195d2cf620b43e7b, type: 3}
@@ -2860,6 +2882,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 145432019502564715, guid: 4a990d84d6f670a4195d2cf620b43e7b, type: 3}
   m_PrefabInstance: {fileID: 2680314770313900557}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3642936120052082581 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1710289292085826968, guid: 4a990d84d6f670a4195d2cf620b43e7b, type: 3}
+  m_PrefabInstance: {fileID: 2680314770313900557}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09d8f2f9c44646c497dc486d5584a7cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopPanelPresenter
 --- !u!114 &6289575625467166473 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8249305477484514564, guid: 4a990d84d6f670a4195d2cf620b43e7b, type: 3}

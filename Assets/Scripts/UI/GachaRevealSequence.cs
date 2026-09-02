@@ -49,7 +49,6 @@ public sealed class GachaRevealSequence : MonoBehaviour
 
     [Header("연출 시간")]
     [Min(0.1f)] [SerializeField] private float totalDuration = 1.8f;
-    [Range(0.05f, 0.9f)] [SerializeField] private float closedDoorPhaseRatio = 0.3f;
     [Range(0.05f, 0.9f)] [SerializeField] private float openedDoorPhaseRatio = 0.45f;
 
     public bool IsPlaying => playRoutine != null || isWaitingForTap;
@@ -65,7 +64,6 @@ public sealed class GachaRevealSequence : MonoBehaviour
     private readonly Dictionary<RectTransform, Vector2> lightBasePositions = new Dictionary<RectTransform, Vector2>();
 
     private static Sprite runtimeGlowSprite;
-    private static Texture2D runtimeGlowTexture;
 
     private void Awake()
     {
@@ -174,12 +172,10 @@ public sealed class GachaRevealSequence : MonoBehaviour
         for (float elapsed = 0f; elapsed < duration && !skipRequested; elapsed += Time.unscaledDeltaTime)
         {
             float progress = duration <= 0f ? 1f : Mathf.Clamp01(elapsed / duration);
-            float flashAlpha = 0.18f + Mathf.Sin(progress * Mathf.PI) * 0.42f;
             SetStage(openedDoorEffectSprite, 1f, Vector3.Lerp(Vector3.one, Vector3.one * 1.08f, progress));
             SetOpenedDoorLights(flashColor, 1f, Vector3.one * Mathf.Lerp(1f, 1.08f, progress));
             yield return null;
         }
-
     }
 
     // 닫힌 문에서 희미한 빛을 유지하며 플레이어 입력을 기다림
@@ -203,30 +199,6 @@ public sealed class GachaRevealSequence : MonoBehaviour
         }
 
         SetTouchPromptVisible(false);
-    }
-
-    private IEnumerator PlayResultBackgroundPhase(float duration)
-    {
-        if (resultBackgroundSprite == null)
-        {
-            yield return WaitForDuration(duration);
-            yield break;
-        }
-
-        for (float elapsed = 0f; elapsed < duration && !skipRequested; elapsed += Time.unscaledDeltaTime)
-        {
-            float progress = duration <= 0f ? 1f : Mathf.Clamp01(elapsed / duration);
-            SetStage(resultBackgroundSprite, Mathf.SmoothStep(0f, 1f, progress), Vector3.one);
-            yield return null;
-        }
-    }
-
-    private IEnumerator WaitForDuration(float duration)
-    {
-        for (float elapsed = 0f; elapsed < duration && !skipRequested; elapsed += Time.unscaledDeltaTime)
-        {
-            yield return null;
-        }
     }
 
     // 10회 소환 결과를 한 장씩 크게 보여준 뒤 기존 결과 그리드로 넘김
@@ -366,8 +338,6 @@ public sealed class GachaRevealSequence : MonoBehaviour
 
         texture.SetPixels(pixels);
         texture.Apply();
-
-        runtimeGlowTexture = texture;
 
         runtimeGlowSprite = Sprite.Create(
             texture,
