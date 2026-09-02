@@ -1,12 +1,14 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 // 버튼 OnClick에서 1회 또는 10회 소환을 호출하는 중계 컴포넌트임
 public sealed class GachaDrawButton : MonoBehaviour
 {
     [SerializeField] private string bannerId = "Standard";
     [Min(1)] [SerializeField] private int drawCount = 1;
+    [SerializeField] private Button button;
     [SerializeField] private UnityEvent onDrawCompleted;
     [SerializeField] private UnityEvent<GachaDrawFailure> onDrawFailed;
 
@@ -19,6 +21,13 @@ public sealed class GachaDrawButton : MonoBehaviour
     // 코드 기반 결과 UI가 소환 실패를 받을 수 있게 알림
     public event Action<GachaDrawFailure> DrawFailed;
 
+    private bool isInputLocked;
+
+    private void Awake()
+    {
+        button ??= GetComponent<Button>();
+    }
+
     // 선택된 배너에 맞게 버튼 소환 정보를 갱신함
     public void Configure(string targetBannerId, int targetDrawCount)
     {
@@ -26,9 +35,24 @@ public sealed class GachaDrawButton : MonoBehaviour
         drawCount = Mathf.Max(1, targetDrawCount);
     }
 
+    // 결과 연출 또는 결과 요약 중에는 중복 소환 입력을 막음
+    public void SetInputLocked(bool isLocked)
+    {
+        isInputLocked = isLocked;
+        if (button != null)
+        {
+            button.interactable = !isLocked;
+        }
+    }
+
     // 버튼 클릭 시 설정된 배너와 횟수로 소환 시도함
     public void Draw()
     {
+        if (isInputLocked)
+        {
+            return;
+        }
+
         if (GachaManager.Instance == null || !GachaManager.Instance.IsInitialized)
         {
             LastResult = null;

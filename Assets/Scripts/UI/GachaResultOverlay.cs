@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public sealed class GachaResultOverlay : MonoBehaviour
 {
     [SerializeField] private GameObject overlayRoot;
+    [SerializeField] private Image resultBackgroundImage;
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private Transform cardContent;
     [SerializeField] private GachaResultCardView cardTemplate;
@@ -16,6 +17,7 @@ public sealed class GachaResultOverlay : MonoBehaviour
     private readonly List<GachaResultCardView> cards = new();
 
     public event Action Closed;
+    public bool IsOpen => overlayRoot != null && overlayRoot.activeSelf;
 
     // 계속 버튼 클릭을 결과 닫기 동작에 연결함
     private void Awake()
@@ -27,7 +29,11 @@ public sealed class GachaResultOverlay : MonoBehaviour
     }
 
     // 결과 수만큼 텍스트 카드 골격을 생성해 표시함
-    public void Show(GachaDrawResult result, Func<string, string> getHeroName)
+    public void Show(
+        GachaDrawResult result,
+        Func<string, string> getHeroName,
+        Func<string, Sprite> getHeroPortrait,
+        Sprite resultBackgroundSprite = null)
     {
         if (result == null || overlayRoot == null || cardTemplate == null || cardContent == null)
         {
@@ -36,6 +42,12 @@ public sealed class GachaResultOverlay : MonoBehaviour
 
         ClearCards();
         cardTemplate.gameObject.SetActive(false);
+
+        if (resultBackgroundImage != null && resultBackgroundSprite != null)
+        {
+            resultBackgroundImage.sprite = resultBackgroundSprite;
+            resultBackgroundImage.preserveAspect = true;
+        }
 
         if (titleText != null)
         {
@@ -46,7 +58,10 @@ public sealed class GachaResultOverlay : MonoBehaviour
         {
             GachaResultCardView card = Instantiate(cardTemplate, cardContent);
             card.gameObject.SetActive(true);
-            card.Bind(pullResult, getHeroName?.Invoke(pullResult.HeroId) ?? pullResult.HeroId);
+            card.Bind(
+                pullResult,
+                getHeroName?.Invoke(pullResult.HeroId) ?? pullResult.HeroId,
+                getHeroPortrait?.Invoke(pullResult.HeroId));
             cards.Add(card);
         }
 
