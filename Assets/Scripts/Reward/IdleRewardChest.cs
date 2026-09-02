@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// 방치 보상 상자 UI 클릭 기능 클래스.
@@ -12,17 +13,21 @@ public class IdleRewardChest : MonoBehaviour
 
     [Header("Reward Component")]
     [SerializeField] private GameObject rewardPanel;
-    [SerializeField] private TMP_Text goldAmountText;
-    [SerializeField] private TMP_Text expAmountText;
-    [SerializeField] private TMP_Text upgradeAmountText;
-    [SerializeField] private TMP_Text equipAmountText;
+    [SerializeField] private TMP_Text goldAmountText;       // 아 배열로
+    [SerializeField] private TMP_Text expAmountText;        // 처리하고싶다
+    [SerializeField] private TMP_Text upgradeAmountText;    // 정말로
+    [SerializeField] private TMP_Text equipAmountText;      // 다음에 해야지
+    [SerializeField] private Transform equipItemParent;
+    [SerializeField] private GameObject equipItemPrefab;
 
     [Header("IdleRewardData")]
+    [SerializeField] private ItemDatabaseSO itemdatabase;
     [SerializeField] private IdleReward idleRewardData;
 
     private bool isOpened = false;
 
     //private readonly string Open = "Open";
+
 
     private void Start()
     {
@@ -33,6 +38,15 @@ public class IdleRewardChest : MonoBehaviour
     }
 
     //
+    private void OnEnable()
+    {
+        ItemReward.OnItemRewardIds += CreateItemIcons;
+    }
+    private void OnDisable()
+    {
+        ItemReward.OnItemRewardIds -= CreateItemIcons;
+    }
+
     public void OnClickChestButton()
     {
         if (isOpened) return;
@@ -87,6 +101,27 @@ public class IdleRewardChest : MonoBehaviour
         if (rewardPanel != null)
         {
             rewardPanel.SetActive(false);
+        }
+    }
+    private void CreateItemIcons(List<int> itemIds)
+    {
+        foreach (Transform child in equipItemParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (int itemId in itemIds)
+        {
+            GameObject iconObj = Instantiate(equipItemPrefab, equipItemParent);
+
+            if (iconObj.transform.GetChild(0).TryGetComponent<Image>(out Image iconImage))
+            {
+                if (itemdatabase != null)
+                {
+                    itemdatabase.TryGetItem<EquipmentSO>(itemId, out EquipmentSO equipment);
+                    iconImage.sprite = equipment.Icon;
+                }
+            }
         }
     }
 }

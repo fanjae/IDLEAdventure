@@ -37,7 +37,7 @@ public class MainQuestButton : QuestButton
         }
         else
         {
-            questNameText.text = "None";
+            questNameText.text = "All Clear";
         }
     }
 
