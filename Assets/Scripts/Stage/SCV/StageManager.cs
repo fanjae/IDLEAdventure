@@ -93,6 +93,19 @@ public sealed class StageManager : MonoBehaviour
         // 실제 스테이지 클리어 및 다음 스테이지 진행에는 포함하지 않는다.
         if (StageRuntimeData.IsFieldEnemyBattle)
         {
+            // 2026.09.02 필드 적 전투 승리 시 처치 상태를 저장 데이터에 반영
+            if (winner == UnitTeam.Hero && FieldEnemyRuntimeData.HasEnemyData)
+            {
+                SaveManager.Instance.CurrentData.FieldObjects ??= new FieldObjectSaveData();
+
+                int defeatedEnemyId = FieldEnemyRuntimeData.InteractedFieldEnemyId;
+
+                if (!SaveManager.Instance.CurrentData.FieldObjects.DefeatedEnemyIds.Contains(defeatedEnemyId))
+                {
+                    SaveManager.Instance.CurrentData.FieldObjects.DefeatedEnemyIds.Add(defeatedEnemyId);
+                }
+            }
+
             SaveManager.Instance.Save();
             return;
         }

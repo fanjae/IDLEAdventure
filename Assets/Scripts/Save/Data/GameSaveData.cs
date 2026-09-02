@@ -40,6 +40,10 @@ public sealed class GameSaveData
     // 필드 플레이어의 마지막 위치
     public PlayerPositionSaveData PlayerPosition { get; set; } = new();
 
+    // 필드에서 획득하거나 처치한 일회성 오브젝트 상태
+    public FieldObjectSaveData FieldObjects { get; set; } = new();
+
     // 옵션 설정 저장 데이터
     public OptionSaveData Option { get; set; } = new();
+
 }
