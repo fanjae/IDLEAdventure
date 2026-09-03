@@ -10,6 +10,7 @@ public sealed class BattleResultPanelController : MonoBehaviour
     [SerializeField] private GameObject losePanel;
     [SerializeField] private GameObject stagePanel;
     [SerializeField] private GameObject stageClearRoot;
+    [SerializeField] private GameObject clearRewardPanel;
     [SerializeField] private TMP_Text nextButtonText;
     [SerializeField] private TMP_Text resultText;
     [SerializeField] private Button backButton;
@@ -23,6 +24,8 @@ public sealed class BattleResultPanelController : MonoBehaviour
     [SerializeField] private BattleEndEffectPanelController battleEndEffectPanel;
     [SerializeField] private UIPanelTransition stageClearTransition;
 
+    private UnitTeam resultWinner;
+
     private void Start()
     {
         HideResult();
@@ -35,7 +38,7 @@ public sealed class BattleResultPanelController : MonoBehaviour
 
         if (nextButton != null)
         {
-            nextButton.onClick.AddListener(ChallengeNextStage);
+            nextButton.onClick.AddListener(HandleResultButton);
         }
 
         if (BattleManager.Instance == null)
@@ -56,7 +59,7 @@ public sealed class BattleResultPanelController : MonoBehaviour
 
         if (nextButton != null)
         {
-            nextButton.onClick.RemoveListener(ChallengeNextStage);
+            nextButton.onClick.RemoveListener(HandleResultButton);
         }
 
         if (BattleManager.Instance != null)
@@ -67,6 +70,8 @@ public sealed class BattleResultPanelController : MonoBehaviour
 
     private void HandleBattleEnded(UnitTeam winner)
     {
+        resultWinner = winner;
+
         // 자동전투 승리 시에는 결과창을 표시하지 않음
         if (StageRuntimeData.IsAutoBattle && winner == UnitTeam.Hero)
         {
@@ -98,6 +103,11 @@ public sealed class BattleResultPanelController : MonoBehaviour
         {
             stageClearRoot.SetActive(true);
 
+            if (clearRewardPanel != null)
+            {
+                clearRewardPanel.SetActive(winner == UnitTeam.Hero);
+            }
+
             stageClearRoot
                 .GetComponentInChildren<StageClearCharacterPanelController>(true)
                 ?.ShowResult(winner);
@@ -118,10 +128,7 @@ public sealed class BattleResultPanelController : MonoBehaviour
             resultText.text = winner == UnitTeam.Hero ? "전투 승리" : "전투 패배";
         }
 
-        if (winner == UnitTeam.Hero)
-        {
-            UpdateNextButtonText();
-        }
+        UpdateNextButtonText(winner);
 
         stageClearTransition?.PlayOpen();
     }
@@ -209,14 +216,40 @@ public sealed class BattleResultPanelController : MonoBehaviour
         SceneManager.LoadScene(battleSceneName);
     }
 
-    // 필드 전투 유무에 따른 버튼 업데이트
-    private void UpdateNextButtonText()
+    // 2026.09.04 승패 및 필드 전투 여부에 따라 결과 버튼 문구 변경
+    private void UpdateNextButtonText(UnitTeam winner)
     {
         if (nextButtonText == null)
         {
             return;
         }
 
-        nextButtonText.text = StageRuntimeData.IsFieldEnemyBattle ? "Return" : "Next";
+        if (winner == UnitTeam.Enemy)
+        {
+            nextButtonText.text = "재도전";
+            return;
+        }
+
+        nextButtonText.text = StageRuntimeData.IsFieldEnemyBattle ? "돌아가기" : "다음 스테이지";
+    }
+
+
+
+    // 2026.09.04 전투 결과에 따라 결과 버튼 동작 분기
+    private void HandleResultButton()
+    {
+        if (resultWinner == UnitTeam.Enemy)
+        {
+            RetryCurrentStage();
+            return;
+        }
+
+        if (StageRuntimeData.IsFieldEnemyBattle)
+        {
+            ReturnToMain();
+            return;
+        }
+
+        ChallengeNextStage();
     }
 }
