@@ -34,7 +34,16 @@ public sealed class GachaInfoPopup : MonoBehaviour
 
         if (contentText != null)
         {
-            contentText.text = $"1티어 {banner.Tier1Weight}%\n2티어 {banner.Tier2Weight}%\n{banner.Tier2PityCount}회 내 2티어 확정\n픽업 가중치 x{banner.PickupWeightMultiplier:0.#}\n중복 전환: 1티어 {banner.GetDuplicateGold(GachaRarity.Tier1)} 골드 / 2티어 {banner.GetDuplicateGold(GachaRarity.Tier2)} 골드";
+            int totalWeight = Mathf.Max(0, banner.Tier1Weight) + Mathf.Max(0, banner.Tier2Weight);
+            float tier1Probability = totalWeight > 0 ? banner.Tier1Weight * 100f / totalWeight : 0f;
+            float tier2Probability = totalWeight > 0 ? banner.Tier2Weight * 100f / totalWeight : 0f;
+
+            contentText.text =
+                $"1티어 {tier1Probability:0.##}%\n" +
+                $"2티어 {tier2Probability:0.##}%\n" +
+                $"{banner.Tier2PityCount}회 내 2티어 확정\n" +
+                $"픽업 가중치 x{banner.PickupWeightMultiplier:0.##}\n" +
+                $"중복 전환: 1티어 {banner.GetDuplicateGold(GachaRarity.Tier1)} 골드 / 2티어 {banner.GetDuplicateGold(GachaRarity.Tier2)} 골드";
         }
 
         popupRoot.SetActive(true);
