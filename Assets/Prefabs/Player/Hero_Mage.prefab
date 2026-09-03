@@ -743,6 +743,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimator
   animator: {fileID: 3352949584346191504}
+  damagedInterval: 0.9
 --- !u!114 &6482133307226279500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -756,7 +757,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkill
   skillData: {fileID: 11400000, guid: 76de3e137c7d2454984a15f1a9398d66, type: 2}
-  secondarySkillData: {fileID: 0}
   projectileSpawnPoint: {fileID: 0}
   skillVfxPoint: {fileID: 3280454558311533173}
 --- !u!114 &-4052169420828358049
@@ -1043,6 +1043,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 12185f86c0e8de845bc6750276804ceb, type: 2}
+    - target: {fileID: 2436971512463497434, guid: aba1b6f0e51f89843957d3c7d572224a, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2763914743243945539, guid: aba1b6f0e51f89843957d3c7d572224a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
