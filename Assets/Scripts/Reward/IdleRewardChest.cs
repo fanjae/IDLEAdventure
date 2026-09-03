@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 /// <summary>
 /// 방치 보상 상자 UI 클릭 기능 클래스.
@@ -18,7 +17,9 @@ public class IdleRewardChest : MonoBehaviour
     [SerializeField] private TMP_Text upgradeAmountText;    // 정말로
     [SerializeField] private TMP_Text equipAmountText;      // 다음에 해야지
     [SerializeField] private Transform equipItemParent;
-    [SerializeField] private GameObject equipItemPrefab;
+    [SerializeField] private InventoryItemSlotView equipItemPrefab;
+    [SerializeField] private HeroClassIconCatalog classIconCatalog;
+
 
     [Header("IdleRewardData")]
     [SerializeField] private ItemDatabaseSO itemdatabase;
@@ -103,6 +104,8 @@ public class IdleRewardChest : MonoBehaviour
             rewardPanel.SetActive(false);
         }
     }
+
+    // 0903 수정 (인벤토리 처리 방식과 방치 보상 구조를 일치)
     private void CreateItemIcons(List<int> itemIds)
     {
         foreach (Transform child in equipItemParent)
@@ -110,18 +113,30 @@ public class IdleRewardChest : MonoBehaviour
             Destroy(child.gameObject);
         }
 
+        Dictionary<int, int> equipmentCounts = new();
+
         foreach (int itemId in itemIds)
         {
-            GameObject iconObj = Instantiate(equipItemPrefab, equipItemParent);
-
-            if (iconObj.transform.GetChild(0).TryGetComponent<Image>(out Image iconImage))
+            if (equipmentCounts.TryGetValue(itemId, out int count))
             {
-                if (itemdatabase != null)
-                {
-                    itemdatabase.TryGetItem<EquipmentSO>(itemId, out EquipmentSO equipment);
-                    iconImage.sprite = equipment.Icon;
-                }
+                equipmentCounts[itemId] = count + 1;
             }
+            else
+            {
+                equipmentCounts.Add(itemId, 1);
+            }
+        }
+
+        foreach (KeyValuePair<int, int> equipmentData in equipmentCounts)
+        {
+            if (!itemdatabase.TryGetItem(equipmentData.Key, out EquipmentSO equipment))
+            {
+                Debug.LogWarning($"[IdleRewardChest] ItemDatabase에서 장비를 찾을 수 없습니다. EquipmentId: {equipmentData.Key}");
+                continue;
+            }
+
+            InventoryItemSlotView slotView = Instantiate(equipItemPrefab, equipItemParent);
+            slotView.BindEquipment(equipment, equipmentData.Value, classIconCatalog);
         }
     }
 }
