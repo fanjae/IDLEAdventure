@@ -53,8 +53,8 @@ public class ItemReward : IReward
         temp = UnityEngine.Random.Range(1, 6) * 100;
         itemId += temp;
         temp = 0;
-        // 부위 선택
-        temp = UnityEngine.Random.Range(1, 6) * 10;
+        // 부위 선택 // 총 6부위가 나와야 하므로, 7까지 가야함. (0903 수정)
+        temp = UnityEngine.Random.Range(1, 7) * 10;
         itemId += temp;
         temp = 0;
         // 장비 레벨(등급?) 선택
