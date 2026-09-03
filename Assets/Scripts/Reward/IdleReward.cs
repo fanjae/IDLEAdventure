@@ -109,7 +109,7 @@ public class IdleReward : MonoBehaviour
                     leftRewards[id] = reward.Value.LeftoverReward;
 
                     // 보상량이 존재하고, 해당 id를 Key로 갖는 보상이 존재한다면 보상 지급.
-                    if (amount > 0 && stageData.Rewards.ContainsKey(id))
+                    if (amount >= 0 && stageData.Rewards.ContainsKey(id))
                     {
                         stageData.Rewards[id].GiveReward(amount);
                     }

@@ -26,8 +26,8 @@ public class QuestManager : Singleton<QuestManager>
     [SerializeField] private List<int> acceptedSubQuestIds = new List<int>();
     [SerializeField] private List<int> clearSubQuestIds = new List<int>();
 
-    [Header("SpawnedTarget")]
-    [SerializeField] private QuestInteractableObject currentQuestTarget;
+    [Header("SpawnedTargets")]
+    [SerializeField] private List<QuestInteractableObject> currentQuestTargets = new List<QuestInteractableObject>();
 
     private const int maxSubQuestCount = 2;
 
@@ -249,17 +249,34 @@ public class QuestManager : Singleton<QuestManager>
     // 퀘스트 객체 저장 함수.
     public void SetQuestTarget(QuestInteractableObject questTarget)
     {
-        currentQuestTarget = questTarget;
+        currentQuestTargets.Add(questTarget);
     }
     // 퀘스트 객체 제거 함수
     public void DestroyQuestTarget()
     {
-        if (currentQuestTarget == null) return;
-
-        currentQuestTarget.SelfDestroy();
-        currentQuestTarget = null;
+        foreach (var target in currentQuestTargets)
+        {
+            if (target != null) target.SelfDestroy();
+        }
+        currentQuestTargets.Clear();
     }
-    //
+    // 채집물 제거 함수.
+    // 생성된 채집물이 모두 제거되면 클리어.
+    // 일단 퀘스트 매니저에 넣어두긴 했는데 여기에 만들어 두는 게 맞는지는 더 생각해볼 부분.
+    public void RemoveGatherTarget(QuestInteractableObject questTarget)
+    {
+        if (currentQuestTargets.Contains(questTarget))
+        {
+            currentQuestTargets.Remove(questTarget);
+            questTarget.SelfDestroy();
+
+            if (currentQuestTargets.Count == 0)
+            {
+                ClearQuest(questTarget.QuestId);
+            }
+        }
+    }
+    // 퀘스트 보상 지급 함수.
     private void GiveQuestReward(QuestData quest)
     {
         if (quest.RewardData != null)
