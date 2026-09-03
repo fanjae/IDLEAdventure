@@ -15,7 +15,6 @@ public class BattleManager : MonoBehaviour
     private int battleStartHeroCount;
 
     public IReadOnlyList<BattleUnit> HeroUnits => heroUnits;
-    public IReadOnlyList<BattleUnit> EnemyUnits => enemyUnits;
 
     public event Action OnBattleStarted;
     public event Action<UnitTeam> OnBattleEnded;

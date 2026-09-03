@@ -469,7 +469,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1300976842}
   - component: {fileID: 1300976841}
-  - component: {fileID: 1300976843}
   m_Layer: 0
   m_Name: BattleManager
   m_TagString: Untagged
@@ -505,28 +504,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1300976843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1300976840}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee2f858bdf565cb4ba6896cc6d67acda, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BattleSoundController
-  normalBattleBgm: {fileID: 8300000, guid: c0770993e7f84c148bcee4db306384ba, type: 3}
-  normalBattleVolume: 0.3
-  bossBattleBgm: {fileID: 8300000, guid: a55c02b18dd27094386dd6aeab7dadd8, type: 3}
-  bossBattleVolume: 0.3
-  fieldBossBattleBgm: {fileID: 8300000, guid: 5009946ae47fb444d8ac82b0bb41bed5, type: 3}
-  fieldBossBattleVolume: 0.3
-  victorySfx: {fileID: 8300000, guid: a9310ddccac7db941bd039dcc167dc52, type: 3}
-  victoryVolume: 0.5
-  defeatSfx: {fileID: 8300000, guid: 859f177bf8aca6242b93c1b04d9c2ecc, type: 3}
-  defeatVolume: 0.5
 --- !u!1 &1391042047
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,19 +655,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 515885347305323502, guid: dd2769c7902ef494c9a41f0c95324061, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 515885347305323502, guid: dd2769c7902ef494c9a41f0c95324061, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3363262221757549733, guid: dd2769c7902ef494c9a41f0c95324061, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3363262221757549733, guid: dd2769c7902ef494c9a41f0c95324061, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4518490516838581734, guid: dd2769c7902ef494c9a41f0c95324061, type: 3}
       propertyPath: m_Name
@@ -698,7 +675,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4518490516838581734, guid: dd2769c7902ef494c9a41f0c95324061, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6178177153463330713, guid: dd2769c7902ef494c9a41f0c95324061, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1339,7 +1316,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2271154330702161179, guid: 62703a192920c6441a788128d131e81e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.16
+      value: 2.87
       objectReference: {fileID: 0}
     - target: {fileID: 2271154330702161179, guid: 62703a192920c6441a788128d131e81e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1347,7 +1324,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2271154330702161179, guid: 62703a192920c6441a788128d131e81e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.14
+      value: 2.8
       objectReference: {fileID: 0}
     - target: {fileID: 2271154330702161179, guid: 62703a192920c6441a788128d131e81e, type: 3}
       propertyPath: m_LocalRotation.w
