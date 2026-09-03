@@ -1004,6 +1004,22 @@ PrefabInstance:
       propertyPath: m_RaycastTarget
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 642042730464257499, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: questPanel
+      value: 
+      objectReference: {fileID: 2097024045}
+    - target: {fileID: 646759295204443160, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2097024044}
+    - target: {fileID: 646759295204443160, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OpenQuestPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 646759295204443160, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MainBottomPanelController, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 1111786951146766167, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
       propertyPath: playerStateMachine
       value: 
@@ -1040,6 +1056,14 @@ PrefabInstance:
       propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4135905445625377498, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2097024045}
+    - target: {fileID: 4135905445625377498, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnClickCloseButton
+      objectReference: {fileID: 0}
     - target: {fileID: 4138996408304420490, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
@@ -1068,6 +1092,26 @@ PrefabInstance:
       propertyPath: m_RaycastTarget
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6085401537445554441, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6085401537445554441, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2097024044}
+    - target: {fileID: 6085401537445554441, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OpenQuestPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 6085401537445554441, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MainBottomPanelController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6085401537445554441, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 6154790001192468406, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
       propertyPath: m_Name
       value: SecondBuildUI
@@ -1087,6 +1131,10 @@ PrefabInstance:
     - target: {fileID: 6290769820156725956, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6876212101405494337, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+      propertyPath: panelTransition
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7358954959710369557, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
       propertyPath: playerStateMachine
@@ -1181,6 +1229,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+--- !u!114 &2097024044 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 642042730464257499, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+  m_PrefabInstance: {fileID: 2097024043}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59bf75ad7d5dcf440bef33c712a23ca7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainBottomPanelController
+--- !u!114 &2097024045 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6876212101405494337, guid: 7d859c7182df68d4c84694a261d3602e, type: 3}
+  m_PrefabInstance: {fileID: 2097024043}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0eaf058dceac2184a9c6061e7e6ce4d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestPanel
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
