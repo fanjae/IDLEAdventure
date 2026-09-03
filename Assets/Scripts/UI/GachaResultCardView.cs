@@ -78,6 +78,9 @@ public sealed class GachaResultCardView : MonoBehaviour
             if (background != null)
             {
                 backgroundImage.sprite = background;
+                // 순차 리빌과 결과 요약 모두에서 티어 카드 프레임을 원색으로 표시함
+                backgroundImage.enabled = true;
+                backgroundImage.color = Color.white;
             }
         }
 
