@@ -716,6 +716,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7715466122359400691}
   - component: {fileID: 4533624426179568833}
+  - component: {fileID: 3085404580840489852}
+  - component: {fileID: 59504963063951539}
   m_Layer: 5
   m_Name: Quest
   m_TagString: Untagged
@@ -759,6 +761,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestPanel
   questPanel: {fileID: 8112617338859084660}
+  panelTransition: {fileID: 3085404580840489852}
   mainQuestNameText: {fileID: 995826625201781309}
   mainQuestButton: {fileID: 7992272279955806167}
   subQuestParent: {fileID: 6410652318528286218}
@@ -766,6 +769,36 @@ MonoBehaviour:
   subQuestButtons:
   - {fileID: 8968196853532695828}
   - {fileID: 551655321698918293}
+--- !u!114 &3085404580840489852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238099993338562681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 979130b6285302f4e968220fe362287f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPanelTransition
+  canvasGroup: {fileID: 59504963063951539}
+  panelTransform: {fileID: 7715466122359400691}
+  openOffset: {x: 0, y: -100}
+  closeOffset: {x: 0, y: -100}
+  openDuration: 0.2
+  closeDuration: 0.2
+--- !u!225 &59504963063951539
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238099993338562681}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1676595838763124775
 GameObject:
   m_ObjectHideFlags: 0
@@ -1323,7 +1356,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4533624426179568833}
         m_TargetAssemblyTypeName: QuestPanel, Assembly-CSharp
-        m_MethodName: CloseQuestPanelToAllMenu
+        m_MethodName: OnClickCloseButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

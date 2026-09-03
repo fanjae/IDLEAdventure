@@ -8,11 +8,25 @@ using UnityEngine;
 /// </summary>
 public class QuestPanel : MonoBehaviour
 {
+    private enum OpenSource
+    {
+        Main,
+        AllMenu
+    }
+
     // Quest Panel 이벤트(0828 UI 연결 용으로 추가)
     public event Action OnClosed;
 
+    // 2026.09.04 필드 Quest UI 종료 후 MainBottomPanel 복구를 위해 추가
+    public event Action OnMainClosed;
+
+    private OpenSource openSource = OpenSource.Main;
+
     [Header("UI Component")]
     [SerializeField] private GameObject questPanel;
+
+    // 2026.09.04 퀘스트 패널 오픈/클로즈 연출 적용
+    [SerializeField] private UIPanelTransition panelTransition;
 
     [Header("Main Quest")]
     [SerializeField] private TMP_Text mainQuestNameText;
@@ -39,8 +53,10 @@ public class QuestPanel : MonoBehaviour
         {
             QuestManager.Instance.OnSubQuestChanged += RefreshPanel;
         }
+
         RefreshPanel();
     }
+
     private void OnDisable()
     {
         if (QuestManager.Instance != null)
@@ -49,29 +65,63 @@ public class QuestPanel : MonoBehaviour
         }
     }
 
-    // Open-Close를 토글 형식으로 진행할 수도 있을듯?
-    // 그래도 일단 단순 키고 끄는 역할을 위해 나눠놓자.
+    // 2026.09.04 메인 화면에서 퀘스트 패널 진입
     public void OpenQuestPanel()
     {
-        if (questPanel != null)
+        openSource = OpenSource.Main;
+
+        if (questPanel == null)
         {
-            questPanel.SetActive(true);
+            return;
         }
+
+        questPanel.SetActive(true);
         RefreshPanel();
-    }
-    public void CloseQuestPanel()
-    {
-        if (questPanel != null)
-        {
-            questPanel.SetActive(false);
-        }
+        panelTransition?.PlayOpen();
     }
 
-    // 퀘스트 패널 뒤로가기 처리 (0828 추가)
+    // 2026.09.04 전체 메뉴에서 퀘스트 패널 진입
+    public void OpenQuestPanelFromAllMenu()
+    {
+        openSource = OpenSource.AllMenu;
+
+        if (questPanel == null)
+        {
+            return;
+        }
+
+        questPanel.SetActive(true);
+        RefreshPanel();
+        panelTransition?.PlayOpen();
+    }
+
+    // 기존 외부 참조 호환용
     public void CloseQuestPanelToAllMenu()
     {
-        CloseQuestPanel();
-        OnClosed?.Invoke();
+        openSource = OpenSource.AllMenu;
+        CloseQuestPanelWithSource();
+    }
+
+    public void CloseQuestPanel()
+    {
+        if (questPanel == null)
+        {
+            return;
+        }
+
+        if (panelTransition == null)
+        {
+            questPanel.SetActive(false);
+            return;
+        }
+
+        panelTransition.PlayClose(() => questPanel.SetActive(false));
+    }
+
+    // 2026.09.04 퀘스트 진입 경로에 따른 종료 처리
+    public void OnClickCloseButton()
+    {
+        CloseQuestPanelWithSource();
     }
 
     // 퀘스트 현황 패널에서 메인 퀘스트 버튼을 눌렀을 때 호출될 함수.
@@ -84,13 +134,14 @@ public class QuestPanel : MonoBehaviour
         QuestData mainQuestData = QuestManager.Instance.GetQuestData(mainQuestId);
         if (mainQuestData == null) return;
 
-        CloseQuestPanel();
+        CloseQuestPanelWithSource();
+
         if (mainQuestButton != null)
         {
             mainQuestButton.OnClickQuestButton();
         }
-        
     }
+
     // 퀘스트 현황판에서 서브 퀘스트를 클릭했을 때 호출될 함수.
     // 최대 수락 가능한 만큼 수락을 하고, 서브 퀘스트 UI 클릭 함수 호출.
     public void OnClickSubQeustSlot(int id, bool isAccepted)
@@ -99,7 +150,7 @@ public class QuestPanel : MonoBehaviour
 
         if (isAccepted)
         {
-            CloseQuestPanel();
+            CloseQuestPanelWithSource();
             AcceptSubQuest(id);
         }
         else
@@ -112,10 +163,11 @@ public class QuestPanel : MonoBehaviour
 
             QuestManager.Instance.AcceptSubQuest(id);
 
-            CloseQuestPanel();
+            CloseQuestPanelWithSource();
             AcceptSubQuest(id);
         }
     }
+
     // 서브 퀘스트 수락 함수.
     // 메인 화면의 서브 퀘스트 버튼 상태를 갱신하고 클릭 명령을 내린다.
     private void AcceptSubQuest(int id)
@@ -130,6 +182,7 @@ public class QuestPanel : MonoBehaviour
             }
         }
     }
+
     // 서브 퀘스트가 클리어 됐을 때 슬롯 제거 함수.
     private void ClearSubQuestSlots()
     {
@@ -140,6 +193,7 @@ public class QuestPanel : MonoBehaviour
                 Destroy(slot);
             }
         }
+
         subQuestSlots.Clear();
     }
 
@@ -174,8 +228,8 @@ public class QuestPanel : MonoBehaviour
         {
             RefreshSubQuestSlot(subQuestId, false);
         }
-
     }
+
     // 서브 퀘스트 슬롯을 갱신하는 함수.
     // 수락한 퀘스트를 메인 화면에 추가한다.
     private void RefreshSubQuestSlot(int id, bool isAccepted)
@@ -192,5 +246,36 @@ public class QuestPanel : MonoBehaviour
         {
             OnClickSubQeustSlot(selectedId, accepted);
         });
+    }
+
+    // 2026.09.04 퀘스트 패널 종료 연출 및 진입 화면 복구
+    private void CloseQuestPanelWithSource()
+    {
+        if (questPanel == null)
+        {
+            return;
+        }
+
+        if (panelTransition == null)
+        {
+            CompleteCloseWithSource();
+            return;
+        }
+
+        panelTransition.PlayClose(CompleteCloseWithSource);
+    }
+
+    // 2026.09.04 닫기 연출 완료 후 패널 비활성화 및 이전 화면 복구
+    private void CompleteCloseWithSource()
+    {
+        questPanel.SetActive(false);
+
+        if (openSource == OpenSource.AllMenu)
+        {
+            OnClosed?.Invoke();
+            return;
+        }
+
+        OnMainClosed?.Invoke();
     }
 }
