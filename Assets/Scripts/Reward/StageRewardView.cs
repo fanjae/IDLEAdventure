@@ -30,11 +30,18 @@ public class StageRewardView : MonoBehaviour
     // UI 활성 상태와 이벤트 구독 생명주기를 분리
     private void Awake()
     {
+        // 2026.09.04 결과 패널 Prefab에서 Scene 보상 컴포넌트를 직접 참조할 수 없어 런타임 연결
+        if (rewardData == null)
+        {
+            rewardData = FindFirstObjectByType<StageClearRewardTest>();
+        }
+
         if (rewardData != null)
         {
             rewardData.OnStageRewardGiven += UpdateUI;
         }
     }
+
     private void OnDestroy()
     {
         if (rewardData != null)

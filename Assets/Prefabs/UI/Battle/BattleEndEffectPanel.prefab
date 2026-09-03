@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 53095384742075809}
   - component: {fileID: 53095384742075810}
   m_Layer: 0
-  m_Name: BattleStartTitle
+  m_Name: BattleEndTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC804\uD22C \uC2DC\uC791"
+  m_text: "\uD074\uB9AC\uC5B4"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fb975d995a9b0434c83bb17b0f0f8fe5, type: 2}
   m_sharedMaterial: {fileID: 3349877598602596059, guid: fb975d995a9b0434c83bb17b0f0f8fe5, type: 2}
@@ -563,9 +563,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7172717336578348243}
   - component: {fileID: 53095384742075811}
-  - component: {fileID: 2656156942278703266}
+  - component: {fileID: 6972556036622795812}
   m_Layer: 0
-  m_Name: BattleStartEffectPanel
+  m_Name: BattleEndEffectPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -603,7 +603,7 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
---- !u!114 &2656156942278703266
+--- !u!114 &6972556036622795812
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -612,9 +612,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6156733852706107008}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 446102f1025210b4d9308b76b798152b, type: 3}
+  m_Script: {fileID: 11500000, guid: 931ac8ada9fd93d489f3b7a3abc36994, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BattleStartEffectPanelController
+  m_EditorClassIdentifier: Assembly-CSharp::BattleEndEffectPanelController
   canvasGroup: {fileID: 53095384742075811}
   dimBackground: {fileID: 53095384742075838}
   ribbonImage: {fileID: 53095384742075826}
