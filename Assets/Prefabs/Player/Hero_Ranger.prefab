@@ -3439,6 +3439,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimator
   animator: {fileID: 8139135601949936884}
+  damagedInterval: 0.9
 --- !u!114 &362458707248704187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3452,9 +3453,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkill
   skillData: {fileID: 11400000, guid: 85661cc48da403e478e39a75a7fc4534, type: 2}
-  secondarySkillData: {fileID: 0}
   projectileSpawnPoint: {fileID: 7530454815029930944}
   skillVfxPoint: {fileID: 0}
+  projectileSfx: {fileID: 8300000, guid: 4ec2861ed43a34e41a4dab043377f305, type: 3}
+  projectileSfxVolume: 0.5
+  areaDamageSfx: {fileID: 0}
+  areaDamageSfxVolume: 0.5
+  barrierSfx: {fileID: 0}
+  barrierSfxVolume: 0.5
+  healSfx: {fileID: 0}
+  healSfxVolume: 0.5
+  bossBuffSfx: {fileID: 0}
+  bossBuffSfxVolume: 0.5
+  laserSfx: {fileID: 0}
+  laserSfxVolume: 0.5
 --- !u!114 &2010622909605572914
 MonoBehaviour:
   m_ObjectHideFlags: 0
