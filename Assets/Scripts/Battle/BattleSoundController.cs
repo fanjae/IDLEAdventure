@@ -3,10 +3,12 @@ using UnityEngine;
 
 public class BattleSoundController : MonoBehaviour
 {
+    public static BattleSoundController Instance { get; private set; }
+
     [Header("전투 BGM")]
     [SerializeField] private AudioClip normalBattleBgm;
     [SerializeField, Range(0.0f, 1.0f)] private float normalBattleVolume = 0.3f;
-    
+
     [SerializeField] private AudioClip bossBattleBgm;
     [SerializeField, Range(0.0f, 1.0f)] private float bossBattleVolume = 0.3f;
 
@@ -20,19 +22,25 @@ public class BattleSoundController : MonoBehaviour
     [SerializeField] private AudioClip defeatSfx;
     [SerializeField, Range(0.0f, 1.0f)] private float defeatVolume = 0.5f;
 
+    [Header("기본 공격 SFX")]
+    [SerializeField] private AudioClip basicHitSfx;
+    [SerializeField, Range(0.0f, 1.0f)] private float basicHitVolume = 0.2f;
+
     private AudioSource bgmSource;
     private AudioSource sfxSource;
 
     private void Awake()
     {
+        Instance = this;
+
         bgmSource = gameObject.AddComponent<AudioSource>();
-        bgmSource.playOnAwake = true;
+        bgmSource.playOnAwake = false;
         bgmSource.loop = true;
         bgmSource.spatialBlend = 0.0f;
 
         sfxSource = gameObject.AddComponent<AudioSource>();
-        sfxSource.playOnAwake = true;
-        sfxSource.loop = true;
+        sfxSource.playOnAwake = false;
+        sfxSource.loop = false;
         sfxSource.spatialBlend = 0.0f;
     }
     void Start()
@@ -44,15 +52,17 @@ public class BattleSoundController : MonoBehaviour
     }
     private void OnDestroy()
     {
-        if (BattleManager.Instance == null) return;
-
-        BattleManager.Instance.OnBattleStarted -= HandleBattleStarted;
-        BattleManager.Instance.OnBattleEnded -= HandleBattleEnded;
+        if (BattleManager.Instance != null)
+        {
+            BattleManager.Instance.OnBattleStarted -= HandleBattleStarted;
+            BattleManager.Instance.OnBattleEnded -= HandleBattleEnded;
+        }
+        if (Instance == this) Instance = null;
     }
 
     private void HandleBattleStarted()
     {
-        if (SoundManager.Instance == null) SoundManager.Instance.StopBgm();
+        if (SoundManager.Instance != null) SoundManager.Instance.StopBgm();
 
         PlayBattleBgm();
     }
@@ -74,7 +84,7 @@ public class BattleSoundController : MonoBehaviour
             //일반 보스
             if (enemy.UnitData is EnemyData enemyData && enemyData.IsBoss) hasBoss = true;
         }
-        
+
         if (hasBoss)
         {
             PlayBgm(bossBattleBgm, bossBattleVolume);
@@ -107,6 +117,14 @@ public class BattleSoundController : MonoBehaviour
         {
             PlaySfx(defeatSfx, defeatVolume);
         }
+    }
+    public void PlayBasicHit()
+    {
+        PlayCombatSfx(basicHitSfx, basicHitVolume);
+    }
+    public void PlayCombatSfx(AudioClip clip, float volume)
+    {
+        PlaySfx(clip, volume);
     }
     private void PlaySfx(AudioClip clip, float volume)
     {
