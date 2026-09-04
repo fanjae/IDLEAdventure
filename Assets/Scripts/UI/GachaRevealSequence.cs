@@ -31,6 +31,11 @@ public sealed class GachaRevealSequence : MonoBehaviour
     [Min(0.1f)] [SerializeField] private float previewCardDuration = 0.42f;
     [Min(1f)] [SerializeField] private float previewCardScale = 3f;
 
+    [Header("가챠 연출 SFX")]
+    [SerializeField] private AudioClip closedDoorTapSfx;
+    [SerializeField] private AudioClip tier1CardRevealSfx;
+    [SerializeField] private AudioClip tier2CardRevealSfx;
+
     [Header("열린 문 빛 이펙트 대상")]
     [SerializeField] private Image[] openedDoorLightImages;
 
@@ -106,10 +111,20 @@ public sealed class GachaRevealSequence : MonoBehaviour
         }
 
         Cancel();
+        StopBgmForReveal();
         ConfigureLightEffectImage();
         onCompleted = completed;
         skipRequested = false;
         playRoutine = StartCoroutine(PlayRoutine(result, ResolveRevealGrade(result)));
+    }
+
+    // 가챠 리빌 시작 전 재생 중인 BGM을 정지해 연출 SFX에 집중시킴
+    private static void StopBgmForReveal()
+    {
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.StopBgm();
+        }
     }
 
     // 스킵은 결과를 바꾸지 않고 남은 연출만 건너뜀
@@ -219,6 +234,7 @@ public sealed class GachaRevealSequence : MonoBehaviour
             }
 
             ClearPreviewCard();
+            PlayCardRevealSfx(pullResult);
             previewCard = Instantiate(previewCardTemplate, tenPullPreviewContent);
             previewCard.gameObject.SetActive(true);
             previewCard.Bind(
@@ -272,7 +288,28 @@ public sealed class GachaRevealSequence : MonoBehaviour
     {
         if (isWaitingForTap)
         {
+            PlaySfx(closedDoorTapSfx);
             isWaitingForTap = false;
+        }
+    }
+
+    // 순차 노출 카드의 티어에 맞는 효과음을 재생함
+    private void PlayCardRevealSfx(GachaPullResult pullResult)
+    {
+        if (pullResult == null)
+        {
+            return;
+        }
+
+        PlaySfx(pullResult.Rarity == GachaRarity.Tier2 ? tier2CardRevealSfx : tier1CardRevealSfx);
+    }
+
+    // 전역 SFX 음량 설정을 따르도록 사운드 매니저를 통해 재생함
+    private static void PlaySfx(AudioClip clip)
+    {
+        if (clip != null && SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.PlaySfx(clip);
         }
     }
 

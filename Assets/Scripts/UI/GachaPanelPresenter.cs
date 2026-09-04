@@ -21,6 +21,9 @@ public sealed class GachaPanelPresenter : MonoBehaviour
     [SerializeField] private GachaInfoPopup infoPopup;
     [SerializeField] private GameObject probabilityButton;
 
+    [Header("패널 BGM")]
+    [SerializeField] private AudioClip gachaBgm;
+
     private GachaDrawButton subscribedSingleButton;
     private GachaDrawButton subscribedTenButton;
     private bool isBannerListInitialized;
@@ -29,6 +32,7 @@ public sealed class GachaPanelPresenter : MonoBehaviour
     // 패널이 열릴 때 소환 버튼과 탭 알림을 연결함
     private void OnEnable()
     {
+        PlayBgm(gachaBgm);
         BindButtons();
         BindBannerTabList();
         BindResultOverlay();
@@ -48,6 +52,7 @@ public sealed class GachaPanelPresenter : MonoBehaviour
     private void OnDisable()
     {
         revealSequence?.Cancel();
+        StopPanelBgm();
         SetDrawFlowLocked(false);
         UnbindButtons();
         UnbindBannerTabList();
@@ -79,6 +84,24 @@ public sealed class GachaPanelPresenter : MonoBehaviour
         if (TryGetBanner(bannerId, out GachaBannerDataSO banner))
         {
             infoPopup?.Show(banner);
+        }
+    }
+
+    // 가챠 패널 진입 시 지정된 BGM을 재생함
+    private static void PlayBgm(AudioClip clip)
+    {
+        if (clip != null && SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.PlayBgm(clip);
+        }
+    }
+
+    // 가챠 패널을 떠날 때 현재 패널 BGM을 정지함
+    private static void StopPanelBgm()
+    {
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.StopBgm();
         }
     }
 

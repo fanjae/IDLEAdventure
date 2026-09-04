@@ -41,6 +41,13 @@ public sealed class ShopPanelPresenter : MonoBehaviour
     [SerializeField] private Button purchaseConfirmButton;
     [SerializeField] private Button purchaseCancelButton;
 
+    [Header("패널 BGM")]
+    [SerializeField] private AudioClip shopBgm;
+
+    [Header("성공 SFX")]
+    [SerializeField] private AudioClip packagePurchaseSfx;
+    [SerializeField] private AudioClip rewardClaimSfx;
+
     [Header("공통")]
     [SerializeField] private TMP_Text statusText;
     [SerializeField] private Sprite goldIcon;
@@ -81,6 +88,7 @@ public sealed class ShopPanelPresenter : MonoBehaviour
     // 페이지가 켜지면 상점 상태 변경을 구독함
     private void OnEnable()
     {
+        PlayBgm(shopBgm);
         Subscribe();
         Refresh();
         if (suppressPackageNoticeOnNextEnable)
@@ -93,7 +101,11 @@ public sealed class ShopPanelPresenter : MonoBehaviour
     }
 
     // 페이지가 꺼지면 이벤트 구독을 해제함
-    private void OnDisable() => Unsubscribe();
+    private void OnDisable()
+    {
+        StopPanelBgm();
+        Unsubscribe();
+    }
 
     // 뒤로가기 기록을 사용해 상점 페이지를 닫음
     public void Close()
@@ -405,12 +417,15 @@ public sealed class ShopPanelPresenter : MonoBehaviour
             return;
         }
 
+        ShopProductAvailability availability = shopManager.Controller.GetAvailability(pendingProductId);
+        ShopProductCategory category = availability.Product != null ? availability.Product.Category : ShopProductCategory.Exchange;
         if (!shopManager.Controller.TryPurchase(pendingProductId, out _, out ShopFailure failure))
         {
             ShowStatus(GetFailureText(failure));
             return;
         }
 
+        PlaySfx(category == ShopProductCategory.Package ? packagePurchaseSfx : rewardClaimSfx);
         ClosePurchaseConfirm();
         ShowStatus("구매 완료");
     }
@@ -522,7 +537,35 @@ public sealed class ShopPanelPresenter : MonoBehaviour
             return;
         }
 
+        PlaySfx(rewardClaimSfx);
         ShowStatus("출석 선물 수령 완료");
+    }
+
+    // 전역 SFX 음량 설정을 따르도록 성공 처리 뒤에만 재생함
+    private static void PlaySfx(AudioClip clip)
+    {
+        if (clip != null && SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.PlaySfx(clip);
+        }
+    }
+
+    // 패널 진입 시 지정된 BGM을 재생함
+    private static void PlayBgm(AudioClip clip)
+    {
+        if (clip != null && SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.PlayBgm(clip);
+        }
+    }
+
+    // 상점 패널을 떠날 때 현재 패널 BGM을 정지함
+    private static void StopPanelBgm()
+    {
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.StopBgm();
+        }
     }
 
     // 이전 목록 배너 복제본을 제거함

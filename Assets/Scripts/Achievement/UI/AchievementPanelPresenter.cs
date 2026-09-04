@@ -14,6 +14,10 @@ public sealed class AchievementPanelPresenter : MonoBehaviour
     [SerializeField] private Button closeButton;
     [SerializeField] private Button claimAllButton;
     [SerializeField] private AchievementRewardToast rewardToast;
+    [SerializeField] private AudioClip rewardClaimSfx;
+
+    [Header("패널 BGM")]
+    [SerializeField] private AudioClip shopBgm;
 
     [Header("패널 연출")]
     [SerializeField] private UIPanelTransition panelTransition;
@@ -49,6 +53,7 @@ public sealed class AchievementPanelPresenter : MonoBehaviour
     // 패널 비활성화 시 업적 이벤트 구독 해제함
     private void OnDisable()
     {
+        StopPanelBgm();
         UnsubscribeFromAchievementEvents();
     }
 
@@ -59,6 +64,7 @@ public sealed class AchievementPanelPresenter : MonoBehaviour
 
     public void Open()
     {
+        PlayBgm(shopBgm);
         selectedCategory = AchievementCategory.PartyGrowth;
         panelRoot.SetActive(true);
 
@@ -180,6 +186,7 @@ public sealed class AchievementPanelPresenter : MonoBehaviour
     {
         if (AchievementManager.Instance.TryClaimAll(selectedCategory, out List<AchievementClaimReward> rewards) > 0)
         {
+            PlayRewardClaimSfx();
             rewardToast?.Show(rewards);
             Refresh();
         }
@@ -189,6 +196,33 @@ public sealed class AchievementPanelPresenter : MonoBehaviour
     public void ShowRewardToast(AchievementClaimReward reward)
     {
         rewardToast?.Show(new[] { reward });
+    }
+
+    // 개별 업적 보상 수령 성공 시 행 UI가 호출함
+    public void PlayRewardClaimSfx()
+    {
+        if (rewardClaimSfx != null && SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.PlaySfx(rewardClaimSfx);
+        }
+    }
+
+    // 상점 계열 패널과 동일한 BGM을 재생함
+    private static void PlayBgm(AudioClip clip)
+    {
+        if (clip != null && SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.PlayBgm(clip);
+        }
+    }
+
+    // 업적 패널을 떠날 때 현재 패널 BGM을 정지함
+    private static void StopPanelBgm()
+    {
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.StopBgm();
+        }
     }
 
     // 수령 가능한 업적이 있을 때만 일괄 수령 버튼을 활성화함

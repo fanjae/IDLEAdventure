@@ -75,6 +75,7 @@ public sealed class AchievementRowView : MonoBehaviour
     {
         if (AchievementManager.Instance.TryClaim(definition, out CurrencyType rewardCurrency, out int rewardAmount))
         {
+            owner.PlayRewardClaimSfx();
             owner.ShowRewardToast(new AchievementClaimReward(definition, rewardCurrency, rewardAmount));
             owner.Refresh();
         }
