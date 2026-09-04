@@ -2003,6 +2003,10 @@ PrefabInstance:
       propertyPath: enemyInteractionButton
       value: 
       objectReference: {fileID: 5664600285535006810}
+    - target: {fileID: 4029598199878203079, guid: e2ebdb281e9f06e4dbf3d5dbb686d753, type: 3}
+      propertyPath: gatherInteractionButton
+      value: 
+      objectReference: {fileID: 4753074995863408969}
     - target: {fileID: 6174949153999150364, guid: e2ebdb281e9f06e4dbf3d5dbb686d753, type: 3}
       propertyPath: m_LocalPosition.x
       value: 161.88837
@@ -3348,6 +3352,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnClickEnemyBattleButton
       objectReference: {fileID: 0}
+    - target: {fileID: 3196208024802167627, guid: c60577ca7766f0645a36a08160b877d8, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2468918046056045631}
+    - target: {fileID: 3196208024802167627, guid: c60577ca7766f0645a36a08160b877d8, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnClickGatherButton
+      objectReference: {fileID: 0}
     - target: {fileID: 3423029089191004011, guid: c60577ca7766f0645a36a08160b877d8, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3448,6 +3460,11 @@ PrefabInstance:
 --- !u!1 &2813818597651264139 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7078635740632516836, guid: c60577ca7766f0645a36a08160b877d8, type: 3}
+  m_PrefabInstance: {fileID: 4985744996376066671}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4753074995863408969 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 344169327405558566, guid: c60577ca7766f0645a36a08160b877d8, type: 3}
   m_PrefabInstance: {fileID: 4985744996376066671}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &5664600285535006810 stripped
