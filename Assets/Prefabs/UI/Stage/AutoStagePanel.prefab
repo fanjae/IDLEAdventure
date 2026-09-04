@@ -954,6 +954,7 @@ GameObject:
   - component: {fileID: 8715308786827204312}
   - component: {fileID: 8788363772558401845}
   - component: {fileID: 4667051470739429055}
+  - component: {fileID: 5510369908064263438}
   m_Layer: 5
   m_Name: BackButton
   m_TagString: Untagged
@@ -1062,6 +1063,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5510369908064263438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4352211447994813251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: c9848039b34a1e44d8bb695b684865e9, type: 3}
 --- !u!1 &4671044275338386323
 GameObject:
   m_ObjectHideFlags: 0
@@ -1075,6 +1089,7 @@ GameObject:
   - component: {fileID: 1813676567088795869}
   - component: {fileID: 6502917674678335306}
   - component: {fileID: 7714256237560794709}
+  - component: {fileID: 2252507056373404551}
   m_Layer: 5
   m_Name: ChallengeButton
   m_TagString: Untagged
@@ -1209,6 +1224,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageChallengeController
   battleSceneName: SecondBuildBattleScene
+--- !u!114 &2252507056373404551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4671044275338386323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: 33d97fafe3fef6945b462a2a59fdf9a1, type: 3}
 --- !u!1 &4850957127606776885
 GameObject:
   m_ObjectHideFlags: 0
@@ -1983,6 +2011,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3424472796766480315, guid: c26e8d61da1af81479aa7898e74832fe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4450117339498026513, guid: c26e8d61da1af81479aa7898e74832fe, type: 3}
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -259,6 +259,7 @@ GameObject:
   - component: {fileID: 6055886597846607872}
   - component: {fileID: 7173446252403702485}
   - component: {fileID: 4601062100809881721}
+  - component: {fileID: 3358624953211825685}
   m_Layer: 5
   m_Name: CancelButton
   m_TagString: Untagged
@@ -367,6 +368,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3358624953211825685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4173532525228448819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: 7a6b5899fb4b8f647a9affd079dea130, type: 3}
 --- !u!1 &8269144579481978881
 GameObject:
   m_ObjectHideFlags: 0
@@ -379,6 +393,7 @@ GameObject:
   - component: {fileID: 7405660398475441868}
   - component: {fileID: 4764032841035604836}
   - component: {fileID: 557202046151487058}
+  - component: {fileID: 4698818039438409927}
   m_Layer: 5
   m_Name: ExitButton
   m_TagString: Untagged
@@ -487,3 +502,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4698818039438409927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8269144579481978881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: d57ee29e6badda04692cb3a6c70a7491, type: 3}

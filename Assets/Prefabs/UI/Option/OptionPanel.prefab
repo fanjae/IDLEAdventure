@@ -178,6 +178,7 @@ GameObject:
   - component: {fileID: 3573976139661598579}
   - component: {fileID: 1313199088469181342}
   - component: {fileID: 8517957548754989534}
+  - component: {fileID: 301031886289271366}
   m_Layer: 5
   m_Name: OptionSaveButton
   m_TagString: Untagged
@@ -286,6 +287,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &301031886289271366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052686081855030256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: d57ee29e6badda04692cb3a6c70a7491, type: 3}
 --- !u!1 &2453855850819981193
 GameObject:
   m_ObjectHideFlags: 0
@@ -375,6 +389,7 @@ GameObject:
   - component: {fileID: 4984552112644532254}
   - component: {fileID: 7635020487250934038}
   - component: {fileID: 674437307698457951}
+  - component: {fileID: 3688835736735420004}
   m_Layer: 5
   m_Name: OptionPanel
   m_TagString: Untagged
@@ -492,6 +507,50 @@ MonoBehaviour:
   closeOffset: {x: 0, y: 150}
   openDuration: 0.2
   closeDuration: 0.2
+--- !u!114 &3688835736735420004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2997169270881610308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 4984552112644532254}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3262792632345720999
 GameObject:
   m_ObjectHideFlags: 0
@@ -690,6 +749,7 @@ GameObject:
   - component: {fileID: 5759779746957157505}
   - component: {fileID: 6921655506267012849}
   - component: {fileID: 2013848557561310058}
+  - component: {fileID: 504095250494793367}
   m_Layer: 5
   m_Name: OptionCancelButton
   m_TagString: Untagged
@@ -798,6 +858,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &504095250494793367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5706977304616155355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: 7a6b5899fb4b8f647a9affd079dea130, type: 3}
 --- !u!1 &7321180163077356839
 GameObject:
   m_ObjectHideFlags: 0

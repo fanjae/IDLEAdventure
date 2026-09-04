@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2019400807910762145}
   - component: {fileID: 2772807989836048779}
   - component: {fileID: 3382431181252864300}
+  - component: {fileID: 3794778247241182078}
   m_Layer: 0
   m_Name: BackButton
   m_TagString: Untagged
@@ -133,6 +134,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3794778247241182078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 209622769062151055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: c9848039b34a1e44d8bb695b684865e9, type: 3}
 --- !u!1 &226204541660099743
 GameObject:
   m_ObjectHideFlags: 0
@@ -145,6 +159,7 @@ GameObject:
   - component: {fileID: 3640344692723584758}
   - component: {fileID: 3213347117689516944}
   - component: {fileID: 3145275239091198870}
+  - component: {fileID: 8231629850983967665}
   m_Layer: 0
   m_Name: CancelButton
   m_TagString: Untagged
@@ -265,6 +280,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &8231629850983967665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 226204541660099743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: c9848039b34a1e44d8bb695b684865e9, type: 3}
 --- !u!1 &366175483172772027
 GameObject:
   m_ObjectHideFlags: 0
@@ -863,6 +891,7 @@ GameObject:
   - component: {fileID: 2740162315220312943}
   - component: {fileID: 763002921020366799}
   - component: {fileID: 2882547643901757115}
+  - component: {fileID: 5985253131315926005}
   m_Layer: 0
   m_Name: ConfirmButton
   m_TagString: Untagged
@@ -983,6 +1012,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &5985253131315926005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1043124902585547518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: d57ee29e6badda04692cb3a6c70a7491, type: 3}
 --- !u!1 &1467671667758153189
 GameObject:
   m_ObjectHideFlags: 0
@@ -1725,6 +1767,7 @@ GameObject:
   - component: {fileID: 472592613468842444}
   - component: {fileID: 4908418785797159052}
   - component: {fileID: 5320860933457029356}
+  - component: {fileID: 6403494268969977811}
   m_Layer: 0
   m_Name: BattleButton
   m_TagString: Untagged
@@ -1845,6 +1888,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &6403494268969977811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5985876554104798211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: 33d97fafe3fef6945b462a2a59fdf9a1, type: 3}
 --- !u!1 &6411208936234937412
 GameObject:
   m_ObjectHideFlags: 0
@@ -1915,6 +1971,7 @@ GameObject:
   - component: {fileID: 6045290151828358307}
   - component: {fileID: 7354217806812352866}
   - component: {fileID: 9007860081881062043}
+  - component: {fileID: 2997763738914833766}
   m_Layer: 0
   m_Name: AutoBattleButton
   m_TagString: Untagged
@@ -2023,6 +2080,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2997763738914833766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6685422008947676527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: 33d97fafe3fef6945b462a2a59fdf9a1, type: 3}
 --- !u!1 &6987797718946369337
 GameObject:
   m_ObjectHideFlags: 0
