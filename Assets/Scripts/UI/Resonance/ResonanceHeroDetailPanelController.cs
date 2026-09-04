@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,6 +27,10 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
 
     [SerializeField] private Button backButton;
     [SerializeField] private Button levelButton;
+
+    [Header("Hero Level Up")]
+    [SerializeField] private TMP_Text levelUpCostText;
+    [SerializeField] private HeroLevelUpCostDatabaseSO levelUpCostDatabase;
 
     [SerializeField] private Image classIcon;
     [SerializeField] private HeroClassIconCatalog classIconCatalog;
@@ -62,6 +67,11 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
             levelButton.onClick.AddListener(HandleLevelButtonClicked);
         }
 
+        if (CurrencyManager.Instance != null)
+        {
+            CurrencyManager.Instance.OnCurrencyChanged += HandleCurrencyChanged;
+        }
+
         if (HeroManager.Instance != null && HeroManager.Instance.IsInitialized)
         {
             HeroManager.Instance.Controller.OnHeroStatChanged += HandleHeroStatChanged;
@@ -85,6 +95,11 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
         if (levelButton != null)
         {
             levelButton.onClick.RemoveListener(HandleLevelButtonClicked);
+        }
+
+        if (CurrencyManager.Instance != null)
+        {
+            CurrencyManager.Instance.OnCurrencyChanged -= HandleCurrencyChanged;
         }
 
         if (HeroManager.Instance != null && HeroManager.Instance.IsInitialized)
@@ -178,6 +193,7 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
 
         RefreshHeroStat(hero);
         RefreshLevelUpStat(hero);
+        RefreshLevelUpCost(hero);
     }
 
     // 현재 레벨의 영웅 스탯과 장비 증가량 표시
@@ -249,9 +265,29 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
         RefreshHeroInfo(hero);
     }
 
+    // 재화 변동 시 비용 부족 상태와 레벨업 버튼 상태 갱신
+    private void HandleCurrencyChanged(CurrencyType _, int __)
+    {
+        if (string.IsNullOrEmpty(selectedHeroId) || HeroManager.Instance == null ||
+            !HeroManager.Instance.IsInitialized)
+        {
+            return;
+        }
+
+        if (HeroManager.Instance.Controller.TryGetHero(selectedHeroId, out OwnedHeroData hero))
+        {
+            RefreshLevelUpCost(hero);
+        }
+    }
+
     // 선택된 영웅 레벨 증가
     private void HandleLevelButtonClicked()
     {
+        if (levelButton != null && !levelButton.interactable)
+        {
+            return;
+        }
+
         if (string.IsNullOrEmpty(selectedHeroId))
         {
             return;
@@ -267,11 +303,34 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
             return;
         }
 
+        if (levelUpCostDatabase == null ||
+            !levelUpCostDatabase.TryGetCost(hero.Level, out HeroLevelUpCostData cost))
+        {
+            return;
+        }
+
+        CurrencyManager currencyManager = CurrencyManager.Instance;
+
+        if (currencyManager.GetCurrency(CurrencyType.GOLD) < cost.GoldCost ||
+            currencyManager.GetCurrency(CurrencyType.EXP) < cost.ExpCost ||
+            currencyManager.GetCurrency(CurrencyType.UPGRADE) < cost.UpgradeCost)
+        {
+            return;
+        }
+
         int nextLevel = hero.Level + 1;
 
         if (!HeroManager.Instance.Controller.TrySetHeroLevel(selectedHeroId, nextLevel))
         {
             return;
+        }
+
+        currencyManager.UseCurrency(CurrencyType.GOLD, cost.GoldCost);
+        currencyManager.UseCurrency(CurrencyType.EXP, cost.ExpCost);
+
+        if (cost.UpgradeCost > 0)
+        {
+            currencyManager.UseCurrency(CurrencyType.UPGRADE, cost.UpgradeCost);
         }
 
         RefreshHeroInfo(hero);
@@ -391,6 +450,69 @@ public sealed class ResonanceHeroDetailPanelController : MonoBehaviour
         {
             selectedSkillSlot.SetSelected(false);
             selectedSkillSlot = null;
+        }
+    }
+
+    // 현재 레벨에서 다음 레벨로 증가할 때 필요한 재화 표시
+    private void RefreshLevelUpCost(OwnedHeroData hero)
+    {
+        if (levelButton != null)
+        {
+            levelButton.interactable = false;
+        }
+
+        if (levelUpCostText == null || levelUpCostDatabase == null || hero == null)
+        {
+            return;
+        }
+
+        if (hero.Level >= levelUpCostDatabase.MaxLevel)
+        {
+            levelUpCostText.text = "최대 레벨에 도달하였습니다.";
+            return;
+        }
+
+        if (!levelUpCostDatabase.TryGetCost(hero.Level, out HeroLevelUpCostData cost))
+        {
+            levelUpCostText.text = "레벨업 비용 정보를 찾을 수 없습니다.";
+            return;
+        }
+
+        string upgradeCost = cost.UpgradeCost > 0
+            ? $"  Upgrade : {cost.UpgradeCost:N0}"
+            : string.Empty;
+
+        string costText = $"Coin : {cost.GoldCost:N0}  EXP : {cost.ExpCost:N0}{upgradeCost}";
+        List<string> insufficientCurrencies = new List<string>();
+        CurrencyManager currencyManager = CurrencyManager.Instance;
+
+        if (currencyManager == null || currencyManager.GetCurrency(CurrencyType.GOLD) < cost.GoldCost)
+        {
+            insufficientCurrencies.Add("Coin이 부족합니다.");
+        }
+
+        if (currencyManager == null || currencyManager.GetCurrency(CurrencyType.EXP) < cost.ExpCost)
+        {
+            insufficientCurrencies.Add("EXP가 부족합니다.");
+        }
+
+        if (cost.UpgradeCost > 0 &&
+            (currencyManager == null || currencyManager.GetCurrency(CurrencyType.UPGRADE) < cost.UpgradeCost))
+        {
+            insufficientCurrencies.Add("Upgrade가 부족합니다.");
+        }
+
+        if (insufficientCurrencies.Count > 0)
+        {
+            levelUpCostText.text = $"{costText}\n{string.Join(" / ", insufficientCurrencies)}";
+            return;
+        }
+
+        levelUpCostText.text = costText;
+
+        if (levelButton != null)
+        {
+            levelButton.interactable = true;
         }
     }
 }
