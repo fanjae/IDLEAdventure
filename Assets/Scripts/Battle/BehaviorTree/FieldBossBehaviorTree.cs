@@ -21,10 +21,6 @@ public class FieldBossBehaviorTree : MonoBehaviour
     [Header("광폭화 안전 종료")]
     [SerializeField, Min(0.5f)] private float rageSafetyDuration = 3.0f;
 
-    [Header("광폭화 SFX")]
-    [SerializeField] private AudioClip rageSfx;
-    [SerializeField, Range(0.0f, 1.0f)] private float rageSfxVolume = 0.6f;
-
     private BattleUnit unit;
     private FieldBossAnimator bossAnimator;
 
@@ -216,7 +212,6 @@ public class FieldBossBehaviorTree : MonoBehaviour
         if (rageBuffApplied) return;
 
         rageBuffApplied = true;
-        BattleSoundController.Instance?.PlayCombatSfx(rageSfx, rageSfxVolume);
         unit.SetAttackModifier(rageAttackBuff);
         if (rageVfxPrefab != null)
         {

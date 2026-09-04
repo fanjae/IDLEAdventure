@@ -149,8 +149,6 @@ public class UnitAttack : MonoBehaviour
             return;
         }
         int appliedDamage = target.TakeDamage(finalDamage, unit);
-        if (appliedDamage > 0) BattleSoundController.Instance?.PlayBasicHit();
-
         Debug.Log($"{unit.name} -> {target.name} / 피해량 : {appliedDamage}");
     }
     //공격 종료 시 공격 상태 및 대상 정보 정리
