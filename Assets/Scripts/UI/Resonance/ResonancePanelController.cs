@@ -289,7 +289,7 @@ public sealed class ResonancePanelController : MonoBehaviour
     {
         bool hasSelection = !string.IsNullOrEmpty(selectedHeroId) && heroController != null && heroController.TryGetHero(selectedHeroId, out _);
         bool isPlaced = hasSelection && resonanceController != null && resonanceController.ContainsResonanceSlotHero(selectedHeroId);
-        bool canPlace = hasSelection && !isPlaced && resonanceController != null && resonanceController.ResonanceSlotHeroIds.Count < 3;
+        bool canPlace = hasSelection && !isPlaced && resonanceController != null && resonanceController.CanAddResonanceSlot;
 
         if (placeButtonText != null)
         {
@@ -315,7 +315,7 @@ public sealed class ResonancePanelController : MonoBehaviour
             return;
         }
 
-        // 공명 슬롯 4명이 모두 등록되지 않은 경우 미적용 상태로 표시
+        // 공명 슬롯이 모두 등록되지 않은 경우 미적용 상태로 표시
         if (resonanceController == null || !resonanceController.TryGetResonanceLevel(out int resonanceLevel))
         {
             resonanceLevelText.text = "공명 레벨 : 미적용";

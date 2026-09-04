@@ -63,7 +63,7 @@ public sealed class ClassEquipmentService
         }
 
         // 보유 장비와 연결된 원본 EquipmentSO 확인
-        if (!itemDatabase.TryGetItem<EquipmentSO>(ownedEquipment.EquipmentId, out EquipmentSO equipment))
+        if (!TryGetEquipmentData(ownedEquipment, out EquipmentSO equipment))
         {
             failureReason = EquipmentEquipFailureReason.EquipmentDataNotFound;
             return false;
@@ -136,7 +136,7 @@ public sealed class ClassEquipmentService
             return false;
         }
 
-        return itemDatabase.TryGetItem<EquipmentSO>(ownedEquipment.EquipmentId, out equipment);
+        return TryGetEquipmentData(ownedEquipment, out equipment);
     }
 
     // 지정한 클래스와 슬롯에 장착된 InstanceId 조회
@@ -210,6 +210,7 @@ public sealed class ClassEquipmentService
     private void InitializeEquipmentSets()
     {
         equipmentSets.Clear();
+
         foreach (HeroClassType heroClass in Enum.GetValues(typeof(HeroClassType)))
         {
             equipmentSets.Add(heroClass, new ClassEquipmentSet());
@@ -220,6 +221,90 @@ public sealed class ClassEquipmentService
     private bool TryGetEquipmentSet(HeroClassType heroClass, out ClassEquipmentSet equipmentSet)
     {
         return equipmentSets.TryGetValue(heroClass, out equipmentSet);
+    }
+
+    // 보유 장비와 연결된 원본 EquipmentSO 조회
+    private bool TryGetEquipmentData(OwnedEquipmentData ownedEquipment, out EquipmentSO equipment)
+    {
+        equipment = null;
+
+        if (ownedEquipment == null)
+        {
+            return false;
+        }
+
+        return itemDatabase.TryGetItem<EquipmentSO>(ownedEquipment.EquipmentId, out equipment);
+    }
+
+    // 지정한 클래스에서 자동 장착 후보로 사용할 수 있는 장비인지 확인
+    private bool IsEquippableCandidate(HeroClassType heroClass, OwnedEquipmentData ownedEquipment, out EquipmentSO equipment)
+    {
+        equipment = null;
+
+        if (ownedEquipment == null || IsEquipped(ownedEquipment.InstanceId))
+        {
+            return false;
+        }
+
+        if (!TryGetEquipmentData(ownedEquipment, out equipment))
+        {
+            return false;
+        }
+
+        return equipment.TargetClass == heroClass;
+    }
+
+    // 후보 장비가 현재 장착 장비보다 좋은 장비인지 확인
+    private bool IsBetterEquipment(EquipmentSO candidateEquipment, EquipmentSO equippedEquipment)
+    {
+        if (candidateEquipment == null)
+        {
+            return false;
+        }
+
+        // 현재 슬롯이 비어 있으면 후보 장비를 바로 장착 가능
+        if (equippedEquipment == null)
+        {
+            return true;
+        }
+
+        return candidateEquipment.CraftLevel > equippedEquipment.CraftLevel;
+    }
+
+    // 지정한 클래스에서 슬롯별 가장 높은 제작 레벨의 미장착 장비 조회
+    private Dictionary<EquipmentSlotType, OwnedEquipmentData> FindBestEquipmentBySlot(HeroClassType heroClass)
+    {
+        Dictionary<EquipmentSlotType, OwnedEquipmentData> bestEquipmentBySlot = new();
+
+        foreach (OwnedEquipmentData ownedEquipment in inventory.Equipments)
+        {
+            if (!IsEquippableCandidate(heroClass, ownedEquipment, out EquipmentSO candidateEquipment))
+            {
+                continue;
+            }
+
+            // 해당 슬롯에서 아직 후보 장비가 없으면 현재 장비를 기준으로 등록
+            if (!bestEquipmentBySlot.TryGetValue(candidateEquipment.SlotType, out OwnedEquipmentData currentBest))
+            {
+                bestEquipmentBySlot.Add(candidateEquipment.SlotType, ownedEquipment);
+                continue;
+            }
+
+            // 기존 후보의 원본 장비 데이터 조회
+            if (!TryGetEquipmentData(currentBest, out EquipmentSO currentBestEquipment))
+            {
+                bestEquipmentBySlot[candidateEquipment.SlotType] = ownedEquipment;
+                continue;
+            }
+
+            // 기존 후보보다 좋은 장비인 경우 슬롯별 최적 장비 교체
+            if (IsBetterEquipment(candidateEquipment, currentBestEquipment))
+            {
+                bestEquipmentBySlot[candidateEquipment.SlotType] = ownedEquipment;
+            }
+        }
+
+        return bestEquipmentBySlot;
     }
 
     // 현재 클래스별 장비 장착 상태를 저장 데이터로 생성
@@ -254,7 +339,6 @@ public sealed class ClassEquipmentService
     // 저장 데이터를 기준으로 클래스별 장비 장착 상태 복원
     public void LoadSaveData(EquipmentSaveData saveData)
     {
-
         if (saveData == null)
         {
             throw new ArgumentNullException(nameof(saveData));
@@ -297,7 +381,7 @@ public sealed class ClassEquipmentService
         }
 
         // 보유 장비와 연결된 원본 EquipmentSO 확인
-        if (!itemDatabase.TryGetItem<EquipmentSO>(ownedEquipment.EquipmentId, out EquipmentSO equipment))
+        if (!TryGetEquipmentData(ownedEquipment, out EquipmentSO equipment))
         {
             return false;
         }
@@ -334,32 +418,14 @@ public sealed class ClassEquipmentService
     {
         foreach (OwnedEquipmentData ownedEquipment in inventory.Equipments)
         {
-            // 이미 장착 중인 장비는 제외
-            if (IsEquipped(ownedEquipment.InstanceId))
+            if (!IsEquippableCandidate(heroClass, ownedEquipment, out EquipmentSO candidateEquipment))
             {
                 continue;
             }
 
-            // 보유 장비와 연결된 원본 EquipmentSO 확인
-            if (!itemDatabase.TryGetItem<EquipmentSO>(ownedEquipment.EquipmentId, out EquipmentSO equipment))
-            {
-                continue;
-            }
+            TryGetEquippedEquipment(heroClass, candidateEquipment.SlotType, out EquipmentSO equippedEquipment);
 
-            // 현재 클래스에서 사용할 수 없는 장비는 제외
-            if (equipment.TargetClass != heroClass)
-            {
-                continue;
-            }
-
-            // 현재 부위에 장착된 장비가 없으면 바로 장착 대상
-            if (!TryGetEquippedEquipment(heroClass, equipment.SlotType, out EquipmentSO equippedEquipment))
-            {
-                return true;
-            }
-
-            // 같은 부위의 현재 장비보다 기준 제작 레벨이 높은 경우 교체 대상
-            if (equipment.CraftLevel > equippedEquipment.CraftLevel)
+            if (IsBetterEquipment(candidateEquipment, equippedEquipment))
             {
                 return true;
             }
@@ -373,25 +439,10 @@ public sealed class ClassEquipmentService
     {
         foreach (OwnedEquipmentData ownedEquipment in inventory.Equipments)
         {
-            // 이미 장착 중인 장비는 제외
-            if (IsEquipped(ownedEquipment.InstanceId))
+            if (IsEquippableCandidate(heroClass, ownedEquipment, out _))
             {
-                continue;
+                return true;
             }
-
-            // 보유 장비와 연결된 원본 EquipmentSO 확인
-            if (!itemDatabase.TryGetItem<EquipmentSO>(ownedEquipment.EquipmentId, out EquipmentSO equipment))
-            {
-                continue;
-            }
-
-            // 현재 클래스에서 사용할 수 없는 장비는 제외
-            if (equipment.TargetClass != heroClass)
-            {
-                continue;
-            }
-
-            return true;
         }
 
         return false;
@@ -400,61 +451,20 @@ public sealed class ClassEquipmentService
     // 지정한 클래스에 부위별 기준 제작 레벨이 가장 높은 장비 일괄 장착
     public bool TryAutoEquipBetterEquipment(HeroClassType heroClass)
     {
-        Dictionary<EquipmentSlotType, OwnedEquipmentData> bestEquipmentBySlot = new();
-
-        foreach (OwnedEquipmentData ownedEquipment in inventory.Equipments)
-        {
-            // 이미 장착 중인 장비는 후보에서 제외
-            if (IsEquipped(ownedEquipment.InstanceId))
-            {
-                continue;
-            }
-
-            // 보유 장비와 연결된 원본 EquipmentSO 확인
-            if (!itemDatabase.TryGetItem<EquipmentSO>(ownedEquipment.EquipmentId, out EquipmentSO equipment))
-            {
-                continue;
-            }
-
-            // 현재 클래스에서 사용할 수 없는 장비는 제외
-            if (equipment.TargetClass != heroClass)
-            {
-                continue;
-            }
-
-            // 해당 부위의 첫 장비는 비교 기준으로 등록
-            if (!bestEquipmentBySlot.TryGetValue(equipment.SlotType, out OwnedEquipmentData bestOwnedEquipment))
-            {
-                bestEquipmentBySlot.Add(equipment.SlotType, ownedEquipment);
-                continue;
-            }
-
-            // 현재까지 선택된 장비 원본 데이터 확인
-            if (!itemDatabase.TryGetItem<EquipmentSO>(bestOwnedEquipment.EquipmentId, out EquipmentSO bestEquipment))
-            {
-                bestEquipmentBySlot[equipment.SlotType] = ownedEquipment;
-                continue;
-            }
-
-            // 같은 부위에서는 기준 제작 레벨이 더 높은 장비 선택
-            if (equipment.CraftLevel > bestEquipment.CraftLevel)
-            {
-                bestEquipmentBySlot[equipment.SlotType] = ownedEquipment;
-            }
-        }
-
+        Dictionary<EquipmentSlotType, OwnedEquipmentData> bestEquipmentBySlot = FindBestEquipmentBySlot(heroClass);
         bool equippedAny = false;
 
         foreach (KeyValuePair<EquipmentSlotType, OwnedEquipmentData> pair in bestEquipmentBySlot)
         {
-            if (!itemDatabase.TryGetItem<EquipmentSO>(pair.Value.EquipmentId, out EquipmentSO candidateEquipment))
+            if (!TryGetEquipmentData(pair.Value, out EquipmentSO candidateEquipment))
             {
                 continue;
             }
 
-            // 현재 부위에 장비가 있으면 기준 제작 레벨 비교
-            if (TryGetEquippedEquipment(heroClass, pair.Key, out EquipmentSO equippedEquipment) &&
-                candidateEquipment.CraftLevel <= equippedEquipment.CraftLevel)
+            TryGetEquippedEquipment(heroClass, pair.Key, out EquipmentSO equippedEquipment);
+
+            // 현재 장착 장비보다 좋은 경우에만 교체
+            if (!IsBetterEquipment(candidateEquipment, equippedEquipment))
             {
                 continue;
             }

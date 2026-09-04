@@ -13,12 +13,28 @@ public class UnitSkill : MonoBehaviour
     [Header("시전자 VFX 위치")]
     [SerializeField] private Transform skillVfxPoint;
 
+    [Header("스킬 SFX")]
+    [SerializeField] private AudioClip projectileSfx;
+    [SerializeField, Range(0.0f, 1.0f)] private float projectileSfxVolume = 0.5f;
+    [SerializeField] private AudioClip areaDamageSfx;
+    [SerializeField, Range(0.0f, 1.0f)] private float areaDamageSfxVolume = 0.5f;
+    [SerializeField] private AudioClip barrierSfx;
+    [SerializeField, Range(0.0f, 1.0f)] private float barrierSfxVolume = 0.5f;
+    [SerializeField] private AudioClip healSfx;
+    [SerializeField, Range(0.0f, 1.0f)] private float healSfxVolume = 0.5f;
+    [SerializeField] private AudioClip bossBuffSfx;
+    [SerializeField, Range(0.0f, 1.0f)] private float bossBuffSfxVolume = 0.5f;
+    [SerializeField] private AudioClip laserSfx;
+    [SerializeField, Range(0.0f, 1.0f)] private float laserSfxVolume = 0.5f;
+
     #region 런타임
     private BattleUnit unit;
     private BattleUnit skillTarget; //스킬 시작 당시의 대상을 보관하는 용
 
     private SkillDataSO selectedSkillData; //BT가 사용하라고 지정한 데이터
     private SkillDataSO activeSkillData;   //지금 실제 애니메이션과 함께 실행 중인 데이터
+
+    private AudioSource laserAudioSource;
     
     private bool isBattleEventSubscribed;
     private bool useExternalSkillAnimation;
@@ -70,6 +86,13 @@ public class UnitSkill : MonoBehaviour
 
 
     #region 유니티 라이프사이클
+    private void Awake()
+    {
+        laserAudioSource = gameObject.AddComponent<AudioSource>();
+        laserAudioSource.playOnAwake = false;
+        laserAudioSource.loop = false;
+        laserAudioSource.spatialBlend = 0.0f;
+    }
     public void Initialize(BattleUnit unit)
     {
         this.unit = unit;
@@ -96,6 +119,8 @@ public class UnitSkill : MonoBehaviour
     }
     private void OnDisable()
     {
+        StopLaserSfx();
+
         UnsubscribeBattleEvent();
 
         selectedSkillData = null;
@@ -246,6 +271,7 @@ public class UnitSkill : MonoBehaviour
     //SkillEnd 애니메이션 이벤트에서 호출
     public void CompleteSkill()
     {
+        StopLaserSfx();
         if (!isUsingSkill) return;
 
         isUsingSkill = false;
@@ -260,6 +286,8 @@ public class UnitSkill : MonoBehaviour
     //상태 변경 또는 사망 등으로 진행 중인 스킬 취소
     public void CancelSkill()
     {
+        StopLaserSfx();
+
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
 
@@ -272,6 +300,8 @@ public class UnitSkill : MonoBehaviour
     //전투 재시작 또는 오브젝트 재사용 시 스킬 상태 초기화
     public void ResetSkill()
     {
+        StopLaserSfx();
+
         isUsingSkill = false;
         hasAppliedSkillEffect = false;
 
@@ -310,25 +340,34 @@ public class UnitSkill : MonoBehaviour
             case SkillEffectType.Heal:
                 if (!IsValidTarget(skillTarget, data)) return;
                 hasAppliedSkillEffect = true;
+                PlaySkillSfx(healSfx, healSfxVolume);
                 ApplyHeal(skillTarget, data);
                 break;
             case SkillEffectType.Barrier:
                 hasAppliedSkillEffect = true;
+                PlaySkillSfx(barrierSfx, barrierSfxVolume);
                 ApplyBarrier(data);
                 break;
             case SkillEffectType.ProjectileDamage:
                 if (!IsValidTarget(skillTarget, data)) return;
                 hasAppliedSkillEffect = true;
+                PlaySkillSfx(projectileSfx, projectileSfxVolume);
                 unit.FaceTarget();
                 FireProjectile(skillTarget, data);
                 break;
             case SkillEffectType.Buff:
                 hasAppliedSkillEffect = true;
+                //일반 보스(오크)가 사용하는 공증 스킬(포효)
+                if (GetComponent<BossBehaviorTree>() != null)
+                {
+                    PlaySkillSfx(bossBuffSfx, bossBuffSfxVolume);
+                }
                 ApplyBuff(data);
                 break;
             case SkillEffectType.AreaDamage:
                 if (!IsValidTarget(skillTarget, data)) return;
                 hasAppliedSkillEffect = true;
+                PlaySkillSfx(areaDamageSfx, areaDamageSfxVolume);
                 unit.FaceTarget();
                 ApplyAreaDamage(skillTarget, data);
                 break;
@@ -336,6 +375,7 @@ public class UnitSkill : MonoBehaviour
             case SkillEffectType.Whirlwind:
                 if (!IsValidTarget(skillTarget, data)) return;
                 hasAppliedSkillEffect = true;
+                //휠윈드는 추가 안 함
                 unit.FaceTarget();
                 StartWhirlwind(data);
                 break;
@@ -344,6 +384,7 @@ public class UnitSkill : MonoBehaviour
                 hasAppliedSkillEffect = true;
                 unit.FaceTarget();
                 StartLaser(data);
+                StartLaserSfx();
                 break;
         }
     }
@@ -829,6 +870,7 @@ public class UnitSkill : MonoBehaviour
         if (BattleManager.Instance == null) return;
 
         BattleManager.Instance.OnBattleStarted += HandleBattleStarted;
+        BattleManager.Instance.OnBattleEnded += HandleBattleEnded;
         isBattleEventSubscribed = true;
     }
     private void UnsubscribeBattleEvent()
@@ -836,8 +878,14 @@ public class UnitSkill : MonoBehaviour
         if (isBattleEventSubscribed && BattleManager.Instance != null)
         {
             BattleManager.Instance.OnBattleStarted -= HandleBattleStarted;
+            BattleManager.Instance.OnBattleEnded -= HandleBattleEnded;
         }
         isBattleEventSubscribed = false;
+    }
+    //전투 종료 시 남아 있는 레이저음 방지용
+    private void HandleBattleEnded(UnitTeam winner)
+    {
+        StopLaserSfx();
     }
     #endregion
 
@@ -851,5 +899,33 @@ public class UnitSkill : MonoBehaviour
             data.EffectType == SkillEffectType.AreaDamage ||
             data.EffectType == SkillEffectType.Whirlwind ||
             data.EffectType == SkillEffectType.Laser;
+    }
+
+    //사운드 함수들
+    private void PlaySkillSfx(AudioClip clip, float volume)
+    {
+        if (clip == null) return;
+        BattleSoundController.Instance?.PlayCombatSfx(clip, volume);
+    }
+    private void StartLaserSfx()
+    {
+        if (laserSfx == null || laserAudioSource == null) return;
+
+        float optionVolume = 1.0f;
+        if (SoundManager.Instance != null) optionVolume = SoundManager.Instance.SfxVolume;
+
+        laserAudioSource.Stop();
+        laserAudioSource.clip = laserSfx;
+        laserAudioSource.loop = true;
+        laserAudioSource.volume = laserSfxVolume * optionVolume;
+        laserAudioSource.Play();
+    }
+    private void StopLaserSfx()
+    {
+        if (laserAudioSource == null) return;
+
+        laserAudioSource.Stop();
+        laserAudioSource.clip = null;
+        laserAudioSource.loop = false;
     }
 }
