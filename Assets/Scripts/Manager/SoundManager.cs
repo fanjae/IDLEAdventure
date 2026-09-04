@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 // 게임 전체 BGM 및 SFX 재생과 음량 관리
@@ -11,6 +12,9 @@ public sealed class SoundManager : Singleton<SoundManager>
 
     public float BgmVolume => bgmVolume;
     public float SfxVolume => sfxVolume;
+
+    public event Action<float> OnBgmVolumeChanged;
+    public event Action<float> OnSfxVolumeChanged;
 
     // 저장된 옵션값을 사운드 설정에 반영
     public void Initialize(OptionSaveData optionData)
@@ -70,6 +74,8 @@ public sealed class SoundManager : Singleton<SoundManager>
         {
             bgmSource.volume = bgmVolume;
         }
+
+        OnBgmVolumeChanged?.Invoke(bgmVolume);
     }
 
     // SFX 음량 설정
@@ -81,6 +87,8 @@ public sealed class SoundManager : Singleton<SoundManager>
         {
             sfxSource.volume = sfxVolume;
         }
+
+        OnSfxVolumeChanged?.Invoke(sfxVolume);
     }
 
     protected override void Awake()
