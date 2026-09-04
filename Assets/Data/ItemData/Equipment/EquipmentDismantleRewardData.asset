@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d8f4d66ff68449782fd1299b30fdcee, type: 3}
+  m_Name: EquipmentDismantleRewardData
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentDismantleRewardDataSO
+  rewardTiers:
+  - craftLevel: 10
+    gold: 120
+    exp: 60
+    upgrade: 6
+    gemChance: 0.1
+    minGem: 1
+    maxGem: 2
+  - craftLevel: 20
+    gold: 300
+    exp: 150
+    upgrade: 15
+    gemChance: 0.15
+    minGem: 1
+    maxGem: 3
+  - craftLevel: 30
+    gold: 600
+    exp: 300
+    upgrade: 30
+    gemChance: 0.2
+    minGem: 2
+    maxGem: 4
+  - craftLevel: 40
+    gold: 1200
+    exp: 600
+    upgrade: 60
+    gemChance: 0.25
+    minGem: 3
+    maxGem: 5
