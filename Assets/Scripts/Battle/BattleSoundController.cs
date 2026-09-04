@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class BattleSoundController : MonoBehaviour
 {
+    public static BattleSoundController Instance { get; private set; }
+
     [Header("전투 BGM")]
     [SerializeField] private AudioClip normalBattleBgm;
     [SerializeField, Range(0.0f, 1.0f)] private float normalBattleVolume = 0.3f;
@@ -20,6 +22,10 @@ public class BattleSoundController : MonoBehaviour
     [SerializeField] private AudioClip defeatSfx;
     [SerializeField, Range(0.0f, 1.0f)] private float defeatVolume = 0.5f;
 
+    [Header("기본 공격 SFX")]
+    [SerializeField] private AudioClip basicHitSfx;
+    [SerializeField, Range(0.0f, 1.0f)] private float basicHitVolume = 0.2f;
+
     private AudioSource bgmSource;
     private AudioSource sfxSource;
 
@@ -28,14 +34,16 @@ public class BattleSoundController : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
+
         bgmSource = gameObject.AddComponent<AudioSource>();
-        bgmSource.playOnAwake = true;
+        bgmSource.playOnAwake = false;
         bgmSource.loop = true;
         bgmSource.spatialBlend = 0.0f;
 
         sfxSource = gameObject.AddComponent<AudioSource>();
-        sfxSource.playOnAwake = true;
-        sfxSource.loop = true;
+        sfxSource.playOnAwake = false;
+        sfxSource.loop = false;
         sfxSource.spatialBlend = 0.0f;
     }
 
@@ -64,6 +72,11 @@ public class BattleSoundController : MonoBehaviour
         if (SoundManager.TryGetExistingInstance(out SoundManager soundManager))
         {
             soundManager.OnBgmVolumeChanged -= HandleBgmVolumeChanged;
+        }
+        
+        if (Instance == this)
+        {
+            Instance = null;
         }
     }
 
@@ -145,13 +158,26 @@ public class BattleSoundController : MonoBehaviour
             PlaySfx(defeatSfx, defeatVolume);
         }
     }
+    
+    public void PlayBasicHit()
+    {
+        PlayCombatSfx(basicHitSfx, basicHitVolume);
+    }
+
+    public void PlayCombatSfx(AudioClip clip, float volume)
+    {
+        PlaySfx(clip, volume);
+    }
 
     private void PlaySfx(AudioClip clip, float volume)
     {
         if (clip == null) return;
 
         float optionVolume = 1.0f;
-        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager)) optionVolume = soundManager.SfxVolume;
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            optionVolume = soundManager.SfxVolume;
+        }
 
         sfxSource.PlayOneShot(clip, volume * optionVolume);
     }
