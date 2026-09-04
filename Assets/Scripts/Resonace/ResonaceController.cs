@@ -12,6 +12,9 @@ public sealed class ResonanceController
     // 현재 공명 슬롯 영웅 ID 목록 반환
     public IReadOnlyList<string> ResonanceSlotHeroIds => resonanceSlotHeroIds;
 
+    // 현재 공명 슬롯에 영웅을 추가할 수 있는 상태인지 반환
+    public bool CanAddResonanceSlot => resonanceSlotHeroIds.Count < MaxResonanceSlotCount;
+
     // 공명 슬롯 구성 변경 알림
     public event Action OnResonanceSlotChanged;
 
