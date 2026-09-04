@@ -459,6 +459,7 @@ GameObject:
   - component: {fileID: 7318866891304753503}
   - component: {fileID: 6732333237997862323}
   - component: {fileID: 8333142042319628035}
+  - component: {fileID: 2109456331099502086}
   m_Layer: 5
   m_Name: IdleRewardPanel
   m_TagString: Untagged
@@ -562,6 +563,19 @@ MonoBehaviour:
   classIconCatalog: {fileID: 11400000, guid: 944d5e8cf077b1446be53f9b80484cca, type: 2}
   itemdatabase: {fileID: 11400000, guid: 29592baeae843814abc08152e94398a3, type: 2}
   idleRewardData: {fileID: 6732333237997862323}
+--- !u!114 &2109456331099502086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1868627743081092122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5283448411dd0a4da8a55de17292dfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IdleRewardSoundListener
+  IdleRewardSFX: {fileID: 8300000, guid: 8b667264f39287e40ab5589407c8ac12, type: 3}
 --- !u!1 &1876446184256794595
 GameObject:
   m_ObjectHideFlags: 0
@@ -1745,6 +1759,18 @@ MonoBehaviour:
       - m_Target: {fileID: 8333142042319628035}
         m_TargetAssemblyTypeName: IdleRewardChest, Assembly-CSharp
         m_MethodName: OnClickChestButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2109456331099502086}
+        m_TargetAssemblyTypeName: IdleRewardSoundListener, Assembly-CSharp
+        m_MethodName: PlayIdleRewardSound
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
