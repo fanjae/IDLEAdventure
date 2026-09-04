@@ -718,6 +718,7 @@ GameObject:
   - component: {fileID: 4533624426179568833}
   - component: {fileID: 3085404580840489852}
   - component: {fileID: 59504963063951539}
+  - component: {fileID: 1967674914137013073}
   m_Layer: 5
   m_Name: Quest
   m_TagString: Untagged
@@ -799,6 +800,19 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &1967674914137013073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238099993338562681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcc802a33e2bd37418bad141ad4e6f61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestSoundListener
+  questClearSFX: {fileID: 8300000, guid: 212289f139193a34dabc233a5ddc134c, type: 3}
 --- !u!1 &1676595838763124775
 GameObject:
   m_ObjectHideFlags: 0
