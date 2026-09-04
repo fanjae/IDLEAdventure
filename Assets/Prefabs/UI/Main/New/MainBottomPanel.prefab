@@ -514,6 +514,7 @@ GameObject:
   - component: {fileID: 7402918934285210898}
   - component: {fileID: 1316976773111535346}
   - component: {fileID: 4817128677621243069}
+  - component: {fileID: 5362074308260486340}
   m_Layer: 5
   m_Name: HeroListButton
   m_TagString: Untagged
@@ -623,6 +624,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5362074308260486340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4731699681881735587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: ff430504dea6f8b47a69338c03be9c74, type: 3}
 --- !u!1 &4880651151043170372
 GameObject:
   m_ObjectHideFlags: 0
@@ -635,6 +649,7 @@ GameObject:
   - component: {fileID: 9141644371887489539}
   - component: {fileID: 8577063759118534838}
   - component: {fileID: 2664348153389180082}
+  - component: {fileID: 5808064424288266883}
   m_Layer: 5
   m_Name: AutoStagePanelButton
   m_TagString: Untagged
@@ -744,6 +759,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5808064424288266883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4880651151043170372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: ff430504dea6f8b47a69338c03be9c74, type: 3}
 --- !u!1 &5658432439991125970
 GameObject:
   m_ObjectHideFlags: 0
@@ -893,6 +921,7 @@ GameObject:
   - component: {fileID: 4989725765396972565}
   - component: {fileID: 7580239336007818600}
   - component: {fileID: 2235996145794289935}
+  - component: {fileID: 6614144799742030600}
   m_Layer: 5
   m_Name: GachaButton
   m_TagString: Untagged
@@ -1002,6 +1031,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6614144799742030600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6503685659425680456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: ff430504dea6f8b47a69338c03be9c74, type: 3}
 --- !u!1 &6908901970752386402
 GameObject:
   m_ObjectHideFlags: 0
@@ -1100,6 +1142,9 @@ MonoBehaviour:
   equipmentRoot: {fileID: 0}
   equipmentPanelController: {fileID: 0}
   gachaRoot: {fileID: 0}
+  gachaPanelTransition: {fileID: 0}
+  allPanelRoot: {fileID: 0}
+  allPanelController: {fileID: 0}
   autoStageButton: {fileID: 2664348153389180082}
   autoStagePanelController: {fileID: 0}
   heroMenu:
@@ -1122,6 +1167,7 @@ MonoBehaviour:
     image: {fileID: 3962087616041941439}
     normalSprite: {fileID: 21300000, guid: 451a2c8688ee5bb45a05605c2bc4d122, type: 3}
     selectedSprite: {fileID: 21300000, guid: bf3dd503aba9b4b4aa2018132dde172b, type: 3}
+  questPanel: {fileID: 0}
 --- !u!1 &7150848760919423589
 GameObject:
   m_ObjectHideFlags: 0
@@ -1484,6 +1530,7 @@ GameObject:
   - component: {fileID: 1712096214871331124}
   - component: {fileID: 5336982639305534945}
   - component: {fileID: 1366047334608365944}
+  - component: {fileID: 3468535486671507895}
   m_Layer: 5
   m_Name: EquipmentButton
   m_TagString: Untagged
@@ -1593,6 +1640,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3468535486671507895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8124006733348569561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: ff430504dea6f8b47a69338c03be9c74, type: 3}
 --- !u!1 &9179690470717450836
 GameObject:
   m_ObjectHideFlags: 0
@@ -1605,6 +1665,7 @@ GameObject:
   - component: {fileID: 8177732205493258527}
   - component: {fileID: 7720404726789174139}
   - component: {fileID: 6051262633339218799}
+  - component: {fileID: 5605802146661284259}
   m_Layer: 5
   m_Name: AllButton
   m_TagString: Untagged
@@ -1714,3 +1775,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5605802146661284259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9179690470717450836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: ff430504dea6f8b47a69338c03be9c74, type: 3}

@@ -826,6 +826,7 @@ GameObject:
   - component: {fileID: 1979750895504806475}
   - component: {fileID: 7601615727927504024}
   - component: {fileID: 7992272279955806167}
+  - component: {fileID: 2628429430706591438}
   m_Layer: 5
   m_Name: MainQuestButton
   m_TagString: Untagged
@@ -961,6 +962,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MainQuestButton
   questNameText: {fileID: 3067952639800507575}
   playerStateMachine: {fileID: 0}
+--- !u!114 &2628429430706591438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1676595838763124775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: 7a6b5899fb4b8f647a9affd079dea130, type: 3}
 --- !u!1 &1744549173253814324
 GameObject:
   m_ObjectHideFlags: 0
@@ -1259,6 +1273,7 @@ GameObject:
   - component: {fileID: 5676580993355574239}
   - component: {fileID: 4305888183103732006}
   - component: {fileID: 6404731144216599130}
+  - component: {fileID: 3610578407629820966}
   m_Layer: 5
   m_Name: CloseButton
   m_TagString: Untagged
@@ -1380,6 +1395,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3610578407629820966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2515012210739015968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5be14be68737fa4787b9d1f0cbd4c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
+  clickSfx: {fileID: 8300000, guid: c9848039b34a1e44d8bb695b684865e9, type: 3}
 --- !u!1 &2632111375053276780
 GameObject:
   m_ObjectHideFlags: 0
