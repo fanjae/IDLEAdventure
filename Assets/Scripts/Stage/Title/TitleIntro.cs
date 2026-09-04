@@ -135,7 +135,6 @@ public sealed class TitleIntro : MonoBehaviour
             {
                 healerAppeared = true;
                 healerCharacter.SetActive(true);
-                healerAnimator.Play("Idle", 0, 0f);
             }
 
             yield return null;

@@ -748,6 +748,7 @@ GameObject:
   m_Component:
   - component: {fileID: 891487526}
   - component: {fileID: 891487525}
+  - component: {fileID: 891487527}
   m_Layer: 0
   m_Name: FieldStreaming
   m_TagString: Untagged
@@ -790,6 +791,20 @@ Transform:
   - {fileID: 125166055}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &891487527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 891487524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 687cb990cdebb464da353b397c2a5f49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneSoundController
+  bgm: {fileID: 8300000, guid: b2e4e8c6f6836b24793110d593f03c5a, type: 3}
+  bgmVolume: 0.1
 --- !u!1 &1202080601
 GameObject:
   m_ObjectHideFlags: 0
