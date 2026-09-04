@@ -2396,6 +2396,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5417697721722631042}
     - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
+      propertyPath: levelUpCostText
+      value:
+      objectReference: {fileID: 4615520158270155914}
+    - target: {fileID: 3411756901002936780, guid: c03a78d87508f93478887a480b846e22, type: 3}
       propertyPath: levelUpStatText
       value: 
       objectReference: {fileID: 5623127631904343618}
@@ -3157,6 +3161,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &4615520158270155914 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8980095528885103365, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
+  m_PrefabInstance: {fileID: 4364597645895649167}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &5417697721722631042 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8628242885007225869, guid: 94e65b70efc4633488c411517d3b00ef, type: 3}
