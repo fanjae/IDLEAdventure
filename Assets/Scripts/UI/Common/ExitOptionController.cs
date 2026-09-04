@@ -121,7 +121,7 @@ public sealed class ExitOptionController : MonoBehaviour
         }
 
         // 현재 게임 데이터 저장
-        saveManager.Save();
+        saveManager.SaveImmediate();
 
         #if UNITY_EDITOR
         // 에디터에서는 Play Mode 종료

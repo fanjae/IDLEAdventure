@@ -1,16 +1,118 @@
 using System;
+using Cysharp.Threading.Tasks;
+using Unity.Profiling;
 using UnityEngine;
 
 // 게임 저장 데이터의 생성, 로드 저장 관리
 // 외부에서 SaveManager 통해 저장 데이터에 접근
 public sealed class SaveManager : Singleton<SaveManager>
 {
+    private static readonly ProfilerMarker SaveTotalMarker = new("Save.Total");
+    private static readonly ProfilerMarker SnapshotMarker = new("Save.Snapshot");
+
     private SaveFileService fileService;
+    private bool isSaving;
+    private bool saveRequested;
 
     public GameSaveData CurrentData { get; private set; }
 
-    // 현재 게임 데이터를 저장 파일에 반영
+    // 기존 저장 호출을 비동기 저장 요청으로 연결
     public void Save()
+    {
+        RequestSave();
+    }
+
+    // 일반 플레이 중 현재 게임 데이터 저장 요청
+    public void RequestSave()
+    {
+        if (CurrentData == null)
+        {
+            throw new InvalidOperationException("저장 데이터가 초기화되지 않았습니다.");
+        }
+
+        // 저장 중 추가 요청이 들어오면 현재 저장 완료 후 최신 상태를 다시 저장
+        saveRequested = true;
+
+        if (isSaving)
+        {
+            return;
+        }
+
+        SaveLoopAsync().Forget();
+    }
+
+    // 종료 또는 백그라운드 전환 전 현재 게임 데이터를 즉시 저장
+    public void SaveImmediate()
+    {
+        if (CurrentData == null)
+        {
+            return;
+        }
+
+        // 즉시 저장 이후 기존 비동기 저장 요청이 다시 실행되지 않도록 요청 상태 초기화
+        saveRequested = false;
+
+        using ProfilerMarker.AutoScope saveScope = SaveTotalMarker.Auto();
+
+        WriteCurrentState();
+
+        GameSaveData snapshot;
+
+        // 비동기 저장과 동일한 독립 저장 데이터 생성
+        using (SnapshotMarker.Auto())
+        {
+            snapshot = GameSaveDataSnapshot.Create(CurrentData);
+        }
+
+        fileService.Save(snapshot);
+    }
+
+    // 연속된 저장 요청을 하나씩 처리하고 중복 요청은 최신 상태 기준으로 다시 저장
+    private async UniTaskVoid SaveLoopAsync()
+    {
+        isSaving = true;
+
+        try
+        {
+            while (saveRequested)
+            {
+                saveRequested = false;
+
+                GameSaveData snapshot;
+
+                // Unity 런타임 데이터 수집과 저장용 복사본 생성은 메인 스레드에서 처리
+                using (SaveTotalMarker.Auto())
+                {
+                    WriteCurrentState();
+
+                    using (SnapshotMarker.Auto())
+                    {
+                        snapshot = GameSaveDataSnapshot.Create(CurrentData);
+                    }
+                }
+
+                // JSON 직렬화와 파일 쓰기는 백그라운드 스레드에서 처리
+                await fileService.SaveAsync(snapshot);
+            }
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[SaveManager] 비동기 저장에 실패했습니다. {exception.Message}");
+        }
+        finally
+        {
+            isSaving = false;
+
+            // 저장 종료 시점에 새 요청이 존재하면 저장 다시 시작
+            if (saveRequested)
+            {
+                RequestSave();
+            }
+        }
+    }
+
+    // 현재 게임 상태를 저장 데이터에 반영
+    private void WriteCurrentState()
     {
         if (CurrentData == null)
         {
@@ -74,7 +176,6 @@ public sealed class SaveManager : Singleton<SaveManager>
 
         // 저장 시점을 UTC Unix Time 기준으로 갱신
         CurrentData.SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        fileService.Save(CurrentData);
     }
 
     // 저장 파일을 불러오고 사용할 수 없는 경우 신규 데이터 생성
@@ -119,7 +220,7 @@ public sealed class SaveManager : Singleton<SaveManager>
             return;
         }
 
-        Save();
+        SaveImmediate();
     }
 
     // 앱이 정상 종료를 요청할 때 현재 게임 데이터 저장
@@ -129,7 +230,7 @@ public sealed class SaveManager : Singleton<SaveManager>
 
         if (CurrentData != null)
         {
-            Save();
+            SaveImmediate();
         }
 
         return true;
