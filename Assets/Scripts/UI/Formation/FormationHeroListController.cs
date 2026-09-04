@@ -12,6 +12,9 @@ public sealed class FormationHeroListController : MonoBehaviour
     private readonly List<FormationHeroCardView> cardViews = new();
     private HeroController heroController;
 
+    // 실제 출전 상태를 카드 선택 표시와 동기화 (0903 추가)
+    private FormationManager formationManager;
+
     public event Action<string> OnHeroSelected;
 
     private void Start()
@@ -21,6 +24,11 @@ public sealed class FormationHeroListController : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (formationManager != null)
+        {
+            formationManager.OnFormationChanged -= RefreshSelectionVisuals;
+        }
+
         Unsubscribe();
 
         foreach (FormationHeroCardView cardView in cardViews)
@@ -57,6 +65,14 @@ public sealed class FormationHeroListController : MonoBehaviour
         heroController.OnHeroCollectionChanged += Refresh;
         heroController.OnHeroLevelChanged += HandleHeroLevelChanged;
 
+        // 씬마다 별도 Inspector 연결을 추가하지 않고 현재 배치 상태를 조회 (0903 추가)
+        formationManager = FindFirstObjectByType<FormationManager>();
+
+        if (formationManager != null)
+        {
+            formationManager.OnFormationChanged += RefreshSelectionVisuals;
+        }
+
         Refresh();
     }
 
@@ -80,6 +96,7 @@ public sealed class FormationHeroListController : MonoBehaviour
         }
 
         HideUnusedCards(visibleCount);
+        RefreshSelectionVisuals();
     }
 
     // 필요한 수만큼 영웅 카드 생성
@@ -105,6 +122,24 @@ public sealed class FormationHeroListController : MonoBehaviour
             {
                 cardViews[index].gameObject.SetActive(false);
             }
+        }
+    }
+
+    // 출전된 영웅만 선택 효과를 표시하고 숨겨진 재사용 카드의 상태를 초기화 (0903 추가)
+    private void RefreshSelectionVisuals()
+    {
+        foreach (FormationHeroCardView cardView in cardViews)
+        {
+            if (cardView == null)
+            {
+                continue;
+            }
+
+            bool isSelected = cardView.gameObject.activeSelf
+                && formationManager != null
+                && formationManager.IsHeroPlaced(cardView.HeroData);
+
+            cardView.SetSelected(isSelected);
         }
     }
 

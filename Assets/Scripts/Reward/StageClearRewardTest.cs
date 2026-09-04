@@ -38,7 +38,11 @@ public class StageClearRewardTest : MonoBehaviour
 
     public void GiveStageClearReward(UnitTeam winner)
     {
-        if (winner == UnitTeam.Enemy) return;
+        if (winner == UnitTeam.Enemy)
+        {
+            QuestEnemyRuntimeData.SetQuestEnemyData(0);
+            return;
+        }
 
         if (QuestEnemyRuntimeData.InteractedQuestId != 0)
         {

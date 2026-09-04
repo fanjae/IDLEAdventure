@@ -39,6 +39,9 @@ public sealed class MainBottomPanelController : MonoBehaviour
     [SerializeField] private BottomMenuButtonData gachaMenu;
     [SerializeField] private BottomMenuButtonData allMenu;
 
+    [Header("퀘스트 패널")]
+    [SerializeField] private QuestPanel questPanel;
+
     private BottomMenuType selectedMenu = BottomMenuType.None;
 
     private void Awake()
@@ -64,6 +67,11 @@ public sealed class MainBottomPanelController : MonoBehaviour
         if (allPanelController != null)
         {
             allPanelController.OnClosed += HandleChildPanelClosed;
+        }
+
+        if (questPanel != null)
+        {
+            questPanel.OnMainClosed += HandleQuestPanelClosed;
         }
     }
 
@@ -105,6 +113,11 @@ public sealed class MainBottomPanelController : MonoBehaviour
         if (allPanelController != null)
         {
             allPanelController.OnClosed -= HandleChildPanelClosed;
+        }
+
+        if (questPanel != null)
+        {
+            questPanel.OnMainClosed -= HandleQuestPanelClosed;
         }
     }
 
@@ -231,5 +244,24 @@ public sealed class MainBottomPanelController : MonoBehaviour
     public void ResetSelectedMenu()
     {
         SetSelectedMenu(BottomMenuType.None);
+    }
+
+    // 퀘스트 패널 표시 및 하단 메뉴 숨김
+    public void OpenQuestPanel()
+    {
+        if (questPanel == null)
+        {
+            return;
+        }
+
+        questPanel.OpenQuestPanel();
+        gameObject.SetActive(false);
+    }
+
+    // 퀘스트 패널 종료 후 하단 메뉴 표시
+    private void HandleQuestPanelClosed()
+    {
+        SetSelectedMenu(BottomMenuType.None);
+        gameObject.SetActive(true);
     }
 }

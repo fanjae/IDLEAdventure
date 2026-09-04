@@ -24,6 +24,7 @@ public sealed class FormationPanelController : MonoBehaviour
 
         if (formationManager.HasPlacedHero)
         {
+            CloseWarningPanel();
             return true;
         }
 

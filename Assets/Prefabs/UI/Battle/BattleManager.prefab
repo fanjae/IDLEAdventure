@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4717909748341543309
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6864768138514686455}
+  - component: {fileID: 3740847620777482910}
+  - component: {fileID: 2342761556666776839}
+  m_Layer: 0
+  m_Name: BattleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6864768138514686455
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4717909748341543309}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.8987, y: 0, z: -2.66527}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3740847620777482910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4717909748341543309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ead1aa04a2edc648b6a783f6eae4dd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleManager
+  autoStart: 0
+--- !u!114 &2342761556666776839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4717909748341543309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee2f858bdf565cb4ba6896cc6d67acda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleSoundController
+  normalBattleBgm: {fileID: 8300000, guid: c0770993e7f84c148bcee4db306384ba, type: 3}
+  normalBattleVolume: 0.3
+  bossBattleBgm: {fileID: 8300000, guid: a55c02b18dd27094386dd6aeab7dadd8, type: 3}
+  bossBattleVolume: 0.3
+  fieldBossBattleBgm: {fileID: 8300000, guid: 5009946ae47fb444d8ac82b0bb41bed5, type: 3}
+  fieldBossBattleVolume: 0.3
+  victorySfx: {fileID: 8300000, guid: a9310ddccac7db941bd039dcc167dc52, type: 3}
+  victoryVolume: 0.5
+  defeatSfx: {fileID: 8300000, guid: 859f177bf8aca6242b93c1b04d9c2ecc, type: 3}
+  defeatVolume: 0.5

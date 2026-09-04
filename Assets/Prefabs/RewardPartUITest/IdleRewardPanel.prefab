@@ -459,6 +459,7 @@ GameObject:
   - component: {fileID: 7318866891304753503}
   - component: {fileID: 6732333237997862323}
   - component: {fileID: 8333142042319628035}
+  - component: {fileID: 2109456331099502086}
   m_Layer: 5
   m_Name: IdleRewardPanel
   m_TagString: Untagged
@@ -558,9 +559,23 @@ MonoBehaviour:
   upgradeAmountText: {fileID: 5877446708314381730}
   equipAmountText: {fileID: 0}
   equipItemParent: {fileID: 4450117339498026513}
-  equipItemPrefab: {fileID: 1281407726018683803, guid: 84080c1269aaffb4d97cfe4190330e2f, type: 3}
+  equipItemPrefab: {fileID: 6872136709950961419, guid: 8d79b2b33073b5b4d91f2d4ca9d6e695, type: 3}
+  classIconCatalog: {fileID: 11400000, guid: 944d5e8cf077b1446be53f9b80484cca, type: 2}
   itemdatabase: {fileID: 11400000, guid: 29592baeae843814abc08152e94398a3, type: 2}
   idleRewardData: {fileID: 6732333237997862323}
+--- !u!114 &2109456331099502086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1868627743081092122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5283448411dd0a4da8a55de17292dfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IdleRewardSoundListener
+  IdleRewardSFX: {fileID: 8300000, guid: 8b667264f39287e40ab5589407c8ac12, type: 3}
 --- !u!1 &1876446184256794595
 GameObject:
   m_ObjectHideFlags: 0
@@ -1111,10 +1126,10 @@ RectTransform:
   - {fileID: 3709013153475767560}
   m_Father: {fileID: 1255403604090585710}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 380}
+  m_SizeDelta: {x: 1080, y: 1920}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6464002406193676773
 CanvasRenderer:
@@ -1753,6 +1768,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 2109456331099502086}
+        m_TargetAssemblyTypeName: IdleRewardSoundListener, Assembly-CSharp
+        m_MethodName: PlayIdleRewardSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!95 &528438296471245930
 Animator:
   serializedVersion: 7
@@ -1809,7 +1836,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 2}
   m_SizeDelta: {x: 500, y: 50}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &8839584824241067577
@@ -1921,8 +1948,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4450117339498026513}
-  - component: {fileID: 8849343938957215143}
   - component: {fileID: 8056315214323403926}
+  - component: {fileID: 2144120563060940910}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -1949,32 +1976,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
---- !u!114 &8849343938957215143
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8773781205071341214}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
-  m_Padding:
-    m_Left: 10
-    m_Right: 0
-    m_Top: 10
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 10
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!114 &8056315214323403926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1989,3 +1990,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
   m_HorizontalFit: 2
   m_VerticalFit: 0
+--- !u!114 &2144120563060940910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8773781205071341214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
+  m_Padding:
+    m_Left: 5
+    m_Right: 0
+    m_Top: 5
+    m_Bottom: 5
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 250, y: 250}
+  m_Spacing: {x: 10, y: 0}
+  m_Constraint: 2
+  m_ConstraintCount: 1

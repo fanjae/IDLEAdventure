@@ -25,8 +25,12 @@ public class IdleView : MonoBehaviour
         {
             idleReward.OnGetIdleReward += UpdateUI;
         }
+    }
+    private void Start()
+    {
         UpdateUI();
     }
+
     private void OnDisable()
     {
         if (idleReward != null)

@@ -18,6 +18,7 @@ public sealed class ShopController
 
     private string lastDailyResetDate;
     private string packageNoticeDismissDate;
+    private bool arePackageNoticesDismissedForToday;
     private string attendanceCycleStartDate;
 
     public event Action OnShopStateChanged;
@@ -26,6 +27,7 @@ public sealed class ShopController
 
     public IReadOnlyList<ShopProductSO> Products => database.Products;
     public IReadOnlyList<ShopRewardEntry> AttendanceRewards => database.AttendanceRewardDatabase.Rewards;
+    public int HighestClearedStageId => highestClearedStageIdProvider();
 
     // 데이터베이스와 테스트 가능한 UTC 시각 공급자를 연결함
     public ShopController(
@@ -67,6 +69,11 @@ public sealed class ShopController
     public IReadOnlyList<ShopProductSO> GetNotifiableUnpurchasedPackages()
     {
         EnsurePackageNoticeDismissState();
+        if (arePackageNoticesDismissedForToday)
+        {
+            return Array.Empty<ShopProductSO>();
+        }
+
         return GetUnpurchasedPackages()
             .Where(item => !dismissedPackageNoticeProductIds.Contains(item.ProductId))
             .ToList();
@@ -82,6 +89,18 @@ public sealed class ShopController
         if (!dismissedPackageNoticeProductIds.Add(productId))
             return;
 
+        OnShopStateChanged?.Invoke();
+        SaveImmediately();
+    }
+
+    // 나중에 보기를 누르면 오늘 표시 가능한 모든 패키지 안내를 공통으로 숨김 처리함
+    public void DismissAllPackageNoticesForToday()
+    {
+        EnsurePackageNoticeDismissState();
+        if (arePackageNoticesDismissedForToday)
+            return;
+
+        arePackageNoticesDismissedForToday = true;
         OnShopStateChanged?.Invoke();
         SaveImmediately();
     }
@@ -273,6 +292,7 @@ public sealed class ShopController
 
         lastDailyResetDate = saveData.Shop.LastDailyResetDate;
         packageNoticeDismissDate = saveData.Shop.PackageNoticeDismissDate;
+        arePackageNoticesDismissedForToday = saveData.Shop.ArePackageNoticesDismissedForToday;
         dismissedPackageNoticeProductIds.Clear();
         foreach (string productId in saveData.Shop.DismissedPackageNoticeProductIds.Where(productId => !string.IsNullOrWhiteSpace(productId)))
         {
@@ -320,6 +340,7 @@ public sealed class ShopController
             LastDailyResetDate = lastDailyResetDate,
             PackageNoticeDismissDate = packageNoticeDismissDate,
             DismissedPackageNoticeProductIds = dismissedPackageNoticeProductIds.OrderBy(productId => productId, StringComparer.Ordinal).ToList(),
+            ArePackageNoticesDismissedForToday = arePackageNoticesDismissedForToday,
             AttendanceCycleStartDate = attendanceCycleStartDate,
             ClaimedAttendanceRewardIndices = claimedAttendanceRewardIndices.OrderBy(index => index).ToList()
         };
@@ -457,6 +478,7 @@ public sealed class ShopController
             return;
 
         dismissedPackageNoticeProductIds.Clear();
+        arePackageNoticesDismissedForToday = false;
         packageNoticeDismissDate = today;
     }
 

@@ -3495,7 +3495,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: c22f1601d667ccd4d8f6346b48a2418d, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -22587,6 +22587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimator
   animator: {fileID: 6583243608216671944}
+  damagedInterval: 0.9
 --- !u!114 &8242877392833974253
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -6,6 +6,7 @@ public sealed class InventoryPanelController : MonoBehaviour
 {
     [Header("공통")]
     [SerializeField] private Button backButton;
+    [SerializeField] private Button decompositeButton;
     [SerializeField] private GameObject inventoryPanelRoot;
 
     [Header("전체 메뉴")]
@@ -18,11 +19,19 @@ public sealed class InventoryPanelController : MonoBehaviour
     private void OnEnable()
     {
         if (backButton != null) backButton.onClick.AddListener(HandleBackButtonClicked);
+        if (decompositeButton != null) decompositeButton.onClick.AddListener(HandleDecompositeButtonClicked);
     }
 
     private void OnDisable()
     {
         if (backButton != null) backButton.onClick.RemoveListener(HandleBackButtonClicked);
+        if (decompositeButton != null) decompositeButton.onClick.RemoveListener(HandleDecompositeButtonClicked);
+    }
+
+    // 미장착 장비 일괄 분해
+    private void HandleDecompositeButtonClicked()
+    {
+        presenter?.DecomposeUnequippedEquipment();
     }
 
     // 인벤토리 패널 오픈 연출

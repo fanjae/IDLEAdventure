@@ -156,12 +156,6 @@ public class EnemyFieldAI : MonoBehaviour
         float playerDistance = Vector3.Distance(transform.position, player.position);
         float homeDistance = Vector3.Distance(transform.position, homePosition);
 
-        if (playerDistance <= encounterDistance)
-        {
-            StartBattle();
-            return;
-        }
-
         if (playerDistance > loseDistance || homeDistance > maxChaseDistance)
         {
             StartReturn();
@@ -205,11 +199,8 @@ public class EnemyFieldAI : MonoBehaviour
 
     private void StartBattle()
     {
-        agent.isStopped = true;
-        enabled = false;
-        //
-        SetMoving(false);
-        //
+        //여기서 추가 하실꺼면 밑의 코드로 false해주셔야합니다.
+        //enabled = false;
 
         //씬 이동 추가
     }

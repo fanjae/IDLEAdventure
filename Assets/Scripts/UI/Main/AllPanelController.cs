@@ -125,9 +125,9 @@ public sealed class AllPanelController : MonoBehaviour
             return;
         }
 
-        // 전체 메뉴 화면을 숨기고 퀘스트 패널 표시
+        // 2026.09.04 전체 메뉴 화면을 숨기고 퀘스트 패널 표시
         allMenuRoot.SetActive(false);
-        questPanel.OpenQuestPanel();
+        questPanel.OpenQuestPanelFromAllMenu();
     }
 
     // 퀘스트 패널 종료 후 전체 메뉴 화면 복원

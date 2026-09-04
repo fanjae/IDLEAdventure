@@ -11,9 +11,16 @@ public sealed class FormationHeroCardView : MonoBehaviour
     [SerializeField] private TMP_Text levelValueText;
     [SerializeField] private Button selectButton;
 
+    // 출전 상태를 캐릭터가 보이는 상태로 구분하기 위한 선택 효과 (0903 추가)
+    [SerializeField] private GameObject selectedTint;
+    [SerializeField] private GameObject selectedBorder;
+    [SerializeField] private GameObject selectedCheck;
+
     private OwnedHeroData hero;
 
     public event Action<string> OnSelected;
+
+    public HeroData HeroData => hero != null ? hero.HeroData : null;
 
     private void Awake()
     {
@@ -36,6 +43,9 @@ public sealed class FormationHeroCardView : MonoBehaviour
     {
         this.hero = hero;
 
+        // ScrollRect 카드 재사용 시 이전 영웅의 선택 표시가 남지 않도록 초기화 (0903 초기화)
+        SetSelected(false);
+
         if (hero == null || hero.HeroData == null)
         {
             return;
@@ -56,6 +66,25 @@ public sealed class FormationHeroCardView : MonoBehaviour
         if (levelValueText != null)
         {
             levelValueText.text = hero.Level.ToString();
+        }
+    }
+
+    // 출전 영웅 카드에 회색 처리, 초록 외곽선, V 표시를 함께 적용 (0903 추가)
+    public void SetSelected(bool selected)
+    {
+        if (selectedTint != null)
+        {
+            selectedTint.SetActive(selected);
+        }
+
+        if (selectedBorder != null)
+        {
+            selectedBorder.SetActive(selected);
+        }
+
+        if (selectedCheck != null)
+        {
+            selectedCheck.SetActive(selected);
         }
     }
 

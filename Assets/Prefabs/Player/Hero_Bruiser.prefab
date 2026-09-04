@@ -246,7 +246,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkill
   skillData: {fileID: 11400000, guid: 5ff10191d0275a8489636262dcdbbba5, type: 2}
-  secondarySkillData: {fileID: 0}
   projectileSpawnPoint: {fileID: 0}
   skillVfxPoint: {fileID: 74817813098625901}
 --- !u!114 &4092121925701557559
@@ -262,6 +261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimator
   animator: {fileID: 719702930009131313}
+  damagedInterval: 0.9
 --- !u!114 &4146129854414764090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1040,7 +1040,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 8f6774d07b8555644abce85971af8fe6, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0

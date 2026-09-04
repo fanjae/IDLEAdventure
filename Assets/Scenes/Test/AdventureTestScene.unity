@@ -270,8 +270,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecbaba0ddec8ab349a61c0f617917ed4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AdventureInteractionUI
-  interactionButton: {fileID: 2112194475}
-  questId: 0
 --- !u!224 &676159602 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7616211419553417814, guid: 6b2f5eaecf375a84cbb8a279d5d028ad, type: 3}
@@ -838,7 +836,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1932485281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -978,9 +976,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 574669081}
     m_Modifications:
+    - target: {fileID: 2215298456326241158, guid: 6b2f5eaecf375a84cbb8a279d5d028ad, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -83
+      objectReference: {fileID: 0}
+    - target: {fileID: 3555016763191673165, guid: 6b2f5eaecf375a84cbb8a279d5d028ad, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3555016763191673165, guid: 6b2f5eaecf375a84cbb8a279d5d028ad, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 0d6cf577d33fb4645a552d5e169fc6eb, type: 3}
     - target: {fileID: 4299491847611283346, guid: 6b2f5eaecf375a84cbb8a279d5d028ad, type: 3}
       propertyPath: m_Name
       value: QuestReward
+      objectReference: {fileID: 0}
+    - target: {fileID: 6105976212810708794, guid: 6b2f5eaecf375a84cbb8a279d5d028ad, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 6550746663450454498, guid: 6b2f5eaecf375a84cbb8a279d5d028ad, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
       objectReference: {fileID: 0}
     - target: {fileID: 7616211419553417814, guid: 6b2f5eaecf375a84cbb8a279d5d028ad, type: 3}
       propertyPath: m_Pivot.x
@@ -1556,6 +1574,10 @@ PrefabInstance:
       propertyPath: enemyInteractionButton
       value: 
       objectReference: {fileID: 1847528098}
+    - target: {fileID: 4029598199878203079, guid: e2ebdb281e9f06e4dbf3d5dbb686d753, type: 3}
+      propertyPath: gatherInteractionButton
+      value: 
+      objectReference: {fileID: 9064778827591779430}
     - target: {fileID: 6174949153999150364, guid: e2ebdb281e9f06e4dbf3d5dbb686d753, type: 3}
       propertyPath: m_LocalPosition.x
       value: 540
@@ -1614,6 +1636,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 56632408}
     - target: {fileID: 2536042500344195672, guid: c60577ca7766f0645a36a08160b877d8, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 56632408}
+    - target: {fileID: 3196208024802167627, guid: c60577ca7766f0645a36a08160b877d8, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 56632408}
@@ -1710,6 +1736,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c60577ca7766f0645a36a08160b877d8, type: 3}
+--- !u!1 &9064778827591779430 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 344169327405558566, guid: c60577ca7766f0645a36a08160b877d8, type: 3}
+  m_PrefabInstance: {fileID: 9064778827591779429}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

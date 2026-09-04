@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// 퀘스트 NPC 상호작용 클래스.
+/// </summary>
 public class QuestNPCInteraction : QuestInteractableObject
 {
     protected override InteractType GetInteractType() => InteractType.NPC;
