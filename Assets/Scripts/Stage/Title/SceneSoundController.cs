@@ -18,18 +18,37 @@ public sealed class SceneSoundController : MonoBehaviour
 
     private void Start()
     {
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.OnBgmVolumeChanged += HandleBgmVolumeChanged;
+        }
+
         PlayBgm();
+    }
+
+    private void OnDestroy()
+    {
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.OnBgmVolumeChanged -= HandleBgmVolumeChanged;
+        }
     }
 
     private void PlayBgm()
     {
         if (bgm == null) return;
 
-        float volume = 1f;
-        if (SoundManager.Instance != null) volume = SoundManager.Instance.BgmVolume;
+        float optionVolume = 1f;
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager)) optionVolume = soundManager.BgmVolume;
 
         bgmSource.clip = bgm;
-        bgmSource.volume = bgmVolume * volume;
+        bgmSource.volume = bgmVolume * optionVolume;
         bgmSource.Play();
+    }
+
+    // 옵션 BGM 음량 변경값을 현재 재생 중인 BGM에 반영
+    private void HandleBgmVolumeChanged(float optionVolume)
+    {
+        bgmSource.volume = bgmVolume * optionVolume;
     }
 }

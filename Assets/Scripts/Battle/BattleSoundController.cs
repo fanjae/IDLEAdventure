@@ -6,7 +6,7 @@ public class BattleSoundController : MonoBehaviour
     [Header("전투 BGM")]
     [SerializeField] private AudioClip normalBattleBgm;
     [SerializeField, Range(0.0f, 1.0f)] private float normalBattleVolume = 0.3f;
-    
+
     [SerializeField] private AudioClip bossBattleBgm;
     [SerializeField, Range(0.0f, 1.0f)] private float bossBattleVolume = 0.3f;
 
@@ -23,6 +23,9 @@ public class BattleSoundController : MonoBehaviour
     private AudioSource bgmSource;
     private AudioSource sfxSource;
 
+    // 현재 재생 중인 BGM 자체의 기본 음량
+    private float currentBgmVolume;
+
     private void Awake()
     {
         bgmSource = gameObject.AddComponent<AudioSource>();
@@ -35,46 +38,66 @@ public class BattleSoundController : MonoBehaviour
         sfxSource.loop = true;
         sfxSource.spatialBlend = 0.0f;
     }
-    void Start()
-    {
-        if (BattleManager.Instance == null) return;
 
-        BattleManager.Instance.OnBattleStarted += HandleBattleStarted;
-        BattleManager.Instance.OnBattleEnded += HandleBattleEnded;
+    private void Start()
+    {
+        if (BattleManager.Instance != null)
+        {
+            BattleManager.Instance.OnBattleStarted += HandleBattleStarted;
+            BattleManager.Instance.OnBattleEnded += HandleBattleEnded;
+        }
+
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.OnBgmVolumeChanged += HandleBgmVolumeChanged;
+        }
     }
+
     private void OnDestroy()
     {
-        if (BattleManager.Instance == null) return;
+        if (BattleManager.Instance != null)
+        {
+            BattleManager.Instance.OnBattleStarted -= HandleBattleStarted;
+            BattleManager.Instance.OnBattleEnded -= HandleBattleEnded;
+        }
 
-        BattleManager.Instance.OnBattleStarted -= HandleBattleStarted;
-        BattleManager.Instance.OnBattleEnded -= HandleBattleEnded;
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.OnBgmVolumeChanged -= HandleBgmVolumeChanged;
+        }
     }
 
     private void HandleBattleStarted()
     {
-        if (SoundManager.Instance == null) SoundManager.Instance.StopBgm();
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager))
+        {
+            soundManager.StopBgm();
+        }
 
         PlayBattleBgm();
     }
+
     private void PlayBattleBgm()
     {
         IReadOnlyList<BattleUnit> enemies = BattleManager.Instance.EnemyUnits;
         bool hasBoss = false;
+
         for (int i = 0; i < enemies.Count; i++)
         {
             BattleUnit enemy = enemies[i];
             if (enemy == null) continue;
 
-            //필드 보스
+            // 필드 보스
             if (enemy.GetComponent<FieldBossBehaviorTree>() != null)
             {
                 PlayBgm(fieldBossBattleBgm, fieldBossBattleVolume);
                 return;
             }
-            //일반 보스
+
+            // 일반 보스
             if (enemy.UnitData is EnemyData enemyData && enemyData.IsBoss) hasBoss = true;
         }
-        
+
         if (hasBoss)
         {
             PlayBgm(bossBattleBgm, bossBattleVolume);
@@ -83,21 +106,35 @@ public class BattleSoundController : MonoBehaviour
 
         PlayBgm(normalBattleBgm, normalBattleVolume);
     }
+
     private void PlayBgm(AudioClip clip, float volume)
     {
         if (clip == null) return;
 
+        // BGM 자체의 기본 음량을 저장
+        currentBgmVolume = Mathf.Clamp01(volume);
+
         float optionVolume = 1.0f;
-        if (SoundManager.Instance != null) optionVolume = SoundManager.Instance.BgmVolume;
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager)) optionVolume = soundManager.BgmVolume;
 
         bgmSource.clip = clip;
-        bgmSource.volume = volume * optionVolume;
+        bgmSource.volume = currentBgmVolume * optionVolume;
         bgmSource.Play();
     }
+
+    // 옵션 BGM 음량 변경값을 현재 재생 중인 전투 BGM에 반영
+    private void HandleBgmVolumeChanged(float optionVolume)
+    {
+        if (bgmSource == null) return;
+
+        bgmSource.volume = currentBgmVolume * Mathf.Clamp01(optionVolume);
+    }
+
     private void HandleBattleEnded(UnitTeam winner)
     {
         bgmSource.Stop();
         bgmSource.clip = null;
+        currentBgmVolume = 0.0f;
 
         if (winner == UnitTeam.Hero)
         {
@@ -108,12 +145,13 @@ public class BattleSoundController : MonoBehaviour
             PlaySfx(defeatSfx, defeatVolume);
         }
     }
+
     private void PlaySfx(AudioClip clip, float volume)
     {
         if (clip == null) return;
 
         float optionVolume = 1.0f;
-        if (SoundManager.Instance != null) optionVolume = SoundManager.Instance.SfxVolume;
+        if (SoundManager.TryGetExistingInstance(out SoundManager soundManager)) optionVolume = soundManager.SfxVolume;
 
         sfxSource.PlayOneShot(clip, volume * optionVolume);
     }
