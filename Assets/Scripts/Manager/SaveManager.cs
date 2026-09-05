@@ -169,12 +169,6 @@ public sealed class SaveManager : Singleton<SaveManager>
     // 최초 실행 시 사용할 기본 저장 데이터 생성
     private GameSaveData CreateNewData()
     {
-        /* 1차 빌드 때 기본 영웅에 대한 지급 문제로 추후 재주석
-        return new GameSaveData
-        {
-            SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-        }; */
-
         GameSaveData saveData = new()
         {
             SavedAtUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
@@ -231,9 +225,4 @@ public sealed class SaveManager : Singleton<SaveManager>
         base.OnDestroy();
     }
 
-    // 앱이 종료될 때 싱글톤 종료 상태 반영
-    protected override void OnApplicationQuit()
-    {
-        base.OnApplicationQuit();
-    }
 }
