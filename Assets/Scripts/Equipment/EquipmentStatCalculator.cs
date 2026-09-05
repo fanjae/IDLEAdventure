@@ -98,7 +98,7 @@ public sealed class EquipmentStatCalculator
         return new EquipmentStat(attack, defense, health);
     }
 
-    // 장비 기본 능력치에 강화 단계 적용
+    // 강화 능력치는 현재 적용하지 않으므로 기본 능력치 반환 (더미 데이터)
     private int CalculateEnhancedStat(int baseStat, int enhancementLevel)
     {
         return baseStat;

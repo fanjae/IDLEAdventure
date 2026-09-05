@@ -42,10 +42,15 @@ public sealed class InventoryManager : Singleton<InventoryManager>
 
     protected override void OnDestroy()
     {
-        // 종료 순서상 SaveManager가 먼저 제거되었을 수 있으므로 기존 인스턴스가 있을 때만 해제
-        if (controller != null && SaveManager.TryGetExistingInstance(out SaveManager saveManager))
+        if (controller != null)
         {
-            saveManager.UnregisterWriter(controller);
+            controller.Dispose();
+
+            // 종료 순서상 SaveManager가 먼저 제거되었을 수 있으므로 기존 인스턴스가 있을 때만 해제
+            if (SaveManager.TryGetExistingInstance(out SaveManager saveManager))
+            {
+                saveManager.UnregisterWriter(controller);
+            }
         }
 
         base.OnDestroy();

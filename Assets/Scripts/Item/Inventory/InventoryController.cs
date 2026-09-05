@@ -137,6 +137,12 @@ public sealed class InventoryController : ISaveDataWriter
         OnInventoryChanged?.Invoke();
     }
 
+    // Inventory 이벤트 구독 해제
+    public void Dispose()
+    {
+        inventory.OnInventoryChanged -= HandleInventoryChanged;
+    }
+
     // 현재 인벤토리 상태를 저장 데이터에 반영
     public void WriteSaveData(GameSaveData saveData)
     {
