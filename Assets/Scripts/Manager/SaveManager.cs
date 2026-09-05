@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Unity.Profiling;
 using UnityEngine;
@@ -10,11 +11,35 @@ public sealed class SaveManager : Singleton<SaveManager>
     private static readonly ProfilerMarker SaveTotalMarker = new("Save.Total");
     private static readonly ProfilerMarker SnapshotMarker = new("Save.Snapshot");
 
+    private readonly HashSet<ISaveDataWriter> saveDataWriters = new();
+
     private SaveFileService fileService;
     private bool isSaving;
     private bool saveRequested;
 
     public GameSaveData CurrentData { get; private set; }
+
+    // 현재 게임 상태 저장에 참여할 객체 등록
+    public void RegisterWriter(ISaveDataWriter writer)
+    {
+        if (writer == null)
+        {
+            throw new ArgumentNullException(nameof(writer));
+        }
+
+        saveDataWriters.Add(writer);
+    }
+
+    // 현재 게임 상태 저장 대상에서 객체 제거
+    public void UnregisterWriter(ISaveDataWriter writer)
+    {
+        if (writer == null)
+        {
+            return;
+        }
+
+        saveDataWriters.Remove(writer);
+    }
 
     // 기존 저장 호출을 비동기 저장 요청으로 연결
     public void Save()
@@ -119,59 +144,10 @@ public sealed class SaveManager : Singleton<SaveManager>
             throw new InvalidOperationException("저장 데이터가 초기화되지 않았습니다.");
         }
 
-        // 현재 생성되어 있는 인벤토리와 장비 장착 상태를 저장 데이터에 반영
-        if (InventoryManager.TryGetExistingInstance(out InventoryManager inventoryManager) && inventoryManager.IsInitialized)
+        // 등록된 시스템의 현재 런타임 상태를 저장 데이터에 반영
+        foreach (ISaveDataWriter writer in saveDataWriters)
         {
-            inventoryManager.Controller.WriteSaveData(CurrentData);
-        }
-
-        // 현재 생성되어 있는 보유 영웅 상태를 저장 데이터에 반영
-        if (HeroManager.TryGetExistingInstance(out HeroManager heroManager) && heroManager.IsInitialized)
-        {
-            heroManager.Controller.WriteSaveData(CurrentData);
-        }
-
-        // 현재 생성되어 있는 공명 상태를 저장 데이터에 반영
-        if (ResonanceManager.TryGetExistingInstance(out ResonanceManager resonanceManager) && resonanceManager.IsInitialized)
-        {
-            resonanceManager.Controller.WriteSaveData(CurrentData);
-        }
-
-        // 현재 생성되어 있는 재화 상태를 저장 데이터에 반영
-        if (CurrencyManager.TryGetExistingInstance(out CurrencyManager currencyManager))
-        {
-            currencyManager.WriteSaveData(CurrentData);
-        }
-
-        // 현재 생성되어 있는 가챠 천장 진행도를 저장 데이터에 반영함
-        if (GachaManager.TryGetExistingInstance(out GachaManager gachaManager) && gachaManager.IsInitialized)
-        {
-            gachaManager.WriteSaveData(CurrentData);
-        }
-
-        // 현재 생성되어 있는 업적 진행도와 보상 수령 상태를 저장 데이터에 반영
-        // 업적 매니저가 생성되지 않았거나 초기화에 실패한 경우 기존 저장 데이터는 그대로 유지
-        if (AchievementManager.TryGetExistingInstance(out AchievementManager achievementManager) && achievementManager.IsInitialized)
-        {
-            achievementManager.WriteSaveData(CurrentData);
-        }
-
-        // 현재 생성되어 있는 상점 구매 제한과 출석 수령 상태를 저장 데이터에 반영
-        if (ShopManager.TryGetExistingInstance(out ShopManager shopManager) && shopManager.IsInitialized)
-        {
-            shopManager.WriteSaveData(CurrentData);
-        }
-
-        // 현재 생성되어 있는 퀘스트 진행 정보를 저장 데이터에 반영
-        if (QuestManager.TryGetExistingInstance(out QuestManager questManager))
-        {
-            questManager.WriteSaveData(CurrentData);
-        }
-
-        // 현재 필드 플레이어가 존재하는 경우 위치 상태를 저장 데이터에 반영
-        if (FieldPlayerPositionController.Current != null)
-        {
-            FieldPlayerPositionController.Current.WriteSaveData(CurrentData);
+            writer.WriteSaveData(CurrentData);
         }
 
         // 저장 시점을 UTC Unix Time 기준으로 갱신

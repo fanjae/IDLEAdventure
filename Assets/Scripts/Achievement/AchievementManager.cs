@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 // 업적 컨트롤러를 전역에서 관리하고 게임 이벤트를 누적 통계로 전달함
-public sealed class AchievementManager : Singleton<AchievementManager>
+public sealed class AchievementManager : Singleton<AchievementManager>, ISaveDataWriter
 {
     private AchievementController controller;
     private AchievementDatabaseSO database;
@@ -88,6 +88,9 @@ public sealed class AchievementManager : Singleton<AchievementManager>
 
         SubscribeHeroEvents();
         SubscribeResonanceEvents();
+
+        // 업적 진행 상태를 저장 대상으로 등록
+        SaveManager.Instance.RegisterWriter(this);
     }
 
     // 스테이지 클리어 지점이 호출할 최고 진행도 기록 진입점임
@@ -307,6 +310,11 @@ public sealed class AchievementManager : Singleton<AchievementManager>
         {
             subscribedResonanceController.OnResonanceSlotChanged -= HandleResonanceSlotChanged;
             subscribedResonanceController = null;
+        }
+
+        if (SaveManager.TryGetExistingInstance(out SaveManager saveManager))
+        {
+            saveManager.UnregisterWriter(this);
         }
 
         base.OnDestroy();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 // 보유 영웅 관련 기능을 처리하는 컨트롤러
 // 게임 전역에서는 HeroManager를 통해 접근
-public sealed class HeroController
+public sealed class HeroController : ISaveDataWriter
 {
     private readonly HeroDatabaseSO heroDatabase;
     private readonly HeroCollection heroCollection;

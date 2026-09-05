@@ -38,5 +38,19 @@ public sealed class ResonanceManager : Singleton<ResonanceManager>
 
         // 공명 관련 기능을 처리할 컨트롤러 생성
         controller = new ResonanceController(heroController);
+
+        // 공명 상태를 저장 대상으로 등록
+        SaveManager.Instance.RegisterWriter(controller);
+    }
+
+    protected override void OnDestroy()
+    {
+        // 종료 순서상 SaveManager가 먼저 제거되었을 수 있으므로 기존 인스턴스가 있을 때만 해제
+        if (controller != null && SaveManager.TryGetExistingInstance(out SaveManager saveManager))
+        {
+            saveManager.UnregisterWriter(controller);
+        }
+
+        base.OnDestroy();
     }
 }

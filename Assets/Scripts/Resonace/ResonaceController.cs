@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 // 영웅 레벨 공명 관련 기능을 처리하는 컨트롤러
-public sealed class ResonanceController
+public sealed class ResonanceController : ISaveDataWriter
 {
     private const int MaxResonanceSlotCount = 3;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 // Inventory와 장비 장착 서비스를 함께 관리하는 클래스
 // 외부에서는 InventoryController를 통해 인벤토리 기능에 접근을 의도
-public sealed class InventoryController
+public sealed class InventoryController : ISaveDataWriter
 {
     private readonly Inventory inventory;
     private readonly ClassEquipmentService equipmentService;
