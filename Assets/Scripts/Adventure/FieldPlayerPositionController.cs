@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 // 필드 플레이어 위치의 저장 및 복원을 관리하는 클래스
-public sealed class FieldPlayerPositionController : MonoBehaviour
+public sealed class FieldPlayerPositionController : MonoBehaviour, ISaveDataWriter
 {
     public static FieldPlayerPositionController Current { get; private set; }
 
@@ -46,10 +46,18 @@ public sealed class FieldPlayerPositionController : MonoBehaviour
     private void Awake()
     {
         Current = this;
+
+        // 현재 필드 플레이어 위치를 저장 대상으로 등록
+        SaveManager.Instance.RegisterWriter(this);
     }
 
     private void OnDestroy()
     {
+        if (SaveManager.TryGetExistingInstance(out SaveManager saveManager))
+        {
+            saveManager.UnregisterWriter(this);
+        }
+
         if (Current == this)
         {
             Current = null;

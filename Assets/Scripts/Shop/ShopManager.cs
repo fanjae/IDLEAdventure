@@ -1,7 +1,7 @@
 using System;
 
 // 상점 컨트롤러를 전역에서 하나만 관리함
-public sealed class ShopManager : Singleton<ShopManager>
+public sealed class ShopManager : Singleton<ShopManager>, ISaveDataWriter
 {
     private ShopController controller;
 
@@ -39,6 +39,9 @@ public sealed class ShopManager : Singleton<ShopManager>
         }
 
         controller = new ShopController(database);
+
+        // 상점 상태를 저장 대상으로 등록
+        SaveManager.Instance.RegisterWriter(this);
     }
 
     // 저장 데이터를 상점 컨트롤러에 복원함
@@ -57,5 +60,15 @@ public sealed class ShopManager : Singleton<ShopManager>
         {
             controller.WriteSaveData(saveData);
         }
+    }
+
+    protected override void OnDestroy()
+    {
+        if (SaveManager.TryGetExistingInstance(out SaveManager saveManager))
+        {
+            saveManager.UnregisterWriter(this);
+        }
+
+        base.OnDestroy();
     }
 }
