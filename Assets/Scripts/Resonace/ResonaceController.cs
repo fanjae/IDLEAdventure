@@ -178,6 +178,13 @@ public sealed class ResonanceController : ISaveDataWriter
         ApplyResonanceLevel();
     }
 
+    // HeroController 이벤트 구독 해제
+    public void Dispose()
+    {
+        heroController.OnHeroLevelChanged -= HandleHeroLevelChanged;
+        heroController.OnHeroCollectionChanged -= HandleHeroCollectionChanged;
+    }
+
     // 현재 공명 상태를 저장 데이터에 반영
     public void WriteSaveData(GameSaveData saveData)
     {

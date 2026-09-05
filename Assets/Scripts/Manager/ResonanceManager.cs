@@ -45,6 +45,11 @@ public sealed class ResonanceManager : Singleton<ResonanceManager>
 
     protected override void OnDestroy()
     {
+        if (controller != null)
+        {
+            controller.Dispose();
+        }
+
         // 종료 순서상 SaveManager가 먼저 제거되었을 수 있으므로 기존 인스턴스가 있을 때만 해제
         if (controller != null && SaveManager.TryGetExistingInstance(out SaveManager saveManager))
         {
