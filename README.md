@@ -1,6 +1,6 @@
-## 모험단 키우기
+## IDLEAdventure
 
-> **모험단 키우기**는 **AFK: 새로운 여정**을 레퍼런스로 제작한 3D 방치형 RPG입니다.
+> **IDLEAdventure**는 **AFK: 새로운 여정**을 레퍼런스로 제작한 3D 방치형 RPG입니다.
 > 최대 5명의 영웅으로 파티를 구성하고 전략적으로 배치하여 자동 전투 스테이지를 진행하며, 필드 탐험과 퀘스트를 통해 다양한 콘텐츠를 수행합니다.
 > 전투와 방치 보상으로 획득한 재화를 활용해 영웅, 레벨 공명, 클래스 장비를 성장시키고 더 높은 스테이지와 콘텐츠에 도전하는 것을 핵심 플레이 구조로 구성했습니다.
 
@@ -224,7 +224,7 @@
 
 ## 플레이 영상
 
-(추가 예정)
+[플레이 영상(임시)](https://www.youtube.com/watch?v=LE-xFqqSeHk)
 
 ## 개발 기록
 [IDLEAdventure 개발일지](https://fanjae.tistory.com/category/Projects/IDLEAdventure)
