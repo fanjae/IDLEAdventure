@@ -42,18 +42,20 @@
 
 |     기능    |     화면    |            설명            |
 | :-------: | :-------: | :----------------------: |
-|   필드 탐험   | 이미지 추가 예정 |  필드 이동, 퀘스트 및 오브젝트 상호작용  |
-|   전략 배치   | 이미지 추가 예정 |    최대 5명의 영웅을 전투 전 배치    |
-|   자동 전투   | 이미지 추가 예정 |   영웅 AI 기반 자동 이동·공격·스킬   |
-|    스테이지   | 이미지 추가 예정 |    스테이지 진행, 보상 및 연속 전투   |
-|   영웅 성장   | 이미지 추가 예정 |     영웅 레벨업 및 스킬 정보 확인    |
-| 장비 / 인벤토리 | 이미지 추가 예정 | 클래스 장비 관리, 자동 장착 및 장비 분해 |
-|   레벨 공명   | 이미지 추가 예정 |   공명 슬롯을 이용한 영웅 레벨 동기화   |
-|   방치 보상   | 이미지 추가 예정 |   오프라인 시간에 따른 재화·장비 획득   |
-|     가챠    | 이미지 추가 예정 |    영웅 소환, 픽업 및 천장 시스템    |
-|    퀘스트    | 이미지 추가 예정 |      메인·서브·채집 퀘스트 진행     |
-|  업적 / 상점  | 이미지 추가 예정 |    업적 보상, 재화 교환 및 패키지    |
-|  저장 / 옵션  | 이미지 추가 예정 |   게임 진행 데이터 저장 및 사운드 설정  |
+|   필드 탐험   | <img width="500" height="500" alt="1 Field" src="https://github.com/user-attachments/assets/691031c8-dfcb-4c6e-a52e-d32fd13775af" /> |  필드 이동, 퀘스트 및 오브젝트 상호작용  |
+|   전략 배치   | <img width="500" height="500" alt="2 Batch" src="https://github.com/user-attachments/assets/57b02562-20d6-444e-8929-546527ca82dc" /> |   최대 5명의 영웅을 전투 전 배치    |
+|   자동 전투   | <img width="500" height="500" alt="1 Battle" src="https://github.com/user-attachments/assets/f2f416c5-66ab-4637-ae90-68868deab776" /> |  영웅 AI 기반 자동 이동·공격·스킬   |
+|    스테이지   | <img width="500" height="500" alt="3 Stage" src="https://github.com/user-attachments/assets/2763dece-1ff4-4fe2-8348-79f86c40f198" />  |  스테이지 진행, 보상 및 연속 전투   |
+|   영웅 성장   | <img width="500" height="500" alt="5 Hero" src="https://github.com/user-attachments/assets/ab20150e-1c7d-4751-add7-6d5fd5213d38" /> | 영웅 레벨업 및 스킬 정보 확인    |
+|      장비     | <img width="500" height="500" alt="6 Equipment" src="https://github.com/user-attachments/assets/97bba49a-261e-4021-827a-96f31d024707" />  | 클래스 장비 관리, 자동 장착 |
+|   인벤토리    | <img width="500" height="500" alt="7 Inventory" src="https://github.com/user-attachments/assets/93b45a4a-b5c3-4b1e-ac8a-71e331defd8d" />  | 슬롯 기반 인벤토리, 장비 분해 |
+|   레벨 공명   | <img width="500" height="500" alt="7 Resonance" src="https://github.com/user-attachments/assets/e7700cea-1676-468e-83c8-173ddaa58a93" />  | 공명 슬롯을 이용한 영웅 레벨 동기화 |
+|   방치 보상   | <img width="500" height="500" alt="14 Reward" src="https://github.com/user-attachments/assets/f2a2cbf7-ca5f-4279-a4be-fa9892dc34ed" /> |  오프라인 시간에 따른 재화·장비 획득   |
+|     가챠    | <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/797ff56f-86e4-4a40-868f-7fc2250e66be" /> | 영웅 소환, 픽업 및 천장 시스템    |
+|    퀘스트    | <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/7188feb3-66d3-4888-85d8-d7adcb21b35b" /> | 메인·서브·채집 퀘스트 진행 |
+|     업적    | <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/ec702270-cff8-45ef-8698-8a98969e8c6f" /> |    업적 보상, 재화 교환 및 패키지    |
+|     저장   | <img width="500" height="500" alt="7 Resonance" src="https://github.com/user-attachments/assets/c76bb923-2600-4f3c-a9d4-7992286df883" /> |   게임 진행 데이터 저장 |
+|     옵션   | <img width="500" height="500" alt="12 Option" src="https://github.com/user-attachments/assets/8c65fb80-cecf-4e64-b15e-aea51815a00d" /> |   배경음 및 효과음 설정 |
 
 ---
 
