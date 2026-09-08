@@ -165,6 +165,7 @@ public sealed class AutoBattleController : MonoBehaviour
         if (!StageDatabase.Instance.TryGetStage(nextStageId, out _))
         {
             StopAutoBattle();
+            SceneManager.LoadScene(mainSceneName);
             return;
         }
 
