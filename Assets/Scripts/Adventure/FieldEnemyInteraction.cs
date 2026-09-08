@@ -5,7 +5,7 @@ public enum FieldType
 {
     None,
     Forest, Desert, Snow,
-    ForestBoss, DesertBoss, SnowBoss,
+    ForestBoss, DesertBoss, SnowBoss,FinalBoss,
     Length
 }
 
