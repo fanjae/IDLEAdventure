@@ -21,6 +21,7 @@ public class IdleView : MonoBehaviour
 
     private void OnEnable()
     {
+        UpdateUI();
         if (idleReward != null)
         {
             idleReward.OnGetIdleReward += UpdateUI;
