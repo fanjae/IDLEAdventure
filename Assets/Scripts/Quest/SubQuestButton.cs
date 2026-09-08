@@ -73,4 +73,11 @@ public class SubQuestButton : QuestButton
             gameObject.SetActive(false);
         }
     }
+
+    // QuestUI 명시적 초기화
+    public void ClearQuestUI()
+    {
+        subQeustId = 0;
+        gameObject.SetActive(false);
+    }
 }

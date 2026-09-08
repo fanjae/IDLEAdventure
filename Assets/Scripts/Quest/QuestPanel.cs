@@ -47,6 +47,11 @@ public class QuestPanel : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        RestoreAcceptedSubQuestButtons();
+    }
+
     private void OnEnable()
     {
         if (QuestManager.Instance != null)
@@ -277,5 +282,30 @@ public class QuestPanel : MonoBehaviour
         }
 
         OnMainClosed?.Invoke();
+    }
+
+    // 수락 정보 버튼을 복원하기 위한 함수 추가
+    private void RestoreAcceptedSubQuestButtons()
+    {
+        if (QuestManager.Instance == null || subQuestButtons == null) return;
+
+        for (int i = 0; i < subQuestButtons.Length; i++)
+        {
+            if (subQuestButtons[i] != null)
+            {
+                subQuestButtons[i].ClearQuestUI();
+            }
+        }
+
+        List<int> acceptedSubQuestIds = QuestManager.Instance.AcceptedSubQuestIds;
+        int restoreCount = Mathf.Min(acceptedSubQuestIds.Count, subQuestButtons.Length);
+
+        for (int i = 0; i < restoreCount; i++)
+        {
+            if (subQuestButtons[i] != null)
+            {
+                subQuestButtons[i].RefreshQuestUI(acceptedSubQuestIds[i]);
+            }
+        }
     }
 }
