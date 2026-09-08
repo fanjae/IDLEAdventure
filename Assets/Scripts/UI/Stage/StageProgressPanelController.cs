@@ -34,7 +34,7 @@ public sealed class StageProgressPanelController : MonoBehaviour
             return;
         }
 
-        int stageCount = StageDatabase.Instance.StageCount;
+        int stageCount = StageProgressController.MaxPlayableStageId;
         int currentStage = Mathf.Clamp(stageProgressController.CurrentStageId, 1, stageCount);
 
         CreateStageNodes(stageCount, currentStage);
