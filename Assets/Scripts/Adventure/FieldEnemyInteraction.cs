@@ -91,6 +91,7 @@ public class FieldEnemyInteraction : MonoBehaviour
         else if (fieldType == FieldType.ForestBoss) fieldId = 5;
         else if (fieldType == FieldType.DesertBoss) fieldId = 10;
         else if (fieldType == FieldType.SnowBoss) fieldId = 15;
+        else if (fieldType == FieldType.FinalBoss) fieldId = 20;
 
         return fieldId;
     }
