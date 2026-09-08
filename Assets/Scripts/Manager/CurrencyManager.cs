@@ -19,7 +19,7 @@ public enum CurrencyType
 /// 재화 소모: UseCurrency(재화 타입, 재화량) <br/>
 /// 재화 확인(값 반환): GetCurrency(재화 타입)
 /// </summary>
-public class CurrencyManager : Singleton<CurrencyManager>
+public class CurrencyManager : Singleton<CurrencyManager>, ISaveDataWriter
 {
     // 필요 없긴 한데 혹시 어떻게 적용하는지 확인해보실 분들을 위해 주석처리
     // 씬 실행 시 강제로 매니저 생성하는 부분
@@ -48,6 +48,9 @@ public class CurrencyManager : Singleton<CurrencyManager>
             // 재화 종류 별로 초기화
             currencies[(CurrencyType)i] = 0;
         }
+
+        // 현재 재화 상태를 저장 대상으로 등록
+        SaveManager.Instance.RegisterWriter(this);
     }
 
     // 재화 획득 함수
@@ -120,5 +123,15 @@ public class CurrencyManager : Singleton<CurrencyManager>
         OnCurrencyChanged?.Invoke(CurrencyType.EXP, currencies[CurrencyType.EXP]);
         OnCurrencyChanged?.Invoke(CurrencyType.UPGRADE, currencies[CurrencyType.UPGRADE]);
         OnCurrencyChanged?.Invoke(CurrencyType.GEM, currencies[CurrencyType.GEM]);
+    }
+
+    protected override void OnDestroy()
+    {
+        if (SaveManager.TryGetExistingInstance(out SaveManager saveManager))
+        {
+            saveManager.UnregisterWriter(this);
+        }
+
+        base.OnDestroy();
     }
 }

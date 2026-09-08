@@ -4,6 +4,8 @@ using UnityEngine;
 // 스테이지 진행도 관리
 public sealed class StageProgressController
 {
+    public const int MaxPlayableStageId = 16;
+
     public int CurrentStageId
     {
         get
@@ -34,7 +36,22 @@ public sealed class StageProgressController
 
         progress.HighestClearedStageId = Mathf.Max(progress.HighestClearedStageId, stageId);
 
-        int nextStageId = Mathf.Min(stageId + 1, StageDatabase.Instance.StageCount);
+        // 최종 스테이지 클리어 시 CurrentStageId를 16으로 유지
+        if (stageId >= MaxPlayableStageId)
+        {
+            progress.CurrentStageId = MaxPlayableStageId;
+            return;
+        }
+
+        int nextStageId = stageId + 1;
+
+        if (StageDatabase.Instance == null || !StageDatabase.Instance.TryGetStage(nextStageId, out _))
+        {
+            Debug.LogWarning($"{nextStageId}번 스테이지 데이터가 없어 현재 스테이지를 유지합니다.");
+            progress.CurrentStageId = stageId;
+            return;
+        }
+
         progress.CurrentStageId = nextStageId;
     }
 
@@ -42,19 +59,26 @@ public sealed class StageProgressController
     public void RecordStageDefeat(int stageId)
     {
         if (stageId < 1)
+        {
             return;
+        }
 
         StageProgressSaveData progress = GetProgressData();
         progress.DefeatedStageIds ??= new System.Collections.Generic.List<int>();
+
         if (!progress.DefeatedStageIds.Contains(stageId))
+        {
             progress.DefeatedStageIds.Add(stageId);
+        }
     }
 
     // 지정 스테이지에 한 번이라도 패배했는지 반환함
     public bool HasDefeatedStage(int stageId)
     {
         if (stageId < 1)
+        {
             return false;
+        }
 
         StageProgressSaveData progress = GetProgressData();
         return progress.DefeatedStageIds != null && progress.DefeatedStageIds.Contains(stageId);

@@ -15,7 +15,7 @@ using UnityEngine;
 /// 2. 배틀씬으로 넘어가 전투를 승리했을 때 퀘스트 완료 하는 로직 구상 필요 <br/>
 /// 3. 보상은 퀘스트 ID에 따라 메인과 서브 구분이 자연스럽게 되니까 클리어 조건문 모두 통과하고 보상 지급 함수를 추가하면 좋아보이긴 하는데... 어떨까?
 /// </summary>
-public class QuestManager : Singleton<QuestManager>
+public class QuestManager : Singleton<QuestManager>, ISaveDataWriter
 {
     private Dictionary<int, QuestData> questDatas = new Dictionary<int, QuestData>();
 
@@ -48,6 +48,9 @@ public class QuestManager : Singleton<QuestManager>
         base.Awake();
 
         InitializeQuests();
+
+        // 퀘스트 진행 상태를 저장 대상으로 등록
+        SaveManager.Instance.RegisterWriter(this);
     }
 
     // 퀘스트 초기화 함수.
@@ -288,5 +291,15 @@ public class QuestManager : Singleton<QuestManager>
         {
             Debug.Log($"[{quest.QuestName}] 설정된 퀘스트 보상이 없습니다.");
         }
+    }
+
+    protected override void OnDestroy()
+    {
+        if (SaveManager.TryGetExistingInstance(out SaveManager saveManager))
+        {
+            saveManager.UnregisterWriter(this);
+        }
+
+        base.OnDestroy();
     }
 }

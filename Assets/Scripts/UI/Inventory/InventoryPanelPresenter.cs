@@ -14,6 +14,7 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
     private readonly List<InventoryItemSlotView> slotViews = new();
 
     private InventoryController inventoryController;
+    private EquipmentDismantleService dismantleService;
     private Sequence slotSequence;
 
     private void Start()
@@ -25,6 +26,12 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
         }
 
         inventoryController = inventoryManager.Controller;
+
+        if (itemDatabase != null && dismantleRewardData != null)
+        {
+            dismantleService = new EquipmentDismantleService(inventoryController, itemDatabase, dismantleRewardData);
+        }
+
         inventoryController.OnInventoryChanged += Refresh;
         inventoryController.OnEquipmentChanged += Refresh;
 
@@ -80,9 +87,9 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
     // 현재 장착 중인 장비를 제외한 모든 보유 장비 분해
     public void DecomposeUnequippedEquipment()
     {
-        if (inventoryController == null || dismantleRewardData == null)
+        if (dismantleService == null)
         {
-            Debug.LogWarning("[InventoryPanelPresenter] 분해에 필요한 데이터가 준비되지 않았습니다.");
+            Debug.LogWarning("[InventoryPanelPresenter] 장비 분해 서비스가 준비되지 않았습니다.");
             return;
         }
 
@@ -92,61 +99,25 @@ public sealed class InventoryPanelPresenter : MonoBehaviour
             return;
         }
 
-        List<OwnedEquipmentData> targets = new();
+        EquipmentDismantleResult result = dismantleService.DismantleUnequippedEquipment();
 
-        foreach (OwnedEquipmentData ownedEquipment in inventoryController.Equipments)
-        {
-            if (!inventoryController.IsEquipped(ownedEquipment.InstanceId))
-            {
-                targets.Add(ownedEquipment);
-            }
-        }
-
-        int decomposedCount = 0;
-        long totalGold = 0;
-        long totalExp = 0;
-        long totalUpgrade = 0;
-        long totalGem = 0;
-
-        foreach (OwnedEquipmentData ownedEquipment in targets)
-        {
-            if (!itemDatabase.TryGetItem(ownedEquipment.EquipmentId, out EquipmentSO equipment) ||
-                !dismantleRewardData.TryRollReward(equipment.CraftLevel, out EquipmentDismantleReward reward))
-            {
-                Debug.LogWarning($"[InventoryPanelPresenter] 분해 보상 데이터를 찾을 수 없어 장비를 유지합니다. EquipmentId: {ownedEquipment.EquipmentId}");
-                continue;
-            }
-
-            if (!inventoryController.TryRemoveOwnedEquipment(ownedEquipment.InstanceId, out EquipmentRemoveFailureReason failureReason))
-            {
-                Debug.LogWarning($"[InventoryPanelPresenter] 장비 분해에 실패했습니다. InstanceId: {ownedEquipment.InstanceId}, Reason: {failureReason}");
-                continue;
-            }
-
-            decomposedCount++;
-            totalGold += reward.Gold;
-            totalExp += reward.Exp;
-            totalUpgrade += reward.Upgrade;
-            totalGem += reward.Gem;
-        }
-
-        if (decomposedCount == 0)
+        if (result.DismantledCount == 0)
         {
             Debug.Log("[InventoryPanelPresenter] 분해할 미장착 장비가 없습니다.");
             return;
         }
 
-        GrantCurrency(currencyManager, CurrencyType.GOLD, totalGold);
-        GrantCurrency(currencyManager, CurrencyType.EXP, totalExp);
-        GrantCurrency(currencyManager, CurrencyType.UPGRADE, totalUpgrade);
-        GrantCurrency(currencyManager, CurrencyType.GEM, totalGem);
+        GrantCurrency(currencyManager, CurrencyType.GOLD, result.Gold);
+        GrantCurrency(currencyManager, CurrencyType.EXP, result.Exp);
+        GrantCurrency(currencyManager, CurrencyType.UPGRADE, result.Upgrade);
+        GrantCurrency(currencyManager, CurrencyType.GEM, result.Gem);
 
         if (SaveManager.TryGetExistingInstance(out SaveManager saveManager) && saveManager.CurrentData != null)
         {
             saveManager.Save();
         }
 
-        Debug.Log($"[장비 분해] {decomposedCount}개 | GOLD +{totalGold}, EXP +{totalExp}, UPGRADE +{totalUpgrade}, GEM +{totalGem}");
+        Debug.Log($"[장비 분해] {result.DismantledCount}개 | GOLD +{result.Gold}, EXP +{result.Exp}, UPGRADE +{result.Upgrade}, GEM +{result.Gem}");
     }
 
     private static void GrantCurrency(CurrencyManager currencyManager, CurrencyType type, long amount)

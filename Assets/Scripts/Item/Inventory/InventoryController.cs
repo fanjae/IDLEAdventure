@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 // Inventory와 장비 장착 서비스를 함께 관리하는 클래스
 // 외부에서는 InventoryController를 통해 인벤토리 기능에 접근을 의도
-public sealed class InventoryController
+public sealed class InventoryController : ISaveDataWriter
 {
     private readonly Inventory inventory;
     private readonly ClassEquipmentService equipmentService;
@@ -135,6 +135,12 @@ public sealed class InventoryController
     private void HandleInventoryChanged()
     {
         OnInventoryChanged?.Invoke();
+    }
+
+    // Inventory 이벤트 구독 해제
+    public void Dispose()
+    {
+        inventory.OnInventoryChanged -= HandleInventoryChanged;
     }
 
     // 현재 인벤토리 상태를 저장 데이터에 반영

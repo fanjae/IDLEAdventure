@@ -1,7 +1,7 @@
 using System;
 
 // 가챠 컨트롤러를 전역에서 하나만 관리함
-public sealed class GachaManager : Singleton<GachaManager>
+public sealed class GachaManager : Singleton<GachaManager>, ISaveDataWriter
 {
     private GachaController controller;
 
@@ -41,6 +41,9 @@ public sealed class GachaManager : Singleton<GachaManager>
         }
 
         controller = new GachaController(database, heroDatabase);
+
+        // 가챠 천장 진행 상태를 저장 대상으로 등록
+        SaveManager.Instance.RegisterWriter(this);
     }
 
     // 현재 천장 진행도를 저장 데이터에 반영함
@@ -63,5 +66,15 @@ public sealed class GachaManager : Singleton<GachaManager>
         }
 
         controller.LoadSaveData(saveData);
+    }
+
+    protected override void OnDestroy()
+    {
+        if (SaveManager.TryGetExistingInstance(out SaveManager saveManager))
+        {
+            saveManager.UnregisterWriter(this);
+        }
+
+        base.OnDestroy();
     }
 }
