@@ -58,7 +58,7 @@ public class ItemReward : IReward
         itemId += temp;
         temp = 0;
         // 장비 레벨(등급?) 선택
-        temp = UnityEngine.Random.Range(1, 1);
+        temp = UnityEngine.Random.Range(1, 3);
         itemId += temp;
         temp = 0;
         
