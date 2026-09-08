@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 public enum FieldType
 {
     None,
-    Forest, Desert, Snow,
+    Forest, Desert, Snow, FinalBoss,
     Length
 }
 
@@ -87,7 +87,8 @@ public class FieldEnemyInteraction : MonoBehaviour
         if (fieldType == FieldType.Forest) fieldId = 1;
         else if (fieldType == FieldType.Desert) fieldId = 6;
         else if (fieldType == FieldType.Snow) fieldId = 11;
+        else if (fieldType == FieldType.FinalBoss) fieldId = 20;
 
-        return fieldId;
+            return fieldId;
     }
 }
