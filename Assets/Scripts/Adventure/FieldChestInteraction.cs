@@ -21,6 +21,9 @@ public class FieldChestInteraction : MonoBehaviour
     [Header("Reward Setting")]
     [SerializeField] private List<ChestRewardInfo> chestRewards = new List<ChestRewardInfo>();
 
+    [Header("Feedback")]
+    [SerializeField] private AudioClip chestOpenSfx;
+
     private bool isOpened = false;
 
     // 2026.09.02 저장된 상자 획득 이력이 있으면 필드에서 제거
@@ -63,6 +66,11 @@ public class FieldChestInteraction : MonoBehaviour
     {
         if (isOpened) return;
         isOpened = true;
+
+        if (chestOpenSfx != null && SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySfx(chestOpenSfx);
+        }
 
         foreach (ChestRewardInfo info in chestRewards)
         {
