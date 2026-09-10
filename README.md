@@ -32,7 +32,7 @@
 
 ## 실행 방법
 
-1. [Ver1.7 링크](https://github.com/fanjae/IDLEAdventure/releases/tag/Ver1.7) 접속
+1. [Ver1.7 링크](https://github.com/fanjae/IDLEAdventure/releases/tag/Ver1.9) 접속
 2. `IDLEAdventureVer1.7.zip` 압축 해제
 3. `IDLEAdventure.exe` 실행
 
